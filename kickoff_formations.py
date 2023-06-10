@@ -15,21 +15,40 @@ import json
 from urllib.request import urlopen
 from PIL import Image
 
+import sys
+sys.path.append("../fumbbl_datasets/src/")
+from write_json_file import write_json_file
+
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 
 def fetch_replay(replay_id):
-    
-    target = 'raw/df_replay_' + time.strftime("%Y%m%d_%H%M%S") + '.h5'
 
     print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON')
 
     dirname = "raw/replay_files/" 
     fname_string_gz = dirname + str(replay_id) + ".gz"        
-        
-    # PM read compressed json file
-    with gzip.open(fname_string_gz, mode = "rb") as f:
-        replay = json.load(f)
+
+    # check if file already exists, else scrape it
+    try:
+        f = open(fname_string_gz, mode = "rb")
+    except OSError as e:
+        # scrape it 
+        api_string = "https://fumbbl.com/api/replay/get/" + str(replay_id) + "/gz" 
+
+        replay = requests.get(api_string, stream = True)
+
+        with open(fname_string_gz, 'wb') as f:
+            for chunk in replay.iter_content(None):
+                f.write(chunk)
+
+        with gzip.open(fname_string_gz, mode = "rb") as f:
+            replay = json.load(f)
+            
+    else:
+        # file already present
+        with gzip.open(fname_string_gz, mode = "rb") as f:
+            replay = json.load(f)
 
     return replay
 
