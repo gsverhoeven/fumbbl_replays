@@ -123,8 +123,10 @@ def extract_players_from_replay(my_replay):
     playerType = []
     skillArray = []
     home_away = []
+    teamId = []
 
     tmpPlayers = my_replay['game']['teamAway']['playerArray']
+    tmp_team_id = my_replay['game']['teamAway']['teamId']
 
     for playerIndex in range(len(tmpPlayers)):
         playerId.append(tmpPlayers[playerIndex]['playerId'])
@@ -134,8 +136,10 @@ def extract_players_from_replay(my_replay):
         playerType.append(tmpPlayers[playerIndex]['playerType'])
         skillArray.append(tmpPlayers[playerIndex]['skillArray'])
         home_away.append('teamAway')
+        teamId.append(tmp_team_id)
 
     tmpPlayers = my_replay['game']['teamHome']['playerArray']
+    tmp_team_id = my_replay['game']['teamHome']['teamId']
 
     for playerIndex in range(len(tmpPlayers)):
         playerId.append(tmpPlayers[playerIndex]['playerId'])
@@ -145,8 +149,10 @@ def extract_players_from_replay(my_replay):
         playerType.append(tmpPlayers[playerIndex]['playerType'])
         skillArray.append(tmpPlayers[playerIndex]['skillArray'])
         home_away.append('teamHome')
+        teamId.append(tmp_team_id)
 
-    df_players = pd.DataFrame( {"playerId": playerId, 
+    df_players = pd.DataFrame( {"teamId": teamId,
+                        "playerId": playerId, 
                         "playerNr": playerNr,
                         "positionId": positionId,
                         "playerName": playerName,
@@ -365,13 +371,13 @@ def process_replay(replay_id, df_matches):
 
     # determine who is receiving
     receiving_team = determine_receiving_team_at_start(df)
-
+    print(df_players.query('home_away != @receiving_team')['teamId'])
     # create the plots
     create_defense_plot(replay_id, match_id, positions, receiving_team)
 
-    create_offense_plot(replay_id, match_id, positions, receiving_team)
+    #create_offense_plot(replay_id, match_id, positions, receiving_team)
 
-    create_vertical_plot(replay_id, match_id, positions, receiving_team)
+    #create_vertical_plot(replay_id, match_id, positions, receiving_team)
 
-    create_horizontal_plot(replay_id, match_id, positions, receiving_team)
+    #create_horizontal_plot(replay_id, match_id, positions, receiving_team)
 
