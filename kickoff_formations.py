@@ -156,7 +156,7 @@ def extract_rosters_from_replay(my_replay):
     positionId = []
     positionName = []
     icon_path = []
-    home_away = []
+    #home_away = []
 
     tmpRosters = my_replay['game']['teamAway']['roster']
 
@@ -165,7 +165,7 @@ def extract_rosters_from_replay(my_replay):
         positionId.append(tmpPosition['positionId'])
         positionName.append(tmpPosition['positionName'])
         icon_path.append(tmpRosters['baseIconPath'] + tmpPosition['urlIconSet'])
-        home_away.append('teamAway')
+        #home_away.append('teamAway')
 
     tmpRosters = my_replay['game']['teamHome']['roster']
 
@@ -174,12 +174,14 @@ def extract_rosters_from_replay(my_replay):
         positionId.append(tmpPosition['positionId'])
         positionName.append(tmpPosition['positionName'])
         icon_path.append(tmpRosters['baseIconPath'] + tmpPosition['urlIconSet'])
-        home_away.append('teamHome')
+        #home_away.append('teamHome')
 
     df_positions = pd.DataFrame( {"positionId": positionId,
                                 "positionName": positionName,
-                                "icon_path": icon_path,
-                                "home_away": home_away})
+                                "icon_path": icon_path#,
+                                #"home_away": home_away
+                                })
+    df_positions.drop_duplicates(inplace = True, ignore_index = True)
 
     return df_positions
 
