@@ -1,30 +1,6 @@
-import random
-import time
-import os
-
-from isoweek import Week
-
-import requests # API library
-
-import numpy as np
-import pandas as pd
-
-import gzip
-import json
-
-from urllib.request import urlopen
-from PIL import Image
-
-import sys
-sys.path.append("../fumbbl_datasets/src/")
-from write_json_file import write_json_file
-
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
-
 def fetch_replay(replay_id):
 
-    print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON')
+    #print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON')
 
     dirname = "raw/replay_files/" 
     fname_string_gz = dirname + str(replay_id) + ".gz"        
@@ -37,16 +13,17 @@ def fetch_replay(replay_id):
         api_string = "https://fumbbl.com/api/replay/get/" + str(replay_id) + "/gz" 
 
         replay = requests.get(api_string, stream = True)
-
+        print("x",  end = '')
         with open(fname_string_gz, 'wb') as f:
             for chunk in replay.iter_content(None):
                 f.write(chunk)
-
+        time.sleep(0.3)
         with gzip.open(fname_string_gz, mode = "rb") as f:
             replay = json.load(f)
             
     else:
         # file already present
+        print("o",  end = '')
         with gzip.open(fname_string_gz, mode = "rb") as f:
             replay = json.load(f)
 
@@ -117,7 +94,10 @@ def parse_replay_file(my_replay, to_excel = False):
                         SetPlayerCoordinate.append(0)
                         PlayerCoordinateX.append(99)
                         PlayerCoordinateY.append(99)
+        elif tmpCommand['netCommandId'] == "serverAddPlayer":
+            pass
         else:
+            # unknown netCommand: print it
             print(tmpCommand['netCommandId'])
 
     df = pd.DataFrame( {"commandNr": commandNr, 
@@ -238,7 +218,7 @@ def add_tacklezones(pitch, positions, flip = False, horizontal = False):
         pitch.paste(tacklezone_color, box, mask)
     return pitch
 
-def add_players(pitch, positions, flip = False, horizontal = False):
+def add_players(pitch, positions, receiving_team, flip = False, horizontal = False):
     for i in range(len(positions)):
         if horizontal == False:
             x = 14 - positions.iloc[i]['PlayerCoordinateY']
@@ -275,20 +255,20 @@ def pitch_select_upper_half(pitch):
     pitch = pitch.crop((0, 0, 15*28, 13*28))
     return pitch
 
-def create_horizontal_plot():
+def create_horizontal_plot(replay_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.resize((26 * 28, 15 * 28))
 
     pitch = add_tacklezones(pitch, positions, flip = False, horizontal = True)   
-    pitch = add_players(pitch, positions, flip = False, horizontal = True)
+    pitch = add_players(pitch, positions, receiving_team, flip = False, horizontal = True)
 
-    image_path = 'datasets/kickoff_pngs/'
+    image_path = 'kickoff_pngs/'
     image_name = str(replay_id) + "_kickoff_horizontal.png"
 
     pitch.save(image_path + image_name,"PNG")
     return pitch
 
-def create_vertical_plot():
+def create_vertical_plot(replay_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.rotate(angle = 90, expand = True)
     pitch = pitch.resize((15 * 28, 26 * 28))
@@ -299,15 +279,15 @@ def create_vertical_plot():
         doFlip = False
 
     pitch = add_tacklezones(pitch, positions, flip = doFlip)   
-    pitch = add_players(pitch, positions, flip = doFlip)
+    pitch = add_players(pitch, positions, receiving_team, flip = doFlip)
 
-    image_path = 'datasets/kickoff_pngs/'
+    image_path = 'kickoff_pngs/'
     image_name = str(replay_id) + "_kickoff_vertical.png"
 
     pitch.save(image_path + image_name,"PNG")
     return pitch
 
-def create_defense_plot():
+def create_defense_plot(replay_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.rotate(angle = 90, expand = True)
     pitch = pitch.resize((15 * 28, 26 * 28))
@@ -318,17 +298,17 @@ def create_defense_plot():
         doFlip = False
 
     pitch = add_tacklezones(pitch, positions.query('home_away != @receiving_team'), flip = doFlip)   
-    pitch = add_players(pitch, positions.query('home_away != @receiving_team'), flip = doFlip)
+    pitch = add_players(pitch, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)
 
     pitch = pitch_select_lower_half(pitch)
 
-    image_path = 'datasets/kickoff_pngs/'
+    image_path = 'kickoff_pngs/'
     image_name = str(replay_id) + "_kickoff_lower_defense.png"
 
     pitch.save(image_path + image_name,"PNG")
     return pitch
 
-def create_offense_plot():
+def create_offense_plot(replay_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.rotate(angle = 90, expand = True)
     pitch = pitch.resize((15 * 28, 26 * 28))
@@ -339,11 +319,11 @@ def create_offense_plot():
         doFlip = True
 
     pitch = add_tacklezones(pitch, positions.query('home_away == @receiving_team'),flip = doFlip)   
-    pitch = add_players(pitch, positions.query('home_away == @receiving_team'), flip = doFlip)
+    pitch = add_players(pitch, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)
 
     pitch = pitch_select_lower_half(pitch)
 
-    image_path = 'datasets/kickoff_pngs/'
+    image_path = 'kickoff_pngs/'
     image_name = str(replay_id) + "_kickoff_lower_offense.png"
 
     pitch.save(image_path + image_name,"PNG")
@@ -358,3 +338,37 @@ def determine_receiving_team_at_start(df):
     else: 
         receiving_team = 'teamAway'
     return receiving_team
+
+def process_replay(replay_id):
+    my_replay = fetch_replay(replay_id)
+
+    df_players = extract_players_from_replay(my_replay)
+    df_positions = extract_rosters_from_replay(my_replay)
+    # roster
+    df_players2 = pd.merge(df_players, df_positions, on="positionId", how="left")
+
+    df = parse_replay_file(my_replay)
+
+    # board state at kick-off
+    positions = df.query('turnNr == 0 & turnMode == "setup" & Half == 1 & \
+                         modelChangeId == "fieldModelSetPlayerCoordinate"').groupby('modelChangeKey').tail(1)
+
+    positions = pd.merge(positions, df_players2, left_on='modelChangeKey', right_on='playerId', how="left")
+    # check if we have 22 players
+    # len(positions.query('PlayerCoordinateX != [-1, 30]'))
+
+    # select only players on the board at kick-off, i.e. not in reserve
+    positions = positions.query('PlayerCoordinateX != [-1, 30]').copy()
+
+    # determine who is receiving
+    receiving_team = determine_receiving_team_at_start(df)
+    #receiving_team
+    # create the plots
+    create_defense_plot(replay_id, positions, receiving_team)
+    #print("plot created")
+    create_offense_plot(replay_id, positions, receiving_team)
+    #print("plot created")
+    create_vertical_plot(replay_id, positions, receiving_team)
+    #print("plot created")
+    create_horizontal_plot(replay_id, positions, receiving_team)
+    #print("plot created")
