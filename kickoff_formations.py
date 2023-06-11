@@ -371,7 +371,8 @@ def process_replay(replay_id, df_matches):
 
     # determine who is receiving
     receiving_team = determine_receiving_team_at_start(df)
-    print(df_players.query('home_away != @receiving_team')['teamId'])
+    team_id_defensive = df_players.query('home_away != @receiving_team')['teamId'].unique()[0]
+
     # create the plots
     create_defense_plot(replay_id, match_id, positions, receiving_team)
 
@@ -380,4 +381,4 @@ def process_replay(replay_id, df_matches):
     #create_vertical_plot(replay_id, match_id, positions, receiving_team)
 
     #create_horizontal_plot(replay_id, match_id, positions, receiving_team)
-
+    return team_id_defensive
