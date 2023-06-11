@@ -122,6 +122,7 @@ def extract_players_from_replay(my_replay):
     playerName = []
     playerType = []
     skillArray = []
+    home_away = []
 
     tmpPlayers = my_replay['game']['teamAway']['playerArray']
 
@@ -132,6 +133,7 @@ def extract_players_from_replay(my_replay):
         playerName.append(tmpPlayers[playerIndex]['playerName'])
         playerType.append(tmpPlayers[playerIndex]['playerType'])
         skillArray.append(tmpPlayers[playerIndex]['skillArray'])
+        home_away.append('teamAway')
 
     tmpPlayers = my_replay['game']['teamHome']['playerArray']
 
@@ -142,13 +144,15 @@ def extract_players_from_replay(my_replay):
         playerName.append(tmpPlayers[playerIndex]['playerName'])
         playerType.append(tmpPlayers[playerIndex]['playerType'])
         skillArray.append(tmpPlayers[playerIndex]['skillArray'])
+        home_away.append('teamHome')
 
     df_players = pd.DataFrame( {"playerId": playerId, 
                         "playerNr": playerNr,
                         "positionId": positionId,
                         "playerName": playerName,
                         "playerType": playerType,
-                        "skillArray": skillArray})
+                        "skillArray": skillArray,
+                        "home_away": home_away})
     
     return df_players
 
@@ -156,7 +160,6 @@ def extract_rosters_from_replay(my_replay):
     positionId = []
     positionName = []
     icon_path = []
-    #home_away = []
 
     tmpRosters = my_replay['game']['teamAway']['roster']
 
@@ -165,7 +168,6 @@ def extract_rosters_from_replay(my_replay):
         positionId.append(tmpPosition['positionId'])
         positionName.append(tmpPosition['positionName'])
         icon_path.append(tmpRosters['baseIconPath'] + tmpPosition['urlIconSet'])
-        #home_away.append('teamAway')
 
     tmpRosters = my_replay['game']['teamHome']['roster']
 
@@ -174,12 +176,10 @@ def extract_rosters_from_replay(my_replay):
         positionId.append(tmpPosition['positionId'])
         positionName.append(tmpPosition['positionName'])
         icon_path.append(tmpRosters['baseIconPath'] + tmpPosition['urlIconSet'])
-        #home_away.append('teamHome')
 
     df_positions = pd.DataFrame( {"positionId": positionId,
                                 "positionName": positionName,
-                                "icon_path": icon_path#,
-                                #"home_away": home_away
+                                "icon_path": icon_path
                                 })
     df_positions.drop_duplicates(inplace = True, ignore_index = True)
 
