@@ -185,7 +185,7 @@ def extract_rosters_from_replay(my_replay):
 
     return df_positions
 
-def add_tacklezones(pitch, positions, flip = False, horizontal = False):
+def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
     """Write a separate function that draws semi transparent tackle zones.
     """
     for i in range(len(positions)):
@@ -257,20 +257,20 @@ def pitch_select_upper_half(pitch):
     pitch = pitch.crop((0, 0, 15*28, 13*28))
     return pitch
 
-def create_horizontal_plot(replay_id, positions, receiving_team):
+def create_horizontal_plot(replay_id, match_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.resize((26 * 28, 15 * 28))
 
-    pitch = add_tacklezones(pitch, positions, flip = False, horizontal = True)   
+    pitch = add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = True)   
     pitch = add_players(pitch, positions, receiving_team, flip = False, horizontal = True)
 
     image_path = 'kickoff_pngs/'
-    image_name = str(replay_id) + "_kickoff_horizontal.png"
+    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_horizontal.png"
 
     pitch.save(image_path + image_name,"PNG")
     return pitch
 
-def create_vertical_plot(replay_id, positions, receiving_team):
+def create_vertical_plot(replay_id, match_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.rotate(angle = 90, expand = True)
     pitch = pitch.resize((15 * 28, 26 * 28))
@@ -280,16 +280,16 @@ def create_vertical_plot(replay_id, positions, receiving_team):
     else:
         doFlip = False
 
-    pitch = add_tacklezones(pitch, positions, flip = doFlip)   
+    pitch = add_tacklezones(pitch, positions, receiving_team, flip = doFlip)   
     pitch = add_players(pitch, positions, receiving_team, flip = doFlip)
 
     image_path = 'kickoff_pngs/'
-    image_name = str(replay_id) + "_kickoff_vertical.png"
+    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_vertical.png"
 
     pitch.save(image_path + image_name,"PNG")
     return pitch
 
-def create_defense_plot(replay_id, positions, receiving_team):
+def create_defense_plot(replay_id, match_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.rotate(angle = 90, expand = True)
     pitch = pitch.resize((15 * 28, 26 * 28))
@@ -299,18 +299,18 @@ def create_defense_plot(replay_id, positions, receiving_team):
     else:
         doFlip = False
 
-    pitch = add_tacklezones(pitch, positions.query('home_away != @receiving_team'), flip = doFlip)   
+    pitch = add_tacklezones(pitch, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)   
     pitch = add_players(pitch, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)
 
     pitch = pitch_select_lower_half(pitch)
 
     image_path = 'kickoff_pngs/'
-    image_name = str(replay_id) + "_kickoff_lower_defense.png"
+    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_lower_defense.png"
 
     pitch.save(image_path + image_name,"PNG")
     return pitch
 
-def create_offense_plot(replay_id, positions, receiving_team):
+def create_offense_plot(replay_id, match_id, positions, receiving_team):
     pitch = Image.open("resources/nice.jpg")
     pitch = pitch.rotate(angle = 90, expand = True)
     pitch = pitch.resize((15 * 28, 26 * 28))
@@ -320,13 +320,13 @@ def create_offense_plot(replay_id, positions, receiving_team):
     else:
         doFlip = True
 
-    pitch = add_tacklezones(pitch, positions.query('home_away == @receiving_team'),flip = doFlip)   
+    pitch = add_tacklezones(pitch, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)   
     pitch = add_players(pitch, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)
 
     pitch = pitch_select_lower_half(pitch)
 
     image_path = 'kickoff_pngs/'
-    image_name = str(replay_id) + "_kickoff_lower_offense.png"
+    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_lower_offense.png"
 
     pitch.save(image_path + image_name,"PNG")
 
@@ -341,8 +341,9 @@ def determine_receiving_team_at_start(df):
         receiving_team = 'teamAway'
     return receiving_team
 
-def process_replay(replay_id):
+def process_replay(replay_id, df_matches):
     my_replay = fetch_replay(replay_id)
+    match_id = df_matches.query("replay_id == @replay_id")['match_id'].values[0]
 
     df_players = extract_players_from_replay(my_replay)
     df_positions = extract_rosters_from_replay(my_replay)
@@ -364,13 +365,13 @@ def process_replay(replay_id):
 
     # determine who is receiving
     receiving_team = determine_receiving_team_at_start(df)
-    #receiving_team
+
     # create the plots
-    create_defense_plot(replay_id, positions, receiving_team)
-    #print("plot created")
-    create_offense_plot(replay_id, positions, receiving_team)
-    #print("plot created")
-    create_vertical_plot(replay_id, positions, receiving_team)
-    #print("plot created")
-    create_horizontal_plot(replay_id, positions, receiving_team)
-    #print("plot created")
+    create_defense_plot(replay_id, match_id, positions, receiving_team)
+
+    create_offense_plot(replay_id, match_id, positions, receiving_team)
+
+    create_vertical_plot(replay_id, match_id, positions, receiving_team)
+
+    create_horizontal_plot(replay_id, match_id, positions, receiving_team)
+
