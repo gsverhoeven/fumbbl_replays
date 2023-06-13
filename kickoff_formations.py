@@ -406,34 +406,14 @@ def process_replay(replay_id, df_matches, refresh = False):
     race_defensive = df_players.query('teamId == @team_id_defensive')['race'].unique()[0]
     race_offensive = df_players.query('teamId == @team_id_offensive')['race'].unique()[0]
 
-    # team_home_id = df_matches.query("replay_id == @replay_id")['team1_id'].values[0]
-    # team_away_id = df_matches.query("replay_id == @replay_id")['team2_id'].values[0]
-
-    # team_home_id = df_matches.query("replay_id == @replay_id")['team1_id'].values[0]
-    # team_away_id = df_matches.query("replay_id == @replay_id")['team2_id'].values[0]
-
     team1_score = df_matches.query("replay_id == @replay_id")['team1_score'].values[0]
     team2_score = df_matches.query("replay_id == @replay_id")['team2_score'].values[0]
 
-    # if receiving_team == "teamHome":
-    #     if int(team_id_offensive) != int(team_home_id):
-    #         print("Err")
-    #     if int(team_id_defensive) != int(team_away_id):
-    #         print("Err")
-    # else: 
-    #     if int(team_id_offensive) != int(team_away_id):
-    #         print("Err")
-    #     if int(team_id_defensive) != int(team_home_id):
-    #         print("Err")   
-
-    
     coach1 = my_replay['game']['teamHome']['coach']
     coach2 = my_replay['game']['teamAway']['coach']
     
     race1 = my_replay['game']['teamHome']['race']
     race2 = my_replay['game']['teamAway']['race']
-
-    receiving_coach = my_replay['game'][receiving_team]['coach']
 
     text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team] # 1 home # 2 away
     # create the plots
