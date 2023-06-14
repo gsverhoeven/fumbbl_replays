@@ -385,9 +385,7 @@ def extract_coin_toss(df):
                 pass
         else:
             pass
-    return [None]
-
-"team " + str(choosingTeamId) + " chooses " + coinChoice
+    return None
 
 def process_replay(replay_id, df_matches, refresh = False):
     my_replay = fetch_replay(replay_id)
