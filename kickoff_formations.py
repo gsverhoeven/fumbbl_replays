@@ -331,6 +331,7 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
         text_line2 = text[1] + "(" + text[3] + ")"
         text_line3 = "match nr. " + str(match_id) + " score:" + str(text[4]) + " - " + str(text[5])
 
+        draw.text((5, 252), text[7], font=font1, fill='black')
         draw.text((5, 280), text_line0, font=font1, fill='black')
         draw.text((5, 307), text_line1, font=font1, fill='black')
         draw.text((5, 335), text_line2, font=font1, fill='black')
@@ -373,6 +374,21 @@ def determine_receiving_team_at_start(df):
         receiving_team = 'teamAway'
     return receiving_team
 
+def extract_coin_toss(df):
+    for i in range(len(df)):
+        if isinstance(df.iloc[i].modelChangeValue, dict):
+            if 'choosingTeamId' in df.iloc[i].modelChangeValue:
+                choosingTeamId = df.iloc[i].modelChangeValue['choosingTeamId']
+                # PM compare this to receiving team: this is the choice
+                return choosingTeamId
+            else:
+                pass
+        else:
+            pass
+    return [None]
+
+"team " + str(choosingTeamId) + " chooses " + coinChoice
+
 def process_replay(replay_id, df_matches, refresh = False):
     my_replay = fetch_replay(replay_id)
     match_id = df_matches.query("replay_id == @replay_id")['match_id'].values[0]
@@ -383,8 +399,6 @@ def process_replay(replay_id, df_matches, refresh = False):
     df_players2 = pd.merge(df_players, df_positions, on="positionId", how="left")
 
     df = parse_replay_file(my_replay)
-    #df['coin_choice'] = df.modelChangeValue.str.contains('coinChoice')
-    #print(df.query("coin_choice == True"))
 
     # board state at kick-off
     positions = df.query('turnNr == 0 & turnMode == "setup" & Half == 1 & \
@@ -406,6 +420,12 @@ def process_replay(replay_id, df_matches, refresh = False):
     race_defensive = df_players.query('teamId == @team_id_defensive')['race'].unique()[0]
     race_offensive = df_players.query('teamId == @team_id_offensive')['race'].unique()[0]
 
+    choosing_team = extract_coin_toss(df)
+    if str(choosing_team) == str(team_id_offensive):
+        toss_choice = "toss choice is play offense"
+    else:
+        toss_choice = "toss choice is play defense"
+
     team1_score = df_matches.query("replay_id == @replay_id")['team1_score'].values[0]
     team2_score = df_matches.query("replay_id == @replay_id")['team2_score'].values[0]
 
@@ -415,7 +435,7 @@ def process_replay(replay_id, df_matches, refresh = False):
     race1 = my_replay['game']['teamHome']['race']
     race2 = my_replay['game']['teamAway']['race']
 
-    text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team] # 1 home # 2 away
+    text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     # create the plots
     create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh)
 
@@ -425,3 +445,16 @@ def process_replay(replay_id, df_matches, refresh = False):
 
     #create_horizontal_plot(replay_id, match_id, positions, receiving_team)
     return replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
+
+def sort_defensive_plots(df_replays):
+    """Sort defense setups in folders by race"""
+    current_dirname = "kickoff_pngs/"
+
+    for row in range(len(df_replays)):
+        dirname = df_replays.iloc[row]['raceDefense'] + "/"
+        dirname = dirname.lower()
+        dirname = dirname.replace(' ', '_')
+        if not os.path.exists(current_dirname + dirname):
+            os.makedirs(current_dirname + dirname)
+        fname = str(df_replays.iloc[row]['replayId']) + "_" + str(df_replays.iloc[row]['matchId']) + "_kickoff_lower_defense.png"
+        os.rename(current_dirname + fname, current_dirname + dirname + fname)
