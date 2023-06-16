@@ -233,7 +233,21 @@ def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal =
     return pitch
 
 def add_players(pitch, positions, receiving_team, flip = False, horizontal = False):
+    square_h = 28
+    square_w = 28
+
+    if horizontal == False:
+        # sort the positions for drawing the lowest row on the board first
+        # horizontal board, X from left to right is correct plotting order if we rotate CCW afterwards
+        if flip == False:
+            positions = positions.sort_values(by = 'PlayerCoordinateX', \
+                                      ascending = True)
+        else:
+            positions = positions.sort_values(by = 'PlayerCoordinateX', \
+                                      ascending = False)
+
     for i in range(len(positions)):
+        #print(positions.iloc[i]['playerName'])
         if horizontal == False:
             x = 14 - positions.iloc[i]['PlayerCoordinateY']
             y = positions.iloc[i]['PlayerCoordinateX']
@@ -248,17 +262,23 @@ def add_players(pitch, positions, receiving_team, flip = False, horizontal = Fal
             
         team = positions.iloc[i]['home_away']
         icon_path = positions.iloc[i]['icon_path']
+
         icon = Image.open(urlopen(icon_path)).convert("RGBA")
         icon_w, icon_h = icon.size
+
         if team == receiving_team:
             # select first icon
             icon = icon.crop((0,0,icon_w/4,icon_w/4))
         else:
             # select third icon
             icon = icon.crop((icon_w/2, 0, icon_w*3/4, icon_w/4))
-        icon = icon.resize((28, 28))
-        icon_w, icon_h = icon.size
-        pitch.paste(icon, (icon_w * x,icon_h * y), icon)
+
+        icon_w, icon_h = icon.size # bigger for big guys
+        shift_w = icon_w - square_w
+        shift_h = icon_h - square_h
+        pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
+                                      square_h * y - shift_h), \
+                                        mask = icon)
     return pitch
 
 def pitch_select_lower_half(pitch):
@@ -304,9 +324,17 @@ def create_vertical_plot(replay_id, match_id, positions, receiving_team):
         pitch.save(image_path + image_name,"PNG")
 
 def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh):
-    image_path = 'kickoff_pngs/'
+    base_path = 'kickoff_pngs/'
+
+    dirname = positions.iloc[0]['race'] + "/"
+    dirname = dirname.lower()
+    dirname = dirname.replace(' ', '_')
+
+    if not os.path.exists(base_path + dirname):
+        os.makedirs(base_path + dirname)
+
     image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_lower_defense.png"
-    fname = image_path + image_name
+    fname = base_path + dirname + image_name
 
     if not os.path.exists(fname) or refresh:  
         pitch = Image.open("resources/nice.jpg")
@@ -337,7 +365,7 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
         draw.text((5, 335), text_line2, font=font1, fill='black')
         draw.text((5, 366), text_line3, font=font2, fill='black')
 
-        pitch.save(image_path + image_name,"PNG")
+        pitch.save(base_path + dirname + image_name,"PNG")
     else:
         print(".", end = '')
 
