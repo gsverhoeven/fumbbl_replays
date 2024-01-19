@@ -55,6 +55,8 @@ def parse_replay_file(my_replay, to_excel = False):
                 'fieldModelRemoveTrackNumber',
                 'fieldModelRemovePlayer',
                 'fieldModelAddBloodSpot',
+                'turnDataSetBlitzUsed',
+                'actingPlayerSetHasMoved',
                 'fieldModelRemovePushbackSquare',
                 'playerResultSetTurnsPlayed', # we can ignore all playerResult* these are all in game statistic counters
                 'playerResultSetBlocks',
