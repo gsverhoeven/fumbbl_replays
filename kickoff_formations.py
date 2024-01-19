@@ -49,6 +49,12 @@ def parse_replay_file(my_replay, to_excel = False):
                 'fieldModelAddDiceDecoration',
                 'fieldModelRemoveDiceDecoration',
                 'fieldModelAddPushbackSquare',
+                'fieldModelRemoveMoveSquare',
+                'fieldModelAddMoveSquare',
+                'fieldModelAddTrackNumber',
+                'fieldModelRemoveTrackNumber',
+                'fieldModelRemovePlayer',
+                'fieldModelAddBloodSpot',
                 'fieldModelRemovePushbackSquare',
                 'playerResultSetTurnsPlayed', # we can ignore all playerResult* these are all in game statistic counters
                 'playerResultSetBlocks',
