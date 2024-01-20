@@ -45,25 +45,11 @@ def parse_replay_file(my_replay, to_excel = False):
 
     my_gamelog = my_replay['gameLog']
 
-    ignoreList = ['fieldModelAddPlayerMarker', 
-                'fieldModelRemoveSkillEnhancements',
-                'fieldModelAddDiceDecoration',
-                'fieldModelRemoveDiceDecoration',
-                'fieldModelAddPushbackSquare',
-                'fieldModelRemoveMoveSquare',
-                'fieldModelAddMoveSquare',
-                'fieldModelAddTrackNumber',
-                'fieldModelRemoveTrackNumber',
-                'fieldModelRemovePlayer',
-                'fieldModelAddBloodSpot',
-                'turnDataSetBlitzUsed',
-                'actingPlayerSetHasMoved',
-                'fieldModelRemovePushbackSquare',
-                'playerResultSetTurnsPlayed', # we can ignore all playerResult* these are all in game statistic counters
-                'playerResultSetBlocks',
-                'actingPlayerSetStrength',
-                'gameSetConcessionPossible'
-                ]
+    ignoreList = pd.read_csv("resources/Ignore.csv")
+
+    ignoreList = ignoreList['modelChangeId'].values
+
+
     # N.b. We miss the kick-off event result, this is part of the `reportList` list element.
 
     for commandIndex in range(len(my_gamelog['commandArray'])):
@@ -135,7 +121,7 @@ def parse_replay_file(my_replay, to_excel = False):
     cl_location = pd.read_csv("resources/Coordinate.csv")
     df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
     df = df.drop(['INT', 'VALUE'], axis=1)
-    
+
     if to_excel:
         df.to_excel("output.xlsx")  
        
