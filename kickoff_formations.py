@@ -42,6 +42,9 @@ def parse_replay_file(my_replay, to_excel = False):
     TurnCounter = 0
     turnMode = []
     Half = []
+    gameTime = []
+    turnTime = []
+    reportValue = []
 
     my_gamelog = my_replay['gameLog']
 
@@ -82,6 +85,8 @@ def parse_replay_file(my_replay, to_excel = False):
                     modelChangeId.append(tmpChange['modelChangeId'])
                     modelChangeKey.append(tmpChange['modelChangeKey'])
                     modelChangeValue.append(tmpChange['modelChangeValue'])
+                    turnTime.append(tmpCommand['turnTime'])
+                    gameTime.append(tmpCommand['gameTime'])
 
                     if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerCoordinate":
                         SetPlayerCoordinate.append(1)
@@ -95,7 +100,23 @@ def parse_replay_file(my_replay, to_excel = False):
                     if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerState":
                         SetPlayerState.append(tmpChange['modelChangeValue'] & 255)
                     else:
-                        SetPlayerState.append(0)                      
+                        SetPlayerState.append(0)
+            for reportListIndex in range(len(tmpCommand['reportList']['reports'])):                     
+                tmpReport = tmpCommand['reportList']['reports'][reportListIndex]
+
+                turnNr.append(TurnCounter)
+                commandNr.append(tmpCommand['commandNr'])
+                modelChangeId.append("reportList")
+                modelChangeKey.append(reportListIndex)
+                modelChangeValue.append(tmpReport)
+                turnTime.append(tmpCommand['turnTime'])
+                gameTime.append(tmpCommand['gameTime'])
+                SetPlayerCoordinate.append(0)
+                PlayerCoordinateX.append(99)
+                PlayerCoordinateY.append(99)
+                SetPlayerState.append(0)     
+                turnMode.append(turnMode[-1])    
+                Half.append(Half[-1])                      
 
         elif tmpCommand['netCommandId'] == "serverAddPlayer":
             pass
@@ -104,6 +125,8 @@ def parse_replay_file(my_replay, to_excel = False):
             print(tmpCommand['netCommandId'])
 
     df = pd.DataFrame( {"commandNr": commandNr, 
+                        "gameTime": gameTime,
+                        "turnTime": turnTime,
                         "Half": Half,
                         "turnNr": turnNr,
                         "turnMode": turnMode,
@@ -114,6 +137,9 @@ def parse_replay_file(my_replay, to_excel = False):
                         "PlayerCoordinateX": PlayerCoordinateX,
                         "PlayerCoordinateY": PlayerCoordinateY,
                         "SetPlayerState": SetPlayerState})
+    
+    df['gameTime'] = df['gameTime']/1000
+    df['turnTime'] = df['turnTime']/1000
     # add state descriptions
     cl_state = pd.read_csv("resources/PlayerState.csv")
     df = pd.merge(left = df, right = cl_state, left_on = "SetPlayerState", right_on = "INT", how = "left", sort = False)
