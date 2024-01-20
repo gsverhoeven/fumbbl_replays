@@ -1,5 +1,6 @@
 modelChangeId
 gameSetConcessionPossible
+gameSetLastTurnMode
 turnDataSetBlitzUsed
 fieldModelAddPlayerMarker
 fieldModelRemoveSkillEnhancements
@@ -14,6 +15,7 @@ fieldModelRemoveTrackNumber
 fieldModelRemovePlayer
 fieldModelAddBloodSpot
 actingPlayerSetHasMoved
+actingPlayerSetCurrentMove
 actingPlayerSetOldPlayerState
 actingPlayerSetStrength
 playerResultSetTurnsPlayed
@@ -22,5 +24,6 @@ playerResultSetSendToBoxReason
 playerResultSetSendToBoxTurn
 playerResultSetSendToBoxHalf
 playerResultSetSendToBoxByPlayerId
+playerResultSetRushing
 
 
