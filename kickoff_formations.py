@@ -34,6 +34,7 @@ def parse_replay_file(my_replay, to_excel = False):
     modelChangeKey = []
     modelChangeValue = []
     SetPlayerCoordinate = []
+    SetPlayerState = []
     PlayerCoordinateX = []
     PlayerCoordinateY = []
     commandNr = []
@@ -89,11 +90,13 @@ def parse_replay_file(my_replay, to_excel = False):
 
                     if str(tmpChange['modelChangeId']) == 'turnDataSetTurnNr':
                         TurnCounter = tmpChange['modelChangeValue']
+
                     turnNr.append(TurnCounter)
                     commandNr.append(tmpCommand['commandNr'])
                     modelChangeId.append(tmpChange['modelChangeId'])
                     modelChangeKey.append(tmpChange['modelChangeKey'])
                     modelChangeValue.append(tmpChange['modelChangeValue'])
+
                     if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerCoordinate":
                         SetPlayerCoordinate.append(1)
                         PlayerCoordinateX.append(tmpChange['modelChangeValue'][0])
@@ -102,6 +105,12 @@ def parse_replay_file(my_replay, to_excel = False):
                         SetPlayerCoordinate.append(0)
                         PlayerCoordinateX.append(99)
                         PlayerCoordinateY.append(99)
+
+                    if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerState":
+                        SetPlayerState.append(tmpChange['modelChangeValue'] & 255)
+                    else:
+                        SetPlayerState.append(0)                      
+
         elif tmpCommand['netCommandId'] == "serverAddPlayer":
             pass
         else:
@@ -117,7 +126,12 @@ def parse_replay_file(my_replay, to_excel = False):
                         "modelChangeValue": modelChangeValue,
                         "SetPlayerCoordinate": SetPlayerCoordinate,
                         "PlayerCoordinateX": PlayerCoordinateX,
-                        "PlayerCoordinateY": PlayerCoordinateY})
+                        "PlayerCoordinateY": PlayerCoordinateY,
+                        "SetPlayerState": SetPlayerState})
+    # add state descriptions
+    cl_state = pd.read_csv("resources/PlayerState.csv")
+    df = pd.merge(left = df, right = cl_state, left_on = "SetPlayerState", right_on = "INT", how = "left", sort = False)
+
     if to_excel:
         df.to_excel("output.xlsx")  
        
