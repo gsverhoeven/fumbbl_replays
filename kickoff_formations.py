@@ -131,7 +131,11 @@ def parse_replay_file(my_replay, to_excel = False):
     # add state descriptions
     cl_state = pd.read_csv("resources/PlayerState.csv")
     df = pd.merge(left = df, right = cl_state, left_on = "SetPlayerState", right_on = "INT", how = "left", sort = False)
-
+    # add location descriptions
+    cl_location = pd.read_csv("resources/Coordinate.csv")
+    df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
+    df = df.drop(['INT', 'VALUE'], axis=1)
+    
     if to_excel:
         df.to_excel("output.xlsx")  
        
