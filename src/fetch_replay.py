@@ -1,8 +1,13 @@
-def fetch_replay(replay_id):
+""" The FUMBBL server, for the replay file API endpoint, uses 'Transfer-Encoding': 'chunked' to "stream" the gzipped content to the client.
 
-    #print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON')
+From the requests documentation:
+```
+For chunked encoded responses, it’s best to iterate over the data using Response.iter_content(). In an ideal situation you’ll have set stream=True on the request, in which case you can iterate chunk-by-chunk by calling iter_content with a chunk_size parameter of None. If you want to set a maximum size of the chunk, you can set a chunk_size parameter to any integer.
+``` """
 
-    dirname = "raw/replay_files/" 
+def fetch_replay(replay_id, dirname = "raw/replay_files/"):
+
+    #print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON') 
     fname_string_gz = dirname + str(replay_id) + ".gz"        
 
     # check if file already exists, else scrape it
