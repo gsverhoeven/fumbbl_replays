@@ -82,6 +82,8 @@ def parse_replay(my_replay, to_excel = False):
                             PlayerCoordinateY.append(99)
 
                         if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerState":
+                            # so first 8 bits (0-255) are reserved to encode mutually exclusive stuff, and then we have the BIT section
+                            # so we convert to bits, then use the first 8 bits for the unique state, and then decorate the player using bits 9 to 14
                             SetPlayerState.append(tmpChange['modelChangeValue'] & 255)
                         else:
                             SetPlayerState.append(0)
