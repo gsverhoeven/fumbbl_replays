@@ -24,6 +24,9 @@ actingPlayerSetStrength
 actingPlayerSetHasBlocked
 actingPlayerSetHasFouled
 actingPlayerSetHasPassed
+actingPlayerSetPlayerId
+actingPlayerMarkSkillUsed
+actingPlayerSetGoingForIt
 playerResultSetTurnsPlayed
 playerResultSetBlocks
 playerResultSetSendToBoxReason
