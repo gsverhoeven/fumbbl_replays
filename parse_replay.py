@@ -42,7 +42,8 @@ def parse_replay(my_replay, to_excel = False):
                         pass
                     elif (str(tmpChange['modelChangeId']) == 'gameSetDialogParameter') & \
                     (isinstance(tmpChange['modelChangeValue'], dict)):
-                        print(tmpChange['modelChangeValue']['dialogId'])                    
+                        #print(tmpChange['modelChangeValue']['dialogId'])                    
+                        pass
                     else:
                         if str(tmpChange['modelChangeId']) == 'gameSetHalf':
                             Half.append(tmpChange['modelChangeValue'])
@@ -133,7 +134,16 @@ def parse_replay(my_replay, to_excel = False):
     df = df.drop(['INT', 'VALUE'], axis=1)
 
     if to_excel:
-        df.to_excel("output.xlsx")  
+        path = 'output/output.xlsx'
+        writer = pd.ExcelWriter(path, engine = 'openpyxl')
+        df.to_excel(writer, sheet_name = 'gamelog')
+        df_players = extract_players_from_replay(my_replay)
+        df_positions = extract_rosters_from_replay(my_replay)
+
+        df2 = pd.merge(df_players, df_positions, on="positionId", how="left")
+        df2 = df2.drop(['teamId', 'positionId', 'playerName', 'playerType', 'icon_path'], axis=1)
+        df2.to_excel(writer, sheet_name = 'roster')
+        writer.close()
        
     return df
 
