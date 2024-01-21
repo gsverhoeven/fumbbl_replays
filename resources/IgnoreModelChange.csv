@@ -1,6 +1,9 @@
 modelChangeId
 gameSetConcessionPossible
 gameSetLastTurnMode
+gameSetHomePlaying
+teamResultSetFanFactor
+teamResultSetTeamValue
 turnDataSetBlitzUsed
 fieldModelAddPlayerMarker
 fieldModelRemoveSkillEnhancements
@@ -18,6 +21,9 @@ actingPlayerSetHasMoved
 actingPlayerSetCurrentMove
 actingPlayerSetOldPlayerState
 actingPlayerSetStrength
+actingPlayerSetHasBlocked
+actingPlayerSetHasFouled
+actingPlayerSetHasPassed
 playerResultSetTurnsPlayed
 playerResultSetBlocks
 playerResultSetSendToBoxReason

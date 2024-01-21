@@ -48,11 +48,20 @@ def parse_replay_file(my_replay, to_excel = False):
 
     my_gamelog = my_replay['gameLog']
 
-    ignoreList = pd.read_csv("resources/Ignore.csv")
+    ignoreList = pd.read_csv("resources/IgnoreModelChange.csv")
 
     ignoreList = ignoreList['modelChangeId'].values
 
+    ignoreList2 = pd.read_csv("resources/IgnoreDialog.csv")
 
+    ignoreList2 = ignoreList2['dialogId'].values
+
+    ignoreList3 = pd.read_csv("resources/IgnoreReport.csv")
+
+    ignoreList3 = ignoreList3['reportId'].values    
+
+    #ignoreList = ignoreList + ignoreList2 + ignoreList3
+    #print(ignoreList)
     # N.b. We miss the kick-off event result, this is part of the `reportList` list element.
 
     for commandIndex in range(len(my_gamelog['commandArray'])):
@@ -61,46 +70,50 @@ def parse_replay_file(my_replay, to_excel = False):
             for modelChangeIndex in range(len(tmpCommand['modelChangeList']['modelChangeArray'])):
                 tmpChange = tmpCommand['modelChangeList']['modelChangeArray'][modelChangeIndex]
                 if str(tmpChange['modelChangeId']) not in ignoreList:
-                    if str(tmpChange['modelChangeId']) == 'gameSetHalf':
-                        Half.append(tmpChange['modelChangeValue'])
+                    if (str(tmpChange['modelChangeId']) == 'gameSetDialogParameter') & (tmpChange['modelChangeValue'] == None):
+                        pass
                     else:
-                        if len(Half) == 0:
-                            Half.append(0)
+                        if str(tmpChange['modelChangeId']) == 'gameSetHalf':
+                            Half.append(tmpChange['modelChangeValue'])
                         else:
-                            Half.append(Half[-1])
-                                           
-                    if str(tmpChange['modelChangeId']) == 'gameSetTurnMode':
-                        turnMode.append(tmpChange['modelChangeValue'])
-                    else:
-                        if len(turnMode) == 0:
-                            turnMode.append('startGame')
+                            if len(Half) == 0:
+                                Half.append(0)
+                            else:
+                                Half.append(Half[-1])
+                                            
+                        if str(tmpChange['modelChangeId']) == 'gameSetTurnMode':
+                            turnMode.append(tmpChange['modelChangeValue'])
                         else:
-                            turnMode.append(turnMode[-1])
+                            if len(turnMode) == 0:
+                                turnMode.append('startGame')
+                            else:
+                                turnMode.append(turnMode[-1])
 
-                    if str(tmpChange['modelChangeId']) == 'turnDataSetTurnNr':
-                        TurnCounter = tmpChange['modelChangeValue']
+                        if str(tmpChange['modelChangeId']) == 'turnDataSetTurnNr':
+                            TurnCounter = tmpChange['modelChangeValue']
 
-                    turnNr.append(TurnCounter)
-                    commandNr.append(tmpCommand['commandNr'])
-                    modelChangeId.append(tmpChange['modelChangeId'])
-                    modelChangeKey.append(tmpChange['modelChangeKey'])
-                    modelChangeValue.append(tmpChange['modelChangeValue'])
-                    turnTime.append(tmpCommand['turnTime'])
-                    gameTime.append(tmpCommand['gameTime'])
+                        turnNr.append(TurnCounter)
+                        commandNr.append(tmpCommand['commandNr'])
+                        modelChangeId.append(tmpChange['modelChangeId'])
+                        modelChangeKey.append(tmpChange['modelChangeKey'])
+                        modelChangeValue.append(tmpChange['modelChangeValue'])
+                        turnTime.append(tmpCommand['turnTime'])
+                        gameTime.append(tmpCommand['gameTime'])
 
-                    if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerCoordinate":
-                        SetPlayerCoordinate.append(1)
-                        PlayerCoordinateX.append(tmpChange['modelChangeValue'][0])
-                        PlayerCoordinateY.append(tmpChange['modelChangeValue'][1])
-                    else:
-                        SetPlayerCoordinate.append(0)
-                        PlayerCoordinateX.append(99)
-                        PlayerCoordinateY.append(99)
+                        if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerCoordinate":
+                            SetPlayerCoordinate.append(1)
+                            PlayerCoordinateX.append(tmpChange['modelChangeValue'][0])
+                            PlayerCoordinateY.append(tmpChange['modelChangeValue'][1])
+                        else:
+                            SetPlayerCoordinate.append(0)
+                            PlayerCoordinateX.append(99)
+                            PlayerCoordinateY.append(99)
 
-                    if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerState":
-                        SetPlayerState.append(tmpChange['modelChangeValue'] & 255)
-                    else:
-                        SetPlayerState.append(0)
+                        if str(tmpChange['modelChangeId']) == "fieldModelSetPlayerState":
+                            SetPlayerState.append(tmpChange['modelChangeValue'] & 255)
+                        else:
+                            SetPlayerState.append(0)
+
             for reportListIndex in range(len(tmpCommand['reportList']['reports'])):                     
                 tmpReport = tmpCommand['reportList']['reports'][reportListIndex]
 
