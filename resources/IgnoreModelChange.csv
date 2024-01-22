@@ -2,9 +2,16 @@ modelChangeId
 gameSetConcessionPossible
 gameSetLastTurnMode
 gameSetHomePlaying
+gameSetDefenderId
+gameSetWaitingForOpponent
+gameSetPassCoordinate
+gameSetThrowerId
 teamResultSetFanFactor
 teamResultSetTeamValue
 turnDataSetBlitzUsed
+turnDataSetPassUsed
+turnDataSetHandOverUsed
+turnDataSetTurnStarted
 fieldModelAddPlayerMarker
 fieldModelRemoveSkillEnhancements
 fieldModelAddDiceDecoration
@@ -17,6 +24,10 @@ fieldModelAddTrackNumber
 fieldModelRemoveTrackNumber
 fieldModelRemovePlayer
 fieldModelAddBloodSpot
+fieldModelSetPlayerState
+fieldModelSetBallInPlay
+fieldModelSetBallMoving
+fieldModelSetTargetSelectionState
 actingPlayerSetHasMoved
 actingPlayerSetCurrentMove
 actingPlayerSetOldPlayerState
@@ -27,6 +38,8 @@ actingPlayerSetHasPassed
 actingPlayerSetPlayerId
 actingPlayerMarkSkillUsed
 actingPlayerSetGoingForIt
+actingPlayerSetDodging
+actingPlayerSetPlayerAction
 playerResultSetTurnsPlayed
 playerResultSetBlocks
 playerResultSetSendToBoxReason
@@ -34,5 +47,12 @@ playerResultSetSendToBoxTurn
 playerResultSetSendToBoxHalf
 playerResultSetSendToBoxByPlayerId
 playerResultSetRushing
+playerResultSetSeriousInjury
+playerResultSetFouls
+playerResultSetCompletions
+playerResultSetPassing
+
+
+
 
 
