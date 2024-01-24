@@ -138,15 +138,15 @@ def parse_replay(my_replay, to_excel = False):
     # add location descriptions
     cl_location = pd.read_csv("resources/Coordinate.csv")
     df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
-    df = df.drop(['INT', 'VALUE', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState'], axis = 1)
-
+  
     # transform sequences of moves into trajectories
-    xy_mode = []
+    xy_mode_list = []
     trajectory = []
     path = [] # 2d
     list_of_paths = []
+    keep = []
 
-    toggle_xy_mode = 0
+    xy_mode = 0
     active_player_id = "0"
     trajectory_id = 0
 
@@ -155,8 +155,8 @@ def parse_replay(my_replay, to_excel = False):
         if (df.iloc[r]['modelChangeId'] == "fieldModelSetPlayerCoordinate") \
             & (df.iloc[r]['turnMode'] != "setup"):
             # need to fix: ignore fieldModelSetBallCoordinate for player carrier the ball (maybe drop this field?)
-            if toggle_xy_mode == 0:
-                toggle_xy_mode = 1
+            if xy_mode == 0:
+                xy_mode = 1
                 path = []
             if (active_player_id != df.iloc[r]['modelChangeKey']): # & (active_player_id > 0):
                 trajectory_id += 1
@@ -167,22 +167,33 @@ def parse_replay(my_replay, to_excel = False):
             path.append(df.iloc[r]['modelChangeValue'])  
             list_of_paths.append(path[:])          
             active_player_id = df.iloc[r]['modelChangeKey']
+            keep.append(0)
         else:
-            toggle_xy_mode = 0
+            if(xy_mode == 1):
+                keep.append(1)
+            else:
+                keep.append(0)
+            xy_mode = 0
             #print(path)
             path = []
             trajectory.append(-1)
             list_of_paths.append(path[:]) # by value, not by reference
-        xy_mode.append(toggle_xy_mode)
+        xy_mode_list.append(xy_mode)
 
-        
-    df['xy_mode'] = xy_mode
-    df['trajectory'] = trajectory
-    df['list_of_paths'] = list_of_paths            
+    df['list_of_paths'] = list_of_paths
+    keep.append(0)  
+    df['keep'] = keep[1:] # shift all elements up to align with record we want to keep          
+
+    # drop unnecessary move rows
+    df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetPlayerCoordinate" & keep == 0)')
+    # cleanup last xy coordinate
+    df.loc[df.keep == 1, 'modelChangeValue'] = "_"
+
 
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
+        df = df.drop(['INT', 'VALUE', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState', 'keep'], axis = 1)
         df.to_excel(writer, sheet_name = 'gamelog')
         df_players = extract_players_from_replay(my_replay)
         df_positions = extract_rosters_from_replay(my_replay)
