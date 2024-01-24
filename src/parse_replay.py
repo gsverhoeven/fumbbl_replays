@@ -140,6 +140,45 @@ def parse_replay(my_replay, to_excel = False):
     df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
     df = df.drop(['INT', 'VALUE', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState'], axis = 1)
 
+    # transform sequences of moves into trajectories
+    xy_mode = []
+    trajectory = []
+    path = [] # 2d
+    list_of_paths = []
+
+    toggle_xy_mode = 0
+    active_player_id = "0"
+    trajectory_id = 0
+
+    
+    for r in range(len(df)):
+        if df.iloc[r]['modelChangeId'] == "fieldModelSetPlayerCoordinate":
+            # need to fix: ignore fieldModelSetBallCoordinate for player carrier the ball (maybe drop this field?)
+            if toggle_xy_mode == 0:
+                toggle_xy_mode = 1
+                path = []
+            if (active_player_id != df.iloc[r]['modelChangeKey']): # & (active_player_id > 0):
+                trajectory_id += 1
+                trajectory[-1] = trajectory_id
+                path = []
+            # do stuff
+            trajectory.append(trajectory_id)
+            path.append(df.iloc[r]['modelChangeValue'])  
+            list_of_paths.append(path)          
+            active_player_id = df.iloc[r]['modelChangeKey']
+        else:
+            toggle_xy_mode = 0
+            #print(path)
+            path = []
+            trajectory.append(-1)
+            list_of_paths.append(path)
+        xy_mode.append(toggle_xy_mode)
+
+        
+    df['xy_mode'] = xy_mode
+    df['trajectory'] = trajectory
+    df['list_of_paths'] = list_of_paths            
+
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
