@@ -92,7 +92,7 @@ def parse_replay(my_replay, to_excel = False):
 
                 turnNr.append(TurnCounter)
                 commandNr.append(tmpCommand['commandNr'])
-                modelChangeId.append("reportList")
+                modelChangeId.append(tmpReport['reportId'])
                 modelChangeKey.append(reportListIndex)
                 modelChangeValue.append(tmpReport)
                 turnTime.append(tmpCommand['turnTime'])
@@ -204,8 +204,9 @@ def parse_replay(my_replay, to_excel = False):
     # drop unnecessary move rows
     df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetPlayerCoordinate" & keep == 0)')
     # cleanup last xy coordinate
-    df.loc[df.keep == 1, 'modelChangeValue'] = df.loc[df.keep == 1, 'list_of_paths']
-
+    mask = (df.keep == 1)
+    df.loc[mask, 'modelChangeValue'] = df.loc[mask, 'list_of_paths']
+   
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')

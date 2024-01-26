@@ -3,3 +3,4 @@ kickoff_pngs/*
 raw/*
 *.xlsx
 .~lock.output.xlsx#
+output/output.pdf
