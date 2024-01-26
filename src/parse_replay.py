@@ -13,7 +13,6 @@ def parse_replay(my_replay, to_excel = False):
     Half = []
     gameTime = []
     turnTime = []
-    reportValue = []
 
     my_gamelog = my_replay['gameLog']
 
@@ -111,6 +110,22 @@ def parse_replay(my_replay, to_excel = False):
             # unknown netCommand: print it
             print(tmpCommand['netCommandId'])
 
+   # add header (coaches, source etc)
+    
+    df_header = pd.DataFrame( {"commandNr": [0, 0], 
+                        "gameTime": [0, 0],
+                        "turnTime": [0, 0],
+                        "Half": [0, 0],
+                        "turnNr": [0, 0],
+                        "turnMode": ["startGame", "startGame"],
+                        "modelChangeId": ["homeCoachName", "awayCoachName"],
+                        "modelChangeKey": [0, 0],
+                        "modelChangeValue": [my_replay['game']['teamHome']['coach'], my_replay['game']['teamAway']['coach']],
+                        "SetPlayerCoordinate": ["", ""],
+                        "PlayerCoordinateX": [99, 99],
+                        "PlayerCoordinateY": [99, 99],
+                        "SetPlayerState": [0, 0]}, index = [0, 1])
+
     df = pd.DataFrame( {"commandNr": commandNr, 
                         "gameTime": gameTime,
                         "turnTime": turnTime,
@@ -124,6 +139,8 @@ def parse_replay(my_replay, to_excel = False):
                         "PlayerCoordinateX": PlayerCoordinateX,
                         "PlayerCoordinateY": PlayerCoordinateY,
                         "SetPlayerState": SetPlayerState})
+    
+    df = pd.concat([df_header, df], ignore_index=True)
     
     # from ms to s
     df['gameTime'] = df['gameTime']/1000
@@ -187,13 +204,12 @@ def parse_replay(my_replay, to_excel = False):
     # drop unnecessary move rows
     df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetPlayerCoordinate" & keep == 0)')
     # cleanup last xy coordinate
-    df.loc[df.keep == 1, 'modelChangeValue'] = "_"
-
+    df.loc[df.keep == 1, 'modelChangeValue'] = df.loc[df.keep == 1, 'list_of_paths']
 
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
-        df = df.drop(['INT', 'VALUE', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState', 'keep'], axis = 1)
+        df = df.drop(['INT', 'VALUE', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState', 'keep', 'list_of_paths'], axis = 1)
         df.to_excel(writer, sheet_name = 'gamelog')
         df_players = extract_players_from_replay(my_replay)
         df_positions = extract_rosters_from_replay(my_replay)
