@@ -209,23 +209,58 @@ def parse_replay(my_replay, to_excel = False):
    
     ActivePlayerId = []
     playerAction = []
+    defenderId = []
+    keep = []
     current_active_player = 0
+    current_defender_id = 0
     current_action = "none"
 
     for r in range(len(df)):
-        if (df.iloc[r]['modelChangeId'] == "playerAction"):
+        if (df.iloc[r]['turnMode'] != "regular"):            
+            ActivePlayerId.append(0)
+            playerAction.append("none")
+            defenderId.append(0)
+            keep.append(1)           
+        elif (df.iloc[r]['modelChangeId'] == "playerAction"):
             current_action = df.iloc[r]['modelChangeValue']['playerAction']
-            playerAction.append(current_action)
             current_active_player = df.iloc[r]['modelChangeValue']['actingPlayerId']
             ActivePlayerId.append(current_active_player)
+            defenderId.append(0)
+            playerAction.append(current_action)
+            if (current_action == "block"): 
+                keep.append(0)
+            else:
+                keep.append(1)
+        elif (df.iloc[r]['modelChangeId'] == "block"): 
+            ActivePlayerId.append(current_active_player)
+            playerAction.append(current_action)
+            current_defender_id = df.iloc[r]['modelChangeValue']['defenderId']
+            defenderId.append(current_defender_id)
+            keep.append(0)
+        elif (df.iloc[r]['modelChangeId'] == "blockChoice"):
+            ActivePlayerId.append(current_active_player)
+            playerAction.append(current_action)
+            defenderId.append(current_defender_id)
+            # final block record, so reset values
+            current_active_player = 0
+            current_defender_id = 0
+            current_action = "none"
+            keep.append(1)           
         else:
             ActivePlayerId.append(current_active_player)
             playerAction.append(current_action)
+            defenderId.append(current_defender_id)
+            keep.append(1)
     
     df['ActivePlayerId'] = ActivePlayerId
     df['playerAction'] = playerAction
+    df['defenderId'] = defenderId
+    df['keep'] = keep      
 
-
+    # drop unnecessary reportList rows
+    df = df.query('keep == 1')
+    df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') # choosingTeam can be deduced from player info (roster)
+    df = df.query('~(modelChangeId in ["turnDataSetTurnNr", "turnDataSetFirstTurnAfterKickoff"])')
 
     if to_excel:
         path = 'output/output.xlsx'
