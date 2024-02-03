@@ -260,6 +260,7 @@ def parse_replay(my_replay, to_excel = False):
     # drop unnecessary reportList rows
     df = df.query('keep == 1')
     df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') # choosingTeam can be deduced from player info (roster)
+    df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') # deduce movement action from actual movement
     df = df.query('~(modelChangeId in ["turnDataSetTurnNr", "turnDataSetFirstTurnAfterKickoff"])')
 
     if to_excel:
