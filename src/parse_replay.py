@@ -207,17 +207,23 @@ def parse_replay(my_replay, to_excel = False):
     mask = (df.keep == 1)
     df.loc[mask, 'modelChangeValue'] = df.loc[mask, 'list_of_paths']
    
-    modelChangeKey = []
+    ActivePlayerId = []
+    playerAction = []
+    current_active_player = 0
+    current_action = "none"
 
     for r in range(len(df)):
         if (df.iloc[r]['modelChangeId'] == "playerAction"):
-            #action_string = df.iloc[r]['modelChangeValue']['playerAction']
-            action_string = df.iloc[r]['modelChangeValue']['actingPlayerId']
-            modelChangeKey.append(action_string)
+            current_action = df.iloc[r]['modelChangeValue']['playerAction']
+            playerAction.append(current_action)
+            current_active_player = df.iloc[r]['modelChangeValue']['actingPlayerId']
+            ActivePlayerId.append(current_active_player)
         else:
-            modelChangeKey.append(df.iloc[r]['modelChangeKey'])
+            ActivePlayerId.append(current_active_player)
+            playerAction.append(current_action)
     
-    df['modelChangeKey'] = modelChangeKey
+    df['ActivePlayerId'] = ActivePlayerId
+    df['playerAction'] = playerAction
 
 
 
