@@ -216,7 +216,13 @@ def parse_replay(my_replay, to_excel = False):
     current_action = "none"
 
     for r in range(len(df)):
-        if (df.iloc[r]['turnMode'] != "regular"):            
+        if (df.iloc[r]['turnMode'] != "regular"):   # IE also during setup     
+            # https://note.nkmk.me/en/python-pandas-at-iat-loc-iloc/
+            str_orig =  str(df.iloc[r]['modelChangeValue'])
+            replace_x = "_" + str(df.iloc[r]['DESCRIPTION'])
+            if (replace_x == "_nan"):
+                replace_x = ""
+            df.iat[r, df.columns.get_loc('modelChangeValue')] = str_orig + replace_x          
             ActivePlayerId.append(0)
             playerAction.append("none")
             defenderId.append(0)
@@ -245,13 +251,24 @@ def parse_replay(my_replay, to_excel = False):
             current_active_player = 0
             current_defender_id = 0
             current_action = "none"
-            keep.append(1)           
+            keep.append(1)
+        elif (df.iloc[r]['modelChangeId'] == "fieldModelSetPlayerCoordinate"):      
+            str_orig =  str(df.iloc[r]['modelChangeValue'])
+            replace_x = "_" + str(df.iloc[r]['DESCRIPTION'])
+            if (replace_x == "_nan"):
+                replace_x = ""
+            df.iat[r, df.columns.get_loc('modelChangeValue')] = str_orig + replace_x  
+            ActivePlayerId.append(current_active_player)
+            playerAction.append(current_action)
+            defenderId.append(current_defender_id)
+            keep.append(1)
         else:
             ActivePlayerId.append(current_active_player)
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
             keep.append(1)
-    
+
+
     df['ActivePlayerId'] = ActivePlayerId
     df['playerAction'] = playerAction
     df['defenderId'] = defenderId
@@ -266,7 +283,7 @@ def parse_replay(my_replay, to_excel = False):
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
-        df = df.drop(['INT', 'VALUE', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState', 'keep', 'list_of_paths'], axis = 1)
+        df = df.drop(['INT', 'VALUE', 'DESCRIPTION', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState', 'keep', 'list_of_paths'], axis = 1)
         df.to_excel(writer, sheet_name = 'gamelog')
         df_players = extract_players_from_replay(my_replay)
         df_positions = extract_rosters_from_replay(my_replay)
