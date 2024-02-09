@@ -207,7 +207,7 @@ def parse_replay(my_replay, to_excel = False):
     mask = (df.keep == 1)
     df.loc[mask, 'modelChangeValue'] = df.loc[mask, 'list_of_paths']
    
-    ActivePlayerId = []
+    #ActivePlayerId = []
     playerAction = []
     defenderId = []
     keep = []
@@ -223,14 +223,15 @@ def parse_replay(my_replay, to_excel = False):
             if (replace_x == "_nan"):
                 replace_x = ""
             df.iat[r, df.columns.get_loc('modelChangeValue')] = str_orig + replace_x          
-            ActivePlayerId.append(0)
+            #ActivePlayerId.append(0)
             playerAction.append("none")
             defenderId.append(0)
             keep.append(1)           
         elif (df.iloc[r]['modelChangeId'] == "playerAction"):
             current_action = df.iloc[r]['modelChangeValue']['playerAction']
             current_active_player = df.iloc[r]['modelChangeValue']['actingPlayerId']
-            ActivePlayerId.append(current_active_player)
+            #ActivePlayerId.append(current_active_player)
+            df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
             defenderId.append(0)
             playerAction.append(current_action)
             if (current_action == "block"): 
@@ -238,13 +239,15 @@ def parse_replay(my_replay, to_excel = False):
             else:
                 keep.append(1)
         elif (df.iloc[r]['modelChangeId'] == "block"): 
-            ActivePlayerId.append(current_active_player)
+            #ActivePlayerId.append(current_active_player)
+            df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
             playerAction.append(current_action)
             current_defender_id = df.iloc[r]['modelChangeValue']['defenderId']
             defenderId.append(current_defender_id)
             keep.append(0)
         elif (df.iloc[r]['modelChangeId'] == "blockChoice"):
-            ActivePlayerId.append(current_active_player)
+            #ActivePlayerId.append(current_active_player)
+            df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
             # final block record, so reset values
@@ -258,18 +261,21 @@ def parse_replay(my_replay, to_excel = False):
             if (replace_x == "_nan"):
                 replace_x = ""
             df.iat[r, df.columns.get_loc('modelChangeValue')] = str_orig + replace_x  
-            ActivePlayerId.append(current_active_player)
+            #ActivePlayerId.append(current_active_player)
+            df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
             keep.append(1)
         else:
-            ActivePlayerId.append(current_active_player)
+            #ActivePlayerId.append(current_active_player)
+            if current_active_player != 0:
+                df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
             keep.append(1)
 
 
-    df['ActivePlayerId'] = ActivePlayerId
+    #df['ActivePlayerId'] = ActivePlayerId
     df['playerAction'] = playerAction
     df['defenderId'] = defenderId
     df['keep'] = keep      
@@ -284,7 +290,7 @@ def parse_replay(my_replay, to_excel = False):
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
 
-        cols = ['gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'ActivePlayerId', \
+        cols = ['gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', \
                  'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue']
         
         df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
