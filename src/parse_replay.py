@@ -283,8 +283,11 @@ def parse_replay(my_replay, to_excel = False):
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
-        df = df.drop(['INT', 'VALUE', 'DESCRIPTION', 'SetPlayerCoordinate', 'PlayerCoordinateX', 'PlayerCoordinateY', 'SetPlayerState', 'keep', 'list_of_paths'], axis = 1)
-        df.to_excel(writer, sheet_name = 'gamelog')
+
+        cols = ['gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'ActivePlayerId', \
+                 'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue']
+        
+        df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
         df_players = extract_players_from_replay(my_replay)
         df_positions = extract_rosters_from_replay(my_replay)
 
