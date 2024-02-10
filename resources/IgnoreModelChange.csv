@@ -6,12 +6,16 @@ gameSetDefenderId
 gameSetWaitingForOpponent
 gameSetPassCoordinate
 gameSetThrowerId
+gameSetTimeoutPossible
 teamResultSetFanFactor
 teamResultSetTeamValue
 turnDataSetBlitzUsed
 turnDataSetPassUsed
 turnDataSetHandOverUsed
 turnDataSetTurnStarted
+turnDataSetReRolls
+turnDataSetFoulUsed
+turnDataSetReRollsBrilliantCoachingOneDrive
 fieldModelAddPlayerMarker
 fieldModelRemoveSkillEnhancements
 fieldModelAddDiceDecoration
@@ -51,6 +55,9 @@ playerResultSetSeriousInjury
 playerResultSetFouls
 playerResultSetCompletions
 playerResultSetPassing
+playerResultSetPlayerAwards
+fumbblResultUpload
+
 
 
 
