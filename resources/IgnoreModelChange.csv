@@ -32,6 +32,7 @@ fieldModelSetPlayerState
 fieldModelSetBallInPlay
 fieldModelSetBallMoving
 fieldModelSetTargetSelectionState
+fieldModelSetRangeRuler
 actingPlayerSetHasMoved
 actingPlayerSetCurrentMove
 actingPlayerSetOldPlayerState
@@ -56,8 +57,6 @@ playerResultSetFouls
 playerResultSetCompletions
 playerResultSetPassing
 playerResultSetPlayerAwards
-fumbblResultUpload
-
 
 
 

@@ -20,13 +20,13 @@ def parse_replay(my_replay, to_excel = False):
 
     ignoreList = ignoreList['modelChangeId'].values
 
-    ignoreList2 = pd.read_csv("resources/IgnoreDialog.csv")
+    # ignoreList2 = pd.read_csv("resources/IgnoreDialog.csv")
 
-    ignoreList2 = ignoreList2['dialogId'].values
+    # ignoreList2 = ignoreList2['dialogId'].values
 
-    ignoreList3 = pd.read_csv("resources/IgnoreReport.csv")
+    # ignoreList3 = pd.read_csv("resources/IgnoreReport.csv")
 
-    ignoreList3 = ignoreList3['reportId'].values    
+    # ignoreList3 = ignoreList3['reportId'].values    
 
     for commandIndex in range(len(my_gamelog['commandArray'])):
         tmpCommand = my_gamelog['commandArray'][commandIndex]
@@ -284,7 +284,12 @@ def parse_replay(my_replay, to_excel = False):
     df = df.query('keep == 1')
     df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') # choosingTeam can be deduced from player info (roster)
     df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') # deduce movement action from actual movement
-    df = df.query('~(modelChangeId in ["turnDataSetTurnNr", "turnDataSetFirstTurnAfterKickoff"])')
+    
+    # post processing ignoreList handcoded (either reportList or modelChangeId)
+    df = df.query('~(modelChangeId in ["turnDataSetTurnNr", \
+                  "turnDataSetFirstTurnAfterKickoff", \
+                  "fumbblResultUpload"])')
+
 
     if to_excel:
         path = 'output/output.xlsx'
