@@ -7,6 +7,7 @@ gameSetWaitingForOpponent
 gameSetPassCoordinate
 gameSetThrowerId
 gameSetTimeoutPossible
+gameSetHalf
 teamResultSetFanFactor
 teamResultSetTeamValue
 turnDataSetBlitzUsed
@@ -57,6 +58,8 @@ playerResultSetFouls
 playerResultSetCompletions
 playerResultSetPassing
 playerResultSetPlayerAwards
+playerResultSetTouchdowns
+
 
 
 
