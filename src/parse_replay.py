@@ -157,21 +157,19 @@ def parse_replay(my_replay, to_excel = False):
     df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
   
     # transform sequences of moves into trajectories
-    xy_mode_list = []
     trajectory = []
     path = [] # 2d
     list_of_paths = []
     keep = []
 
-    xy_mode = 0
+    xy_mode = 0 # trajectory gather mode
+    keep_setball = 0
     active_player_id = "0"
     trajectory_id = 0
 
-    
     for r in range(len(df)):
         if (df.iloc[r]['modelChangeId'] == "fieldModelSetPlayerCoordinate") \
             & (df.iloc[r]['turnMode'] != "setup"):
-            # need to fix: ignore fieldModelSetBallCoordinate for player carrier the ball (maybe drop this field?)
             if xy_mode == 0:
                 xy_mode = 1
                 path = []
@@ -185,9 +183,25 @@ def parse_replay(my_replay, to_excel = False):
             list_of_paths.append(path[:])          
             active_player_id = df.iloc[r]['modelChangeKey']
             keep.append(0)
+        elif (df.iloc[r]['modelChangeId'] == "fieldModelSetBallCoordinate"):
+            if(df.iloc[r+1]['modelChangeId'] == "fieldModelSetPlayerCoordinate"): # two step pattern matching: first check setball/setplayer combi
+                if(df.iloc[r]['modelChangeValue'] == df.iloc[r+1]['modelChangeValue']): # then check if new positions are the same
+                    keep.append(0)
+                    keep_setball = 0
+                else: # when positions differ we want to keep the setball as separate row
+                    keep.append(0)
+                    keep_setball = 1
+            else:
+                keep.append(0)
+                keep_setball = 1
+            trajectory.append(-1)    
+            list_of_paths.append(path[:])                                    
         else:
             if(xy_mode == 1):
                 keep.append(1)
+            elif(keep_setball == 1):
+                keep.append(1)
+                keep_setball = 0
             else:
                 keep.append(0)
             xy_mode = 0
@@ -195,14 +209,14 @@ def parse_replay(my_replay, to_excel = False):
             path = []
             trajectory.append(-1)
             list_of_paths.append(path[:]) # by value, not by reference
-        xy_mode_list.append(xy_mode)
 
     df['list_of_paths'] = list_of_paths
-    keep.append(0)  
+    keep.append(0) 
     df['keep'] = keep[1:] # shift all elements up to align with record we want to keep          
-
+    
     # drop unnecessary move rows
     df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetPlayerCoordinate" & keep == 0)')
+    df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetBallCoordinate" & keep == 0)')
     # cleanup last xy coordinate
     mask = (df.keep == 1)
     df.loc[mask, 'modelChangeValue'] = df.loc[mask, 'list_of_paths']
@@ -278,10 +292,10 @@ def parse_replay(my_replay, to_excel = False):
     #df['ActivePlayerId'] = ActivePlayerId
     df['playerAction'] = playerAction
     df['defenderId'] = defenderId
-    df['keep'] = keep      
+    df['keep2'] = keep      
 
     # drop unnecessary reportList rows
-    df = df.query('keep == 1')
+    df = df.query('keep2 == 1')
     df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') # choosingTeam can be deduced from player info (roster)
     df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') # deduce movement action from actual movement
     
@@ -296,7 +310,7 @@ def parse_replay(my_replay, to_excel = False):
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
 
         cols = ['gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', \
-                 'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue']
+                 'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue', 'keep']
         
         df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
         df_players = extract_players_from_replay(my_replay)
