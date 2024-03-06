@@ -296,12 +296,28 @@ def parse_replay(my_replay, to_excel = False):
                   "turnDataSetFirstTurnAfterKickoff", \
                   "fumbblResultUpload"])')
 
+    # compact setting up
+    set_up_id = 0
+    setupIdCol = []
+
+    for r in range(len(df)):
+        if df.iloc[r]['turnMode'] == 'setup':
+            if df.iloc[r-1]['turnMode'] != 'setup': # entering setup
+                 set_up_id += 1
+            setupIdCol.append(set_up_id)
+            if df.iloc[r]['modelChangeId'] == 'gameSetSetupOffense':
+                if df.iloc[r]['modelChangeValue'] == 'True':
+                    set_up_id += 1
+        else:
+            setupIdCol.append(-1)
+    
+    df['set_up_id'] = setupIdCol
 
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
 
-        cols = ['gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', \
+        cols = ['gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'set_up_id', \
                  'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue', 'keep']
         
         df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
