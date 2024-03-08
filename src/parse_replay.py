@@ -313,6 +313,24 @@ def parse_replay(my_replay, to_excel = False):
     
     df['set_up_id'] = setupIdCol
 
+    # extract roster
+    df_players = extract_players_from_replay(my_replay)
+    df_positions = extract_rosters_from_replay(my_replay)
+
+    df2 = pd.merge(df_players, df_positions, on="positionId", how="left")
+    df2 = df2.drop(['teamId', 'positionId', 'playerName', 'playerType', 'icon_path'], axis=1)    
+
+    # create shorthand id
+    short_name = []
+
+    for r in range(len(df2)):
+        input = str(df2.iloc[r]['positionName'])
+        output = "".join(item[0].upper() for item in input.split()) + str(df2.iloc[r]['playerNr'])
+        #print(str(df2.iloc[r]['playerId']) + ' => ' + input + ' ' ) + ' => ' + output + str(df2.iloc[r]['playerNr']))
+        short_name.append(output)
+
+    df2['short_name'] = short_name
+    
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
@@ -321,11 +339,6 @@ def parse_replay(my_replay, to_excel = False):
                  'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue', 'keep']
         
         df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
-        df_players = extract_players_from_replay(my_replay)
-        df_positions = extract_rosters_from_replay(my_replay)
-
-        df2 = pd.merge(df_players, df_positions, on="positionId", how="left")
-        df2 = df2.drop(['teamId', 'positionId', 'playerName', 'playerType', 'icon_path'], axis=1)
         df2.to_excel(writer, sheet_name = 'roster')
         writer.close()
        
