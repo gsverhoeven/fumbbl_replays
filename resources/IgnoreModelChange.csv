@@ -7,7 +7,6 @@ gameSetWaitingForOpponent
 gameSetPassCoordinate
 gameSetThrowerId
 gameSetTimeoutPossible
-gameSetHalf
 teamResultSetFanFactor
 teamResultSetTeamValue
 turnDataSetBlitzUsed
