@@ -282,10 +282,12 @@ def parse_replay(my_replay, to_excel = False):
     df['defenderId'] = defenderId
     df['keep2'] = keep      
 
-    # drop unnecessary reportList rows
+    # drop unnecessary rows
     df = df.query('keep2 == 1')
     df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') # choosingTeam can be deduced from player info (roster)
     df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') # deduce movement action from actual movement
+    df = df.query('~(turnMode == "setup" & PlayerCoordinateX in [-1, 30])') # drop placing players in dugout during setup
+   
     
     # post processing ignoreList handcoded (either reportList or modelChangeId)
     df = df.query('~(modelChangeId in ["turnDataSetTurnNr", \
@@ -309,7 +311,8 @@ def parse_replay(my_replay, to_excel = False):
     
     df['set_up_id'] = setupIdCol
 
-
+    # roll up, one row per setup
+    # PM add code from nb
 
     if to_excel:
         path = 'output/output.xlsx'
