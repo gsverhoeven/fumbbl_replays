@@ -286,7 +286,7 @@ def parse_replay(my_replay, to_excel = False):
     df = df.query('keep2 == 1')
     df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') # choosingTeam can be deduced from player info (roster)
     df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') # deduce movement action from actual movement
-    df = df.query('~(turnMode == "setup" & PlayerCoordinateX in [-1, 30])') # drop placing players in dugout during setup
+    df = df.query('~(turnMode == "setup" & modelChangeId == "fieldModelSetPlayerCoordinate" & ((PlayerCoordinateX < 0) | (PlayerCoordinateX > 25)))') # drop placing players in dugout during setup
    
     
     # post processing ignoreList handcoded (either reportList or modelChangeId)
@@ -312,14 +312,40 @@ def parse_replay(my_replay, to_excel = False):
     df['set_up_id'] = setupIdCol
 
     # roll up, one row per setup
-    # PM add code from nb
+    df_setup = (df
+    .query('set_up_id > 0 & modelChangeId == "fieldModelSetPlayerCoordinate"')
+    .groupby(['turnTime', 'Half', 'turnNr', 'turnMode', 'set_up_id',	'playerAction'], as_index = False)
+    .agg(
+        gameTime = ('gameTime', 'max')
+    )
+    .sort_values(by=['set_up_id']) 
+    )
+
+    # generate compact setups, add to df_setup
+    setup_list = []
+    for cnt in df_setup['set_up_id']:
+        setup_list.append(transform_setup(df, df_roster, setup_id = cnt))
+
+    df_setup['modelChangeId'] = "gameSetupFormation"
+    df_setup['modelChangeKey'] = 0
+    df_setup['defenderId'] = 0
+    df_setup['modelChangeValue'] = setup_list
+
+    # drop setting up players one by one from gamelog
+    df = df.query('~(turnMode == "setup" & modelChangeId == "fieldModelSetPlayerCoordinate")') 
+   
+    # add compact setups to gamelog df
+    df = pd.concat([df, df_setup])
+    df.index.name = 'MyIdx'
+    df = df.sort_values(by = ['gameTime', 'MyIdx'], ascending = [True, True])
+    df = df.reset_index()
 
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
 
         cols = ['gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'set_up_id', \
-                 'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue', 'keep']
+                 'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue']
         
         df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
         df_roster.to_excel(writer, sheet_name = 'roster')
