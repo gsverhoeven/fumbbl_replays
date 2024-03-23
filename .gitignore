@@ -5,3 +5,4 @@ raw/*
 .~lock.output.xlsx#
 output/output.pdf
 resources/DM's Blood Bowl Rules*
+*.xlsx#
