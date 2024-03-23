@@ -286,8 +286,12 @@ def parse_replay(my_replay, to_excel = False):
     df = df.query('keep2 == 1')
     df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') # choosingTeam can be deduced from player info (roster)
     df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') # deduce movement action from actual movement
-    df = df.query('~(turnMode == "setup" & modelChangeId == "fieldModelSetPlayerCoordinate" & ((PlayerCoordinateX < 0) | (PlayerCoordinateX > 25)))') # drop placing players in dugout during setup
-   
+
+    # flag placing players in dugout during setup
+    # needed to ID players that are initially placed on board but are moved to dugout later during setup
+    row_sel = '(turnMode == "setup" & modelChangeId == "fieldModelSetPlayerCoordinate" & ((PlayerCoordinateX < 0) | (PlayerCoordinateX > 25)))'
+    df['to_dugout'] = 0
+    df.loc[df.eval(row_sel), 'to_dugout'] = 1
     
     # post processing ignoreList handcoded (either reportList or modelChangeId)
     df = df.query('~(modelChangeId in ["turnDataSetTurnNr", \
@@ -300,12 +304,15 @@ def parse_replay(my_replay, to_excel = False):
 
     for r in range(len(df)):
         if df.iloc[r]['turnMode'] == 'setup':
-            if df.iloc[r-1]['turnMode'] != 'setup': # entering setup
-                 set_up_id += 1
-            setupIdCol.append(set_up_id)
-            if df.iloc[r]['modelChangeId'] == 'gameSetSetupOffense':
-                if df.iloc[r]['modelChangeValue'] == 'True':
+            if df.iloc[r]['to_dugout'] == 0: # placing all players in dugout at end of half is not counted as setupFormation for the gamelog
+                if df.iloc[r-1]['turnMode'] != 'setup': # entering setup mode
                     set_up_id += 1
+                setupIdCol.append(set_up_id)
+                if df.iloc[r]['modelChangeId'] == 'gameSetSetupOffense':
+                    if df.iloc[r]['modelChangeValue'] == 'True':
+                        set_up_id += 1
+            else: 
+                setupIdCol.append(set_up_id)
         else:
             setupIdCol.append(-1)
     
@@ -314,7 +321,7 @@ def parse_replay(my_replay, to_excel = False):
     # roll up, one row per setup
     df_setup = (df
     .query('set_up_id > 0 & modelChangeId == "fieldModelSetPlayerCoordinate"')
-    .groupby(['turnTime', 'Half', 'turnNr', 'turnMode', 'set_up_id',	'playerAction'], as_index = False)
+    .groupby(['turnTime', 'Half', 'turnNr', 'turnMode', 'set_up_id', 'playerAction'], as_index = False)
     .agg(
         gameTime = ('gameTime', 'max')
     )
