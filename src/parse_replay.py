@@ -142,7 +142,7 @@ def parse_replay(my_replay, to_excel = False):
     df['gameTime'] = df['gameTime']/1000
     df['turnTime'] = df['turnTime']/1000
 
-    # drop rows with gameSetTurnMode
+    # here we can drop rows with gameSetTurnMode (needed for initial parsing above)
     df = df.query("modelChangeId != 'gameSetTurnMode'")
     # add state descriptions
     cl_state = pd.read_csv("resources/PlayerState.csv")
@@ -346,6 +346,14 @@ def parse_replay(my_replay, to_excel = False):
     df.index.name = 'MyIdx'
     df = df.sort_values(by = ['gameTime', 'MyIdx'], ascending = [True, True])
     df = df.reset_index()
+
+    # replace player IDs with shorthands
+    
+    # occur in three columns: modelChangeKey, defenderId and reportList
+    for playerId in df_roster['playerId'].values:
+        short_hand = df_roster.loc[df_roster.eval("playerId == @playerId"), 'short_name']
+        df.loc[df.eval("modelChangeKey == @playerId"), 'modelChangeKey'] = str(short_hand.values)
+        df.loc[df.eval("defenderId == @playerId"), 'defenderId'] = str(short_hand.values)
 
     if to_excel:
         path = 'output/output.xlsx'
