@@ -355,6 +355,27 @@ def parse_replay(my_replay, to_excel = False):
         df.loc[df.eval("modelChangeKey == @playerId"), 'modelChangeKey'] = str(short_hand.values)
         df.loc[df.eval("defenderId == @playerId"), 'defenderId'] = str(short_hand.values)
 
+    # finally fix all reportLists
+    
+    for r in range(len(df)):
+        #print(r)
+        # check if it is a reportList
+        if 'reportId' in str(df.iloc[r]['modelChangeValue']):
+            reportlist = df.iloc[r]['modelChangeValue']
+            if not isinstance(reportlist, dict):
+                # convert to valid JSON
+                json_reportList = reportlist.replace("'", '"').replace("False", "false").replace("True", "true").replace("None", "null")
+                # convert to dict
+                reportlist = json.loads(json_reportList)
+            if 'playerId' in reportlist:
+                playerId = reportlist['playerId'] 
+                short_hand = df_roster.loc[df_roster.eval("playerId == @playerId"), 'short_name'] 
+                reportlist['playerId'] = str(short_hand.values)
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = reportlist
+        else:
+            pass
+
+
     if to_excel:
         path = 'output/output.xlsx'
         writer = pd.ExcelWriter(path, engine = 'openpyxl')
