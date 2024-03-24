@@ -33,7 +33,7 @@ def extract_rosters_from_replay(my_replay):
 
     df_roster = pd.merge(df_players, df_positions, on="positionId", how="left")
     df_roster = df_roster.drop(['teamId', 'positionId', 'playerName', 'playerType', 'icon_path'], axis=1)    
-
+    df_roster['positionNr'] = df_roster.groupby(['home_away','positionName']).cumcount() + 1
     # create shorthand id
-    df_roster['short_name'] = df_roster['shorthand'] + df_roster['playerNr'].astype(str)
+    df_roster['short_name'] = df_roster['shorthand'] + df_roster['positionNr'].astype(str)
     return df_roster
