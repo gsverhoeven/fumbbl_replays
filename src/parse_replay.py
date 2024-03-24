@@ -372,6 +372,21 @@ def parse_replay(my_replay, to_excel = False):
                 short_hand = df_roster.loc[df_roster.eval("playerId == @playerId"), 'short_name'] 
                 reportlist['playerId'] = str(short_hand.values)
                 df.iat[r, df.columns.get_loc('modelChangeValue')] = reportlist
+            if 'defenderId' in reportlist:
+                playerId = reportlist['defenderId'] 
+                short_hand = df_roster.loc[df_roster.eval("playerId == @playerId"), 'short_name'] 
+                reportlist['defenderId'] = str(short_hand.values)
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = reportlist
+            if 'attackerId' in reportlist:
+                playerId = reportlist['attackerId'] 
+                short_hand = df_roster.loc[df_roster.eval("playerId == @playerId"), 'short_name'] 
+                reportlist['attackerId'] = str(short_hand.values)
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = reportlist   
+            if 'catcherId' in reportlist:
+                playerId = reportlist['catcherId'] 
+                short_hand = df_roster.loc[df_roster.eval("playerId == @playerId"), 'short_name'] 
+                reportlist['catcherId'] = str(short_hand.values)
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = reportlist                     
         else:
             pass
 
