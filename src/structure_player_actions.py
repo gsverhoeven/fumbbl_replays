@@ -1,4 +1,4 @@
-def compact_block_actions(df):
+def structure_player_actions(df):
     playerAction = []
     defenderId = []
     keep = []
