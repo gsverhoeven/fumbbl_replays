@@ -230,7 +230,7 @@ def parse_replay(my_replay, to_excel = False):
                   "turnDataSetFirstTurnAfterKickoff", \
                   "fumbblResultUpload"])')
 
-    df = condense_setup_formations(df)
+    df = condense_setup_formations(df, df_roster)
 
     # replace player IDs with shorthands
     

@@ -1,4 +1,4 @@
-def condense_setup_formations(df): 
+def condense_setup_formations(df, df_roster): 
     # compact setting up
     set_up_id = 0
     setupIdCol = []
