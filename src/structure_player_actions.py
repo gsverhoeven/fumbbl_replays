@@ -52,9 +52,19 @@ def structure_player_actions(df):
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
             keep.append(1)
+        elif (df.iloc[r]['modelChangeId'] == "actingPlayerSetStandingUp"): 
+            current_active_player = df.iloc[r+1]['modelChangeValue']['actingPlayerId']
+            current_action = df.iloc[r+1]['modelChangeValue']['playerAction']
+            df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
+            playerAction.append(current_action)
+            defenderId.append(current_defender_id)
+            keep.append(1)            
         else:
             if current_active_player != 0:
-                df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
+                if (df.iloc[r]['modelChangeId'] not in ["turnEnd"]):
+                    df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
+                else:
+                    df.iat[r, df.columns.get_loc('modelChangeKey')] = '___'
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
             keep.append(1)
@@ -71,5 +81,6 @@ def structure_player_actions(df):
     df = df.query('~(modelChangeId == "blockRoll" & playerAction == "block")') 
     # deduce movement action from actual movement
     df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') 
-
+    # drop first row of blitzmove
+    df = df.query('~(modelChangeId == "playerAction" & playerAction == "blitzMove")') 
     return df
