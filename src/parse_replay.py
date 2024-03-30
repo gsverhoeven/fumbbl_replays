@@ -217,7 +217,7 @@ def parse_replay(my_replay, to_excel = False):
     mask = (df.keep == 1)
     df.loc[mask, 'modelChangeValue'] = df.loc[mask, 'list_of_paths']
    
-    df = compact_block_actions(df)
+    df = structure_player_actions(df)
 
     df = df.query('~(modelChangeId == "playerAction" & playerAction == "move")') # deduce movement action from actual movement
 
