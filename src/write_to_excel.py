@@ -1,4 +1,4 @@
-def write_parsed_replay_to_excel(df, df_roster, path = 'output/output.xlsx'):
+def write_to_excel(df, df_roster, path = 'output/output.xlsx'):
     writer = pd.ExcelWriter(path, engine = 'openpyxl')
 
     cols = ['commandNr', 'gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'set_up_id', \

@@ -35,6 +35,6 @@ def main_program():
     df = replace_player_ids_with_shorthand(df, df_roster)
 
 
-    write_parsed_replay_to_excel(df, df_roster)
+    write_to_excel(df, df_roster)
 
     return df
