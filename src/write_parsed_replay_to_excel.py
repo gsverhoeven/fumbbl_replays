@@ -3,7 +3,10 @@ def write_parsed_replay_to_excel(df, df_roster, path = 'output/output.xlsx'):
 
     cols = ['commandNr', 'gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'set_up_id', \
                 'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue']
+
+    # intersection of two lists   
+    cols_sel = [value for value in cols if value in  df.columns]
     
-    df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
+    df.to_excel(writer, sheet_name = 'gamelog', columns = cols_sel) # define selection plus order
     df_roster.to_excel(writer, sheet_name = 'roster')
     writer.close()
