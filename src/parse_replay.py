@@ -173,16 +173,7 @@ def parse_replay(my_replay, to_excel = False):
     df = replace_player_ids_with_shorthand(df, df_roster)
 
 
-    if to_excel:
-        path = 'output/output.xlsx'
-        writer = pd.ExcelWriter(path, engine = 'openpyxl')
-
-        cols = ['commandNr', 'gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'set_up_id', \
-                 'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue']
-        
-        df.to_excel(writer, sheet_name = 'gamelog', columns = cols) # define selection plus order
-        df_roster.to_excel(writer, sheet_name = 'roster')
-        writer.close()
+    write_parsed_replay_to_excel(df, df_roster)
        
     return df
 
