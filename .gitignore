@@ -4,5 +4,5 @@ raw/*
 *.xlsx
 .~lock.output.xlsx#
 output/output.pdf
-resources/DM's Blood Bowl Rules*
 *.xlsx#
+annotation_system/DM's Blood Bowl Rules*
