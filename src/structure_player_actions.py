@@ -1,4 +1,5 @@
 def structure_player_actions(df):
+    # https://note.nkmk.me/en/python-pandas-at-iat-loc-iloc/
     playerAction = []
     defenderId = []
     keep = []
@@ -7,8 +8,7 @@ def structure_player_actions(df):
     current_action = "none"
 
     for r in range(len(df)):
-        if (df.iloc[r]['turnMode'] != "regular"):   # IE also during setup     
-            # https://note.nkmk.me/en/python-pandas-at-iat-loc-iloc/
+        if (df.iloc[r]['turnMode'] != "regular"):   # for example during setup     
             str_orig =  str(df.iloc[r]['modelChangeValue'])
             replace_x = "_" + str(df.iloc[r]['DESCRIPTION'])
             if (replace_x == "_nan"):
@@ -37,7 +37,7 @@ def structure_player_actions(df):
             df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
-            # final block record, so reset values
+            # final block record, so reset values /// pushes / pows / blitzes after block are now under action "none" FIXME
             current_active_player = 0
             current_defender_id = 0
             current_action = "none"
@@ -47,10 +47,18 @@ def structure_player_actions(df):
             replace_x = "_" + str(df.iloc[r]['DESCRIPTION'])
             if (replace_x == "_nan"):
                 replace_x = ""
-            df.iat[r, df.columns.get_loc('modelChangeValue')] = str_orig + replace_x  
-            df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
-            playerAction.append(current_action)
-            defenderId.append(current_defender_id)
+            df.iat[r, df.columns.get_loc('modelChangeValue')] = str_orig + replace_x
+            if current_active_player != 0:  
+                df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
+                defenderId.append(current_defender_id)
+            else:
+                if df.iloc[r-1]['modelChangeId'] == "blockChoice":
+                    defenderId.append("RIGHT_AFTER_BLOCK")
+                    # modelChangeKey already contains current active player that is moved (push or pow, of blitz player continuing move)
+                else:
+                    defenderId.append("AFTER_BLOCK")
+                    # modelChangeKey already contains current active player that is moved (push or pow, of blitz player continuing move)
+            playerAction.append(current_action)       
             keep.append(1)
         elif (df.iloc[r]['modelChangeId'] == "actingPlayerSetStandingUp"): 
             current_active_player = df.iloc[r+1]['modelChangeValue']['actingPlayerId']
