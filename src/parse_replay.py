@@ -1,4 +1,8 @@
-def parse_replay(my_replay, to_excel = False):
+def parse_replay(my_replay, ignoreList):
+    my_gamelog = my_replay['gameLog']
+
+    ignoreList = ignoreList['modelChangeId'].values
+
     modelChangeId = []
     modelChangeKey = []
     modelChangeValue = []
@@ -13,15 +17,6 @@ def parse_replay(my_replay, to_excel = False):
     Half = []
     gameTime = []
     turnTime = []
-
-    my_gamelog = my_replay['gameLog']
-
-    ignoreList = pd.read_csv("resources/IgnoreModelChange.csv")
-
-    ignoreList = ignoreList['modelChangeId'].values
-
-    # extract rosters
-    df_roster = extract_rosters_from_replay(my_replay)
 
     # parse gamelog
     for commandIndex in range(len(my_gamelog['commandArray'])):
@@ -106,21 +101,7 @@ def parse_replay(my_replay, to_excel = False):
             # unknown netCommand: print it
             print(tmpCommand['netCommandId'])
 
-   # add header (coaches, source etc)
-    
-    df_header = pd.DataFrame( {"commandNr": [0, 0], 
-                        "gameTime": [0, 0],
-                        "turnTime": [0, 0],
-                        "Half": [0, 0],
-                        "turnNr": [0, 0],
-                        "turnMode": ["startGame", "startGame"],
-                        "modelChangeId": ["homeCoachName", "awayCoachName"],
-                        "modelChangeKey": [0, 0],
-                        "modelChangeValue": [my_replay['game']['teamHome']['coach'], my_replay['game']['teamAway']['coach']],
-                        "SetPlayerCoordinate": ["", ""],
-                        "PlayerCoordinateX": [99, 99],
-                        "PlayerCoordinateY": [99, 99],
-                        "SetPlayerState": [0, 0]}, index = [0, 1])
+
 
     df = pd.DataFrame( {"commandNr": commandNr, 
                         "gameTime": gameTime,
@@ -135,45 +116,18 @@ def parse_replay(my_replay, to_excel = False):
                         "PlayerCoordinateX": PlayerCoordinateX,
                         "PlayerCoordinateY": PlayerCoordinateY,
                         "SetPlayerState": SetPlayerState})
-    
-    df = pd.concat([df_header, df], ignore_index=True)
-    
-    # from ms to s
-    df['gameTime'] = df['gameTime']/1000
-    df['turnTime'] = df['turnTime']/1000
+
 
     # here we can drop rows with gameSetTurnMode (needed for initial parsing above)
-    df = df.query("modelChangeId != 'gameSetTurnMode'")
-    # add state descriptions
-    cl_state = pd.read_csv("resources/PlayerState.csv")
-    df = pd.merge(left = df, right = cl_state, left_on = "SetPlayerState", right_on = "INT", how = "left", sort = False)
-    df = df.drop(['DESCRIPTION'], axis = 1)
-    # add location descriptions
-    cl_location = pd.read_csv("resources/Coordinate.csv")
-    df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
-  
-    df = from_steps_to_trajectories(df)
-   
-    df = structure_player_actions(df)
+    df = df.query("modelChangeId != 'gameSetTurnMode'")   
+    # from ms to s
+    df['gameTime'] = df['gameTime']/1000
+    df['turnTime'] = df['turnTime']/1000     
 
     # flag placing players in dugout during setup
     # needed to ID players that are initially placed on board but are moved to dugout later during setup
     row_sel = '(turnMode == "setup" & modelChangeId == "fieldModelSetPlayerCoordinate" & ((PlayerCoordinateX < 0) | (PlayerCoordinateX > 25)))'
     df['to_dugout'] = 0
     df.loc[df.eval(row_sel), 'to_dugout'] = 1
-    
-    # drop more rows that are by now no longer needed (either reportList or modelChangeId)
-    df = df.query('~(modelChangeId in ["turnDataSetTurnNr", \
-                  "turnDataSetFirstTurnAfterKickoff", \
-                  "fumbblResultUpload"])')
-
-    df = condense_setup_formations(df, df_roster)
-
-    # replace player IDs with shorthands
-    df = replace_player_ids_with_shorthand(df, df_roster)
-
-
-    write_parsed_replay_to_excel(df, df_roster)
-       
+                    
     return df
-
