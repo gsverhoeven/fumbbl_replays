@@ -58,9 +58,9 @@ def from_steps_to_trajectories(df):
     df['keep'] = keep[1:] # shift all elements up to align with record we want to keep          
     
     # drop unnecessary move rows
-    df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetPlayerCoordinate" & keep == 0)')
-    df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetBallCoordinate" & keep == 0)')
-    # cleanup last xy coordinate
+    #df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetPlayerCoordinate" & keep == 0)')
+    #df = df.query('~(turnMode == "regular" & modelChangeId == "fieldModelSetBallCoordinate" & keep == 0)')
+    # write full trajectory over the last xy coordinate
     mask = (df.keep == 1)
     df.loc[mask, 'modelChangeValue'] = df.loc[mask, 'list_of_paths']
     return df
