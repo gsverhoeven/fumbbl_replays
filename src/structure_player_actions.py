@@ -53,10 +53,10 @@ def structure_player_actions(df):
                 defenderId.append(current_defender_id)
             else:
                 if df.iloc[r-1]['modelChangeId'] == "blockChoice":
-                    defenderId.append("RIGHT_AFTER_BLOCK")
+                    defenderId.append("*")
                     # modelChangeKey already contains current active player that is moved (push or pow, of blitz player continuing move)
                 else:
-                    defenderId.append("AFTER_BLOCK")
+                    defenderId.append("**")
                     # modelChangeKey already contains current active player that is moved (push or pow, of blitz player continuing move)
             playerAction.append(current_action)       
             keep.append(1)
