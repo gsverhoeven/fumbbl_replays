@@ -6,7 +6,7 @@ def main_program():
     # initial parse
     df = parse_replay(my_replay, ignoreList) 
     
-    df = add_header(df)
+    df = add_header(df, my_replay)
 
     # add state descriptions
     cl_state = pd.read_csv("resources/PlayerState.csv")
