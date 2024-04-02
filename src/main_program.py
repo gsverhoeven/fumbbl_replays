@@ -17,9 +17,9 @@ def main_program():
     cl_location = pd.read_csv("resources/Coordinate.csv")
     df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
 
-    df = from_steps_to_trajectories(df)
-   
     df = structure_player_actions(df)
+    
+    df = from_steps_to_trajectories(df)
 
     # drop more rows that are by now no longer needed (either reportList or modelChangeId)
     df = df.query('~(modelChangeId in ["turnDataSetTurnNr", \
