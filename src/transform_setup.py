@@ -11,7 +11,8 @@ def transform_setup(gamelog, df_roster, setup_id = 1):
         tmp = res.query("PlayerCoordinateX == @boardrow")
         for r in range(len(tmp)):
             playerId = str(tmp.iloc[r]['modelChangeKey'])
-            positions.append(df_roster.query('playerId == @playerId')['short_name'].values[0] + ': ' + str(tmp.iloc[r]['modelChangeValue']))
+            boardpos = str(tmp.iloc[r]['CoordinateX']) + str(tmp.iloc[r]['PlayerCoordinateY'] + 1)
+            positions.append(df_roster.query('playerId == @playerId')['short_name'].values[0] + ': ' + boardpos)
         #print(positions)
         if len(tmp) > 0:
             setup.append(positions)
@@ -21,7 +22,8 @@ def transform_setup(gamelog, df_roster, setup_id = 1):
         tmp = res.query("PlayerCoordinateX == @boardrow")
         for r in range(len(tmp)):
             playerId = str(tmp.iloc[r]['modelChangeKey'])
-            positions.append(df_roster.query('playerId == @playerId')['short_name'].values[0] + ': ' + str(tmp.iloc[r]['modelChangeValue']))
+            boardpos = str(tmp.iloc[r]['CoordinateX']) + str(tmp.iloc[r]['PlayerCoordinateY'] + 1)
+            positions.append(df_roster.query('playerId == @playerId')['short_name'].values[0] + ': ' + boardpos)
         #print(positions)
         if len(tmp) > 0:
             setup.append(positions)

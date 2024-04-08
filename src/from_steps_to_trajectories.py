@@ -26,7 +26,8 @@ def from_steps_to_trajectories(df):
                     path = []
             # do stuff
             trajectory.append(trajectory_id)
-            path.append(df.iloc[r]['modelChangeValue'])  
+            boardpos = str(df.iloc[r]['CoordinateX']) + str(df.iloc[r]['PlayerCoordinateY'] + 1)
+            path.append(boardpos)  
             list_of_paths.append(path[:])
             # check for end of trajectory
             if (df.iloc[r+1]['modelChangeId'] != "fieldModelSetPlayerCoordinate"):
