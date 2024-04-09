@@ -66,6 +66,11 @@ def parse_replay(my_replay, ignoreList):
                             SetPlayerCoordinate.append(1)
                             PlayerCoordinateX.append(tmpChange['modelChangeValue'][0])
                             PlayerCoordinateY.append(tmpChange['modelChangeValue'][1])
+                        elif (str(tmpChange['modelChangeId']) == "fieldModelSetBallCoordinate") \
+                            and hasattr(tmpChange['modelChangeValue'], "__len__"): # contents can also be int 0 or None
+                            SetPlayerCoordinate.append(0)
+                            PlayerCoordinateX.append(tmpChange['modelChangeValue'][0])
+                            PlayerCoordinateY.append(tmpChange['modelChangeValue'][1])                          
                         else:
                             SetPlayerCoordinate.append(0)
                             PlayerCoordinateX.append(99)
@@ -124,7 +129,8 @@ def parse_replay(my_replay, ignoreList):
     df['gameTime'] = df['gameTime']/1000
     df['turnTime'] = df['turnTime']/1000     
 
-    row_sel = '(modelChangeId == "fieldModelSetPlayerCoordinate" & ((PlayerCoordinateX >= 0) & (PlayerCoordinateX <= 25)))'
+    changesel = ["fieldModelSetPlayerCoordinate", "fieldModelSetBallCoordinate"]
+    row_sel = '(modelChangeId in @changesel & ((PlayerCoordinateX >= 0) & (PlayerCoordinateX <= 25)))'
     df['CoordinateX'] = 0
     df.loc[df.eval(row_sel), 'CoordinateX'] = [string.ascii_lowercase[element] for element in df.loc[df.eval(row_sel), 'PlayerCoordinateX'].astype(int).values]  
     
