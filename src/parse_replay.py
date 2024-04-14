@@ -130,9 +130,9 @@ def parse_replay(my_replay, ignoreList):
     df['turnTime'] = df['turnTime']/1000     
 
     changesel = ["fieldModelSetPlayerCoordinate", "fieldModelSetBallCoordinate"]
-    row_sel = '(modelChangeId in @changesel & ((PlayerCoordinateX >= 0) & (PlayerCoordinateX <= 25)))'
-    df['CoordinateX'] = 0
-    df.loc[df.eval(row_sel), 'CoordinateX'] = [string.ascii_lowercase[element] for element in df.loc[df.eval(row_sel), 'PlayerCoordinateX'].astype(int).values]  
+    row_sel = '(modelChangeId in @changesel & ((PlayerCoordinateY >= 0) & (PlayerCoordinateY <= 14)))'
+    df['CoordinateY'] = 0
+    df.loc[df.eval(row_sel), 'CoordinateY'] = [string.ascii_lowercase[element] for element in df.loc[df.eval(row_sel), 'PlayerCoordinateY'].astype(int).values]  
     
     # flag placing players in dugout during setup
     # needed to ID players that are initially placed on board but are moved to dugout later during setup

@@ -26,7 +26,7 @@ def from_steps_to_trajectories(df):
                     path = []
             # do stuff
             trajectory.append(trajectory_id)
-            boardpos = str(df.iloc[r]['CoordinateX']) + str(df.iloc[r]['PlayerCoordinateY'] + 1)
+            boardpos = parse_boardpos(df.iloc[r])
             path.append(boardpos)  
             list_of_paths.append(path[:])
             # check for end of trajectory
@@ -53,7 +53,7 @@ def from_steps_to_trajectories(df):
                     keep.append(1)
             else:
                 keep.append(0)
-            boardpos = str(df.iloc[r]['CoordinateX']) + str(df.iloc[r]['PlayerCoordinateY'] + 1)
+            boardpos = parse_boardpos(df.iloc[r])
             df.iat[r, df.columns.get_loc('modelChangeValue')] = [boardpos]
             trajectory.append(-1)    
             list_of_paths.append(path[:])                                    
