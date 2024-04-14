@@ -35,6 +35,7 @@ def structure_player_actions(df):
             keep.append(0)
         elif (df.iloc[r]['modelChangeId'] == "blockChoice"):
             df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
+            df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_blockchoice(df.iloc[r]['modelChangeValue'])
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
             # final block record, so reset values /// pushes / pows / blitzes after block are now under action "none" FIXME
