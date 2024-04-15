@@ -8,7 +8,8 @@ def structure_player_actions(df):
     current_action = "none"
 
     for r in range(len(df)):
-        if (df.iloc[r]['turnMode'] != "regular"):   # for example during setup     
+        if (df.iloc[r]['turnMode'] != "regular"):   # for example during setup
+            # kickoff / setup     
             str_orig =  str(df.iloc[r]['modelChangeValue'])
             replace_x = "_" + str(df.iloc[r]['DESCRIPTION'])
             if (replace_x == "_nan"):
