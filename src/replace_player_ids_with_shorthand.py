@@ -39,7 +39,11 @@ def replace_player_ids_with_shorthand(df, df_roster):
                 reportlist['catcherId'] = str(short_hand.values)
                 df.iat[r, df.columns.get_loc('modelChangeValue')] = reportlist
             if reportlist['reportId'] == 'catchRoll':
-                df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_catchroll(reportlist)                              
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_catchroll(reportlist)
+            if reportlist['reportId'] == 'dodgeRoll':
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_dodgeroll(reportlist)
+            if reportlist['reportId'] == 'goForItRoll':
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_GFIroll(reportlist)                
         else:
             pass
 
