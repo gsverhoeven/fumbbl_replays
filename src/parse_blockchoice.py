@@ -8,7 +8,7 @@ def parse_blockchoice(blockobj):
 
     die_chosen = blockobj['diceIndex']
 
-    out_string = "dice that were rolled:" + str(block_roll) + " | block result: " + \
+    out_string = "Block roll:" + str(block_roll) + " | block result: " + \
         str(block_symbols[blockobj['blockRoll'][die_chosen] - 1]) + " (" + blockobj['blockResult'] + ")"
 
     return out_string
