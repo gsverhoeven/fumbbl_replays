@@ -1,6 +1,6 @@
-def main_program():
+def main_program(replay_id):
     # load replay
-    my_replay = fetch_replay(1559380, dirname = "example_input/")
+    my_replay = fetch_replay(replay_id, dirname = "example_input/")
     
     ignoreList = pd.read_csv("resources/IgnoreModelChange.csv")
     # initial parse
@@ -17,6 +17,8 @@ def main_program():
     cl_location = pd.read_csv("resources/Coordinate.csv")
     df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
 
+    df = df.drop_duplicates(subset=df.columns.difference(['modelChangeValue']))
+
     df = structure_player_actions(df)
     
     df = from_steps_to_trajectories(df)
@@ -30,11 +32,11 @@ def main_program():
     df_roster = extract_rosters_from_replay(my_replay)    
 
     df = condense_setup_formations(df, df_roster)
-
+    
     # replace player IDs with shorthands
     df = replace_player_ids_with_shorthand(df, df_roster)
 
-
-    write_to_excel(df, df_roster)
+    write_to_excel(df, df_roster) 
+    #write_to_excel(df, df_roster = pd.DataFrame([])) 
 
     return df

@@ -63,8 +63,14 @@ def structure_player_actions(df):
             playerAction.append(current_action)       
             keep.append(1)
         elif (df.iloc[r]['modelChangeId'] == "actingPlayerSetStandingUp"): 
-            current_active_player = df.iloc[r+1]['modelChangeValue']['actingPlayerId']
-            current_action = df.iloc[r+1]['modelChangeValue']['playerAction']
+            if 'actingPlayerId' in str(df.iloc[r+1]['modelChangeValue']):
+                current_active_player = df.iloc[r+1]['modelChangeValue']['actingPlayerId']
+            else:
+                current_active_player = 'Unknown active player'
+            if 'playerAction' in str(df.iloc[r+1]['modelChangeValue']):
+                current_action = df.iloc[r+1]['modelChangeValue']['playerAction']
+            else:
+                current_action = 'Unknown action'                
             df.iat[r, df.columns.get_loc('modelChangeKey')] = current_active_player
             playerAction.append(current_action)
             defenderId.append(current_defender_id)
