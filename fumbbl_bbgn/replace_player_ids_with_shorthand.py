@@ -5,6 +5,7 @@ from .parse_GFIroll import parse_GFIroll
 from .parse_confusionroll import parse_confusionroll
 from .parse_injury import parse_injury
 from .parse_turnend import parse_turnend
+from .parse_kickoff_scatter import parse_kickoff_scatter
 
 def replace_player_ids_with_shorthand(df, df_roster):
     
@@ -59,6 +60,8 @@ def replace_player_ids_with_shorthand(df, df_roster):
                 df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_injury(reportlist)
             if reportlist['reportId'] == 'turnEnd':
                 df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_turnend(reportlist)
+            if reportlist['reportId'] == 'kickoffScatter':
+                df.iat[r, df.columns.get_loc('modelChangeValue')] = parse_kickoff_scatter(reportlist)                
         else:
             pass
 
