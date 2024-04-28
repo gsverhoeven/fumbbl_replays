@@ -9,6 +9,8 @@ gameSetThrowerId
 gameSetTimeoutPossible
 teamResultSetFanFactor
 teamResultSetTeamValue
+teamResultSetSeriousInjurySuffered
+teamResultSetBadlyHurtSuffered
 turnDataSetBlitzUsed
 turnDataSetPassUsed
 turnDataSetHandOverUsed
@@ -29,6 +31,7 @@ fieldModelRemoveTrackNumber
 fieldModelRemovePlayer
 fieldModelAddBloodSpot
 fieldModelSetPlayerState
+fieldModelAddFieldMarker
 fieldModelSetBallInPlay
 fieldModelSetBallMoving
 fieldModelSetTargetSelectionState
@@ -47,6 +50,7 @@ actingPlayerSetDodging
 actingPlayerSetPlayerAction
 playerResultSetTurnsPlayed
 playerResultSetBlocks
+playerResultSetCasualties
 playerResultSetSendToBoxReason
 playerResultSetSendToBoxTurn
 playerResultSetSendToBoxHalf
