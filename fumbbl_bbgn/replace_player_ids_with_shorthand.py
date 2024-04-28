@@ -1,3 +1,11 @@
+import json
+from .parse_catchroll import parse_catchroll
+from .parse_dodgeroll import parse_dodgeroll
+from .parse_GFIroll import parse_GFIroll
+from .parse_confusionroll import parse_confusionroll
+from .parse_injury import parse_injury
+from .parse_turnend import parse_turnend
+
 def replace_player_ids_with_shorthand(df, df_roster):
     
     # fix in columns modelChangeKey, defenderId

@@ -1,3 +1,5 @@
+import pandas as pd
+
 def write_to_excel(df, df_roster, path = 'output/output.xlsx'):
     writer = pd.ExcelWriter(path, engine = 'openpyxl')
 

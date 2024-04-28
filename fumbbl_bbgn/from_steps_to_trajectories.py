@@ -1,3 +1,5 @@
+from .parse_boardpos import parse_boardpos
+
 def from_steps_to_trajectories(df):
     # transform sequences of moves into trajectories
     trajectory = []

@@ -1,3 +1,6 @@
+import pandas as pd
+import string
+
 def parse_replay(my_replay, ignoreList):
     my_gamelog = my_replay['gameLog']
 

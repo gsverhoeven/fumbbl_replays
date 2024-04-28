@@ -6,3 +6,5 @@ raw/*
 output/output.pdf
 *.xlsx#
 annotation_system/DM's Blood Bowl Rules*
+*.pyc
+fumbbl_bbgn.egg-info/*

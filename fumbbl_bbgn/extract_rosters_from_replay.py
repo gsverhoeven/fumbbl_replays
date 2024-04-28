@@ -1,3 +1,6 @@
+import pandas as pd
+from .extract_players_from_replay import extract_players_from_replay
+
 def extract_rosters_from_replay(my_replay):
     positionId = []
     positionName = []

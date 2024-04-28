@@ -1,3 +1,5 @@
+from .parse_blockchoice import parse_blockchoice
+
 def structure_player_actions(df):
     # https://note.nkmk.me/en/python-pandas-at-iat-loc-iloc/
     playerAction = []

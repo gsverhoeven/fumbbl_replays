@@ -1,3 +1,5 @@
+from .parse_boardpos import parse_boardpos
+
 def transform_setup(gamelog, df_roster, setup_id = 1):
     res = gamelog.query("set_up_id == @setup_id")
 

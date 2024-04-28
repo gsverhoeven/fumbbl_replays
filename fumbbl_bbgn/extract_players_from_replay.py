@@ -1,3 +1,5 @@
+import pandas as pd
+
 def extract_players_from_replay(my_replay):
     playerId = []
     playerNr = []
