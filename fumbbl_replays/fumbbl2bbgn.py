@@ -10,7 +10,7 @@ from .condense_setup_formations import condense_setup_formations
 from .replace_player_ids_with_shorthand import replace_player_ids_with_shorthand
 from .write_to_excel import write_to_excel
 
-def main_program(replay_id):
+def fumbbl2bbgn(replay_id):
     # load replay
     my_replay = fetch_replay(replay_id, dirname = "example_input/")
     
