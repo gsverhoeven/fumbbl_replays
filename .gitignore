@@ -8,3 +8,4 @@ output/output.pdf
 annotation_system/DM's Blood Bowl Rules*
 *.pyc
 fumbbl_replays.egg-info/*
+.vscode/settings.json
