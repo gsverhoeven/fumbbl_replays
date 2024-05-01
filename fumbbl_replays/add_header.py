@@ -1,7 +1,6 @@
 import pandas as pd
 
 def add_header(df, my_replay):
-    # add header (coaches, source etc)
     
     df_header = pd.DataFrame( {"commandNr": [0, 0], 
                         "gameTime": [0, 0],
@@ -18,4 +17,5 @@ def add_header(df, my_replay):
                         "SetPlayerState": [0, 0]}, index = [0, 1])
 
     df = pd.concat([df_header, df], ignore_index=True)
+    
     return df
