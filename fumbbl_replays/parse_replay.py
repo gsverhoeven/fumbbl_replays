@@ -1,11 +1,14 @@
 import pandas as pd
 import string
 
-def parse_replay(my_replay, ignoreList):
+def parse_replay(my_replay, ignoreList = None):
     my_gamelog = my_replay['gameLog']
 
-    ignoreList = ignoreList['modelChangeId'].values
-
+    if ignoreList is not None:
+        ignoreList = ignoreList['modelChangeId'].values
+    else:
+        ignoreList = []
+        
     modelChangeId = []
     modelChangeKey = []
     modelChangeValue = []
