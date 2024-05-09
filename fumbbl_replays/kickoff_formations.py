@@ -6,7 +6,6 @@ from urllib.request import urlopen
 
 from .fetch_replay import fetch_replay
 from .parse_replay import parse_replay
-from .extract_players_from_replay import extract_players_from_replay
 from .extract_rosters_from_replay import extract_rosters_from_replay
 
 def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
@@ -231,22 +230,19 @@ def create_plot(replay_id, df_matches, refresh = False):
     my_replay = fetch_replay(replay_id)
     match_id = df_matches.query("replay_id == @replay_id")['match_id'].values[0]
 
-    df_players = extract_players_from_replay(my_replay)
-    df_positions = extract_rosters_from_replay(my_replay)
-    # roster
-    df_players2 = pd.merge(df_players, df_positions, on="positionId", how="left")
-
     df = parse_replay(my_replay)
 
     # board state at kick-off
     positions = df.query('turnNr == 0 & turnMode == "setup" & Half == 1 & \
                          modelChangeId == "fieldModelSetPlayerCoordinate"').groupby('modelChangeKey').tail(1)
 
-    positions = pd.merge(positions, df_players2, left_on='modelChangeKey', right_on='playerId', how="left")
-    # mutiple identical columns at this point
+    df_players = extract_rosters_from_replay(my_replay)
+
+    positions = pd.merge(positions, df_players, left_on='modelChangeKey', right_on='playerId', how="left")
     
     # check if we have 22 players
-    # len(positions.query('PlayerCoordinateX != [-1, 30]'))
+    if len(positions.query('PlayerCoordinateX != [-1, 30]')) != 22:
+        print("warning: expected 22 players")
 
     # select only players on the board at kick-off, i.e. not in reserve
     positions = positions.query('PlayerCoordinateX != [-1, 30]').copy()
