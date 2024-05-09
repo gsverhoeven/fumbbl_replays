@@ -45,7 +45,7 @@ def fumbbl2bbgn(replay_id):
 
     df = condense_setup_formations(df, df_roster)
     
-    # replace player IDs with shorthands
+    # replace player IDs with shorthands, parse reportList messages
     df = replace_player_ids_with_shorthand(df, df_roster)
 
     write_to_excel(df, df_roster) 
