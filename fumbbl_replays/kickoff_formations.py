@@ -1,3 +1,14 @@
+import pandas as pd
+import os
+
+from PIL import Image, ImageDraw, ImageFont
+from urllib.request import urlopen
+
+from .fetch_replay import fetch_replay
+from .parse_replay import parse_replay
+from .extract_players_from_replay import extract_players_from_replay
+from .extract_rosters_from_replay import extract_rosters_from_replay
+
 def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
     """Write a separate function that draws semi transparent tackle zones.
     """
@@ -216,7 +227,7 @@ def extract_coin_toss(df):
             pass
     return None
 
-def process_replay(replay_id, df_matches, refresh = False):
+def create_plot(replay_id, df_matches, refresh = False):
     my_replay = fetch_replay(replay_id)
     match_id = df_matches.query("replay_id == @replay_id")['match_id'].values[0]
 
@@ -225,13 +236,15 @@ def process_replay(replay_id, df_matches, refresh = False):
     # roster
     df_players2 = pd.merge(df_players, df_positions, on="positionId", how="left")
 
-    df = parse_replay_file(my_replay)
+    df = parse_replay(my_replay)
 
     # board state at kick-off
     positions = df.query('turnNr == 0 & turnMode == "setup" & Half == 1 & \
                          modelChangeId == "fieldModelSetPlayerCoordinate"').groupby('modelChangeKey').tail(1)
 
     positions = pd.merge(positions, df_players2, left_on='modelChangeKey', right_on='playerId', how="left")
+    # mutiple identical columns at this point
+    
     # check if we have 22 players
     # len(positions.query('PlayerCoordinateX != [-1, 30]'))
 
