@@ -226,9 +226,12 @@ def extract_coin_toss(df):
             pass
     return None
 
-def create_plot(replay_id, df_matches, refresh = False):
+def create_plot(replay_id, df_matches = None, refresh = False):
     my_replay = fetch_replay(replay_id)
-    match_id = df_matches.query("replay_id == @replay_id")['match_id'].values[0]
+    if df_matches is not None:
+        match_id = df_matches.query("replay_id == @replay_id")['match_id'].values[0]
+    else:
+        match_id = 0
 
     df = parse_replay(my_replay)
 
@@ -262,8 +265,11 @@ def create_plot(replay_id, df_matches, refresh = False):
     else:
         toss_choice = "toss choice is play defense"
 
-    team1_score = df_matches.query("replay_id == @replay_id")['team1_score'].values[0]
-    team2_score = df_matches.query("replay_id == @replay_id")['team2_score'].values[0]
+    if df_matches is not None:
+        team1_score = df_matches.query("replay_id == @replay_id")['team1_score'].values[0]
+        team2_score = df_matches.query("replay_id == @replay_id")['team2_score'].values[0]
+    else:
+        team1_score = team2_score = -1
 
     coach1 = my_replay['game']['teamHome']['coach']
     coach2 = my_replay['game']['teamAway']['coach']
