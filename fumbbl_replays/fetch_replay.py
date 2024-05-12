@@ -13,7 +13,6 @@ def fetch_replay(replay_id, dirname = "raw/replay_files/"):
 
     #print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON') 
     fname_string_gz = dirname + str(replay_id) + ".gz"        
-
     # check if file already exists, else scrape it
     try:
         f = open(fname_string_gz, mode = "rb")

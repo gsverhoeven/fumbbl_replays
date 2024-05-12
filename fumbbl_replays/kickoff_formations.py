@@ -135,7 +135,7 @@ def create_vertical_plot(replay_id, match_id, positions, receiving_team):
         pitch = add_players(pitch, positions, receiving_team, flip = doFlip)
         pitch.save(image_path + image_name,"PNG")
 
-def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh):
+def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose = False):
     base_path = 'kickoff_pngs/'
 
     dirname = positions.iloc[0]['race'] + "/"
@@ -177,7 +177,10 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
         draw.text((5, 335), text_line2, font=font1, fill='black')
         draw.text((5, 366), text_line3, font=font2, fill='black')
 
-        pitch.save(base_path + dirname + image_name,"PNG")
+        pitch.save(fname, "PNG")
+        if verbose:
+            print("\n")
+            print("wrote plot to ", fname)
     else:
         print(".", end = '')
 
@@ -227,7 +230,7 @@ def extract_coin_toss(df):
             pass
     return None
 
-def create_plot(match_id, refresh = False):
+def create_plot(match_id, refresh = False, verbose = False):
     my_match = fetch_match(match_id)
     team1_score = my_match['team1']['score']
     team2_score = my_match['team2']['score']
@@ -274,7 +277,7 @@ def create_plot(match_id, refresh = False):
 
     text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     # create the plots
-    create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh)
+    create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
 
     #create_offense_plot(replay_id, match_id, positions, receiving_team, refresh)
 
