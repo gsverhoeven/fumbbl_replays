@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 from urllib.request import urlopen
 
 from .fetch_replay import fetch_replay
+from .fetch_match import fetch_match
 from .parse_replay import parse_replay
 from .extract_rosters_from_replay import extract_rosters_from_replay
 
@@ -226,13 +227,13 @@ def extract_coin_toss(df):
             pass
     return None
 
-def create_plot(replay_id, df_matches = None, refresh = False):
-    my_replay = fetch_replay(replay_id)
-    if df_matches is not None:
-        match_id = df_matches.query("replay_id == @replay_id")['match_id'].values[0]
-    else:
-        match_id = 0
+def create_plot(match_id, refresh = False):
+    my_match = fetch_match(match_id)
+    team1_score = my_match['team1']['score']
+    team2_score = my_match['team2']['score']
 
+    replay_id = my_match['replayId']
+    my_replay = fetch_replay(replay_id)
     df = parse_replay(my_replay)
 
     # board state at kick-off
@@ -264,12 +265,6 @@ def create_plot(replay_id, df_matches = None, refresh = False):
         toss_choice = "toss choice is play offense"
     else:
         toss_choice = "toss choice is play defense"
-
-    if df_matches is not None:
-        team1_score = df_matches.query("replay_id == @replay_id")['team1_score'].values[0]
-        team2_score = df_matches.query("replay_id == @replay_id")['team2_score'].values[0]
-    else:
-        team1_score = team2_score = -1
 
     coach1 = my_replay['game']['teamHome']['coach']
     coach2 = my_replay['game']['teamAway']['coach']
