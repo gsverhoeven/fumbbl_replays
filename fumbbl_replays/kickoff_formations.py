@@ -117,36 +117,51 @@ def create_horizontal_plot(replay_id, match_id, positions, receiving_team):
 
 
 def create_vertical_plot(replay_id, match_id, positions, receiving_team):
-    image_path = 'kickoff_pngs/'
-    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_vertical.png"
-    fname = image_path + image_name
+
+    append_string = "_kickoff_vertical.png"
+    fname = build_filename(replay_id, match_id, append_string)
 
     if not os.path.exists(fname):
-        pitch = Image.open("resources/nice.jpg")
-        pitch = pitch.rotate(angle = 90, expand = True)
-        pitch = pitch.resize((15 * 28, 26 * 28))
+        plot = Image.open("resources/nice.jpg")
+        plot = plot.rotate(angle = 90, expand = True)
+        plot = plot.resize((15 * 28, 26 * 28))
         
         if receiving_team == 'teamAway':
             doFlip = True
         else:
             doFlip = False
 
-        pitch = add_tacklezones(pitch, positions, receiving_team, flip = doFlip)   
-        pitch = add_players(pitch, positions, receiving_team, flip = doFlip)
-        pitch.save(image_path + image_name,"PNG")
+        plot = add_tacklezones(plot, positions, receiving_team, flip = doFlip)   
+        plot = add_players(plot, positions, receiving_team, flip = doFlip)
+        plot.save(fname,"PNG")
+    else:
+        plot = Image.open(fname)
+    return plot
+
+def build_filename(replay_id, match_id, append_string, race = None, base_path = 'kickoff_pngs/'):
+
+    if race is not None:
+        dirname = race + "/"
+        dirname = dirname.lower()
+        dirname = dirname.replace(' ', '_')
+
+        if not os.path.exists(base_path + dirname):
+            os.makedirs(base_path + dirname)
+
+    image_name = str(replay_id) + "_" + str(match_id) + append_string
+
+    if race is not None:
+        fname = base_path + dirname + image_name
+    else:
+        fname = base_path + image_name
+
+    return fname
 
 def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose = False):
-    base_path = 'kickoff_pngs/'
 
-    dirname = positions.iloc[0]['race'] + "/"
-    dirname = dirname.lower()
-    dirname = dirname.replace(' ', '_')
-
-    if not os.path.exists(base_path + dirname):
-        os.makedirs(base_path + dirname)
-
-    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_lower_defense.png"
-    fname = base_path + dirname + image_name
+    race = positions.iloc[0]['race']
+    append_string = "_kickoff_lower_defense.png"
+    fname = build_filename(replay_id, match_id, append_string, race)
 
     if not os.path.exists(fname) or refresh:  
         plot = Image.open("resources/nice.jpg")
@@ -282,11 +297,13 @@ def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
     # create the plots
     if plot_type == 'D':
         plot = create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
+    elif plot_type == 'V':
+        plot = create_vertical_plot(replay_id, match_id, positions, receiving_team)
     else:
         plot = print("unknown plot type")
     #create_offense_plot(replay_id, match_id, positions, receiving_team, refresh)
 
-    #create_vertical_plot(replay_id, match_id, positions, receiving_team)
+    #
 
     #create_horizontal_plot(replay_id, match_id, positions, receiving_team)
     # replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
