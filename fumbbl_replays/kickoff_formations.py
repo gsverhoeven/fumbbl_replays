@@ -101,13 +101,12 @@ def pitch_select_upper_half(pitch):
     pitch = pitch.crop((0, 0, 15*28, 13*28))
     return pitch
 
-def create_horizontal_plot(replay_id, match_id, positions, receiving_team):
+def create_horizontal_plot(replay_id, match_id, positions, receiving_team, refresh = False):
 
     append_string = "_kickoff_horizontal.png"
     fname = build_filename(replay_id, match_id, append_string)
 
-    if not os.path.exists(fname):
-        # make plot
+    if not os.path.exists(fname) or refresh:
         plot = Image.open("resources/nice.jpg")
         plot = plot.resize((26 * 28, 15 * 28))
         plot = add_tacklezones(plot, positions, receiving_team, flip = False, horizontal = True)   
@@ -118,12 +117,12 @@ def create_horizontal_plot(replay_id, match_id, positions, receiving_team):
     return plot
 
 
-def create_vertical_plot(replay_id, match_id, positions, receiving_team):
+def create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh = False):
 
     append_string = "_kickoff_vertical.png"
     fname = build_filename(replay_id, match_id, append_string)
 
-    if not os.path.exists(fname):
+    if not os.path.exists(fname) or refresh:
         plot = Image.open("resources/nice.jpg")
         plot = plot.rotate(angle = 90, expand = True)
         plot = plot.resize((15 * 28, 26 * 28))
@@ -159,7 +158,7 @@ def build_filename(replay_id, match_id, append_string, race = None, base_path = 
 
     return fname
 
-def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose = False):
+def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
 
     race = positions.iloc[0]['race']
     append_string = "_kickoff_lower_defense.png"
@@ -206,28 +205,31 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
     return plot
 
 
-def create_offense_plot(replay_id, match_id, positions, receiving_team):
-    image_path = 'kickoff_pngs/'
-    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_lower_offense.png"
-    fname = image_path + image_name
+def create_offense_plot(replay_id, match_id, positions, receiving_team, refresh = False):
 
-    if not os.path.exists(fname):  
-        pitch = Image.open("resources/nice.jpg")
-        pitch = pitch.rotate(angle = 90, expand = True)
-        pitch = pitch.resize((15 * 28, 26 * 28))
+    race = positions.iloc[0]['race']
+    append_string = "_kickoff_lower_offense.png"
+    fname = build_filename(replay_id, match_id, append_string, race)
+
+    if not os.path.exists(fname) or refresh:  
+        plot = Image.open("resources/nice.jpg")
+        plot = plot.rotate(angle = 90, expand = True)
+        plot = plot.resize((15 * 28, 26 * 28))
         
         if receiving_team == 'teamAway':
             doFlip = False
         else:
             doFlip = True
 
-        pitch = add_tacklezones(pitch, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)   
-        pitch = add_players(pitch, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)
+        plot = add_tacklezones(plot, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)   
+        plot = add_players(plot, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)
 
-        pitch = pitch_select_lower_half(pitch)
-        pitch.save(image_path + image_name,"PNG")
+        plot = pitch_select_lower_half(plot)
+        plot.save(fname,"PNG")
     else:
         print(".", end = '')
+        plot = Image.open(fname)
+    return plot
 
 def determine_receiving_team_at_start(df):
     gameSetHomeFirstOffense = len(df.query('turnNr == 0 & turnMode == "startGame" & modelChangeId == "gameSetHomeFirstOffense"').index)
