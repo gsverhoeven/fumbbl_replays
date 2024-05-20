@@ -102,18 +102,20 @@ def pitch_select_upper_half(pitch):
     return pitch
 
 def create_horizontal_plot(replay_id, match_id, positions, receiving_team):
-    image_path = 'kickoff_pngs/'
-    image_name = str(replay_id) + "_" + str(match_id) + "_kickoff_horizontal.png"
-    fname = image_path + image_name
+
+    append_string = "_kickoff_horizontal.png"
+    fname = build_filename(replay_id, match_id, append_string)
 
     if not os.path.exists(fname):
         # make plot
-        pitch = Image.open("resources/nice.jpg")
-        pitch = pitch.resize((26 * 28, 15 * 28))
-        pitch = add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = True)   
-        pitch = add_players(pitch, positions, receiving_team, flip = False, horizontal = True)
-        pitch.save(fname,"PNG")
-
+        plot = Image.open("resources/nice.jpg")
+        plot = plot.resize((26 * 28, 15 * 28))
+        plot = add_tacklezones(plot, positions, receiving_team, flip = False, horizontal = True)   
+        plot = add_players(plot, positions, receiving_team, flip = False, horizontal = True)
+        plot.save(fname,"PNG")
+    else:
+        plot = Image.open(fname)
+    return plot
 
 
 def create_vertical_plot(replay_id, match_id, positions, receiving_team):
@@ -299,13 +301,12 @@ def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
         plot = create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
     elif plot_type == 'V':
         plot = create_vertical_plot(replay_id, match_id, positions, receiving_team)
+    elif plot_type == 'H':
+        plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team)
     else:
         plot = print("unknown plot type")
     #create_offense_plot(replay_id, match_id, positions, receiving_team, refresh)
 
-    #
-
-    #create_horizontal_plot(replay_id, match_id, positions, receiving_team)
     # replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
     return plot
 
