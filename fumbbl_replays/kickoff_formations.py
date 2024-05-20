@@ -182,7 +182,10 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
             print("\n")
             print("wrote plot to ", fname)
     else:
-        print(".", end = '')
+        plot = Image.open(fname)
+        if verbose:
+            print(".", end = '')
+            print("read plot from ", fname)
     return plot
 
 
