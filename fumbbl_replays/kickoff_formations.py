@@ -305,10 +305,10 @@ def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
         plot = create_vertical_plot(replay_id, match_id, positions, receiving_team)
     elif plot_type == 'H':
         plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team)
+    elif plot_type == 'O':
+        plot = create_offense_plot(replay_id, match_id, positions, receiving_team, refresh)
     else:
         plot = print("unknown plot type")
-    #create_offense_plot(replay_id, match_id, positions, receiving_team, refresh)
-
     # replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
     return plot
 
