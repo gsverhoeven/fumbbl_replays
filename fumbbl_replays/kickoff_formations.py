@@ -149,20 +149,20 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
     fname = base_path + dirname + image_name
 
     if not os.path.exists(fname) or refresh:  
-        pitch = Image.open("resources/nice.jpg")
-        pitch = pitch.rotate(angle = 90, expand = True)
-        pitch = pitch.resize((15 * 28, 26 * 28))
+        plot = Image.open("resources/nice.jpg")
+        plot = plot.rotate(angle = 90, expand = True)
+        plot = plot.resize((15 * 28, 26 * 28))
         
         if receiving_team == 'teamAway':
             doFlip = True
         else:
             doFlip = False
 
-        pitch = add_tacklezones(pitch, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)   
-        pitch = add_players(pitch, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)
-        pitch = pitch_select_lower_half(pitch)
+        plot = add_tacklezones(plot, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)   
+        plot = add_players(plot, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)
+        plot = pitch_select_lower_half(plot)
 
-        draw = ImageDraw.Draw(pitch) 
+        draw = ImageDraw.Draw(plot) 
         font1 = ImageFont.truetype('LiberationMono-Regular.ttf', 22)
         font2 = ImageFont.truetype('LiberationMono-Regular.ttf', 16)
 
@@ -177,12 +177,13 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
         draw.text((5, 335), text_line2, font=font1, fill='black')
         draw.text((5, 366), text_line3, font=font2, fill='black')
 
-        pitch.save(fname, "PNG")
+        plot.save(fname, "PNG")
         if verbose:
             print("\n")
             print("wrote plot to ", fname)
     else:
         print(".", end = '')
+    return plot
 
 
 def create_offense_plot(replay_id, match_id, positions, receiving_team):
@@ -230,29 +231,28 @@ def extract_coin_toss(df):
             pass
     return None
 
-def create_plot(match_id, refresh = False, verbose = False):
+def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
     my_match = fetch_match(match_id)
     team1_score = my_match['team1']['score']
     team2_score = my_match['team2']['score']
 
     replay_id = my_match['replayId']
     my_replay = fetch_replay(replay_id)
-    df = parse_replay(my_replay)
-
+    df_players = extract_rosters_from_replay(my_replay)
+    
     # board state at kick-off
+    df = parse_replay(my_replay)
     positions = df.query('turnNr == 0 & turnMode == "setup" & Half == 1 & \
                          modelChangeId == "fieldModelSetPlayerCoordinate"').groupby('modelChangeKey').tail(1)
 
-    df_players = extract_rosters_from_replay(my_replay)
-
     positions = pd.merge(positions, df_players, left_on='modelChangeKey', right_on='playerId', how="left")
     
-    # check if we have 22 players
-    if len(positions.query('PlayerCoordinateX != [-1, 30]')) != 22:
-        print("warning: expected 22 players")
-
     # select only players on the board at kick-off, i.e. not in reserve
     positions = positions.query('PlayerCoordinateX != [-1, 30]').copy()
+
+    # expect a setup with 22 players
+    if len(positions) != 22:
+        print("warning: expected 22 players")
 
     # determine who is receiving: the home or the away team
     receiving_team = determine_receiving_team_at_start(df)
@@ -277,14 +277,17 @@ def create_plot(match_id, refresh = False, verbose = False):
 
     text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     # create the plots
-    create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
-
+    if plot_type == 'D':
+        plot = create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
+    else:
+        plot = print("unknown plot type")
     #create_offense_plot(replay_id, match_id, positions, receiving_team, refresh)
 
     #create_vertical_plot(replay_id, match_id, positions, receiving_team)
 
     #create_horizontal_plot(replay_id, match_id, positions, receiving_team)
-    return replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
+    # replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
+    return plot
 
 def sort_defensive_plots(df_replays):
     """Sort defense setups in folders by race"""
