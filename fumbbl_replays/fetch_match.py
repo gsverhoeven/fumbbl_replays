@@ -6,7 +6,7 @@ import time
 import requests
 import json
 
-def fetch_match(match_id, dirname = "raw/replay_files/", verbose = True):
+def fetch_match(match_id, dirname = "raw/replay_files/", verbose = False):
     # check if file already exists, else scrape it
     fname_string = dirname + str(match_id) + "_match.json"  
     try:
@@ -26,7 +26,8 @@ def fetch_match(match_id, dirname = "raw/replay_files/", verbose = True):
             
     else:
         # file already present
-        print("o",  end = '')
+        if verbose:
+            print("o",  end = '')
         match = read_json_file(fname_string)
 
     return match

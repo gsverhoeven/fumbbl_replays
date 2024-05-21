@@ -9,7 +9,7 @@ import time
 import requests
 import json
 
-def fetch_replay(replay_id, dirname = "raw/replay_files/"):
+def fetch_replay(replay_id, dirname = "raw/replay_files/", verbose = False):
 
     #print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON') 
     fname_string_gz = dirname + str(replay_id) + ".gz"        
@@ -21,7 +21,8 @@ def fetch_replay(replay_id, dirname = "raw/replay_files/"):
         api_string = "https://fumbbl.com/api/replay/get/" + str(replay_id) + "/gz" 
 
         replay = requests.get(api_string, stream = True)
-        print("x",  end = '')
+        if verbose:
+            print("x",  end = '')
         with open(fname_string_gz, 'wb') as f:
             for chunk in replay.iter_content(None):
                 f.write(chunk)
@@ -31,7 +32,8 @@ def fetch_replay(replay_id, dirname = "raw/replay_files/"):
             
     else:
         # file already present
-        print("o",  end = '')
+        if verbose:
+            print("o",  end = '')
         with gzip.open(fname_string_gz, mode = "rb") as f:
             replay = json.load(f)
 
