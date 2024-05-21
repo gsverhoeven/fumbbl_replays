@@ -254,7 +254,7 @@ def extract_coin_toss(df):
             pass
     return None
 
-def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
+def prep_data(match_id):
     my_match = fetch_match(match_id)
     team1_score = my_match['team1']['score']
     team2_score = my_match['team2']['score']
@@ -299,6 +299,9 @@ def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
     race2 = my_replay['game']['teamAway']['race']
 
     text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
+    return match_id, replay_id, positions, receiving_team, text
+
+def create_plot(match_id, replay_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
     # create the plots
     if plot_type == 'D':
         plot = create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
@@ -310,7 +313,6 @@ def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
         plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team)
     else:
         plot = print("unknown plot type")
-    # replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
     return plot
 
 def sort_defensive_plots(df_replays):
