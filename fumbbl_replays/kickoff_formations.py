@@ -10,8 +10,6 @@ from .parse_replay import parse_replay
 from .extract_rosters_from_replay import extract_rosters_from_replay
 
 def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
-    """Write a separate function that draws semi transparent tackle zones.
-    """
     for i in range(len(positions)):
         if horizontal == False:
             x = 14 - positions.iloc[i]['PlayerCoordinateY']
@@ -102,7 +100,6 @@ def pitch_select_upper_half(pitch):
     return pitch
 
 def create_horizontal_plot(replay_id, match_id, positions, receiving_team, refresh = False):
-
     append_string = "_kickoff_horizontal.png"
     fname = build_filename(replay_id, match_id, append_string)
 
@@ -118,7 +115,6 @@ def create_horizontal_plot(replay_id, match_id, positions, receiving_team, refre
 
 
 def create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh = False):
-
     append_string = "_kickoff_vertical.png"
     fname = build_filename(replay_id, match_id, append_string)
 
@@ -140,7 +136,6 @@ def create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh
     return plot
 
 def build_filename(replay_id, match_id, append_string, race = None, base_path = 'kickoff_pngs/'):
-
     if race is not None:
         dirname = race + "/"
         dirname = dirname.lower()
@@ -158,8 +153,26 @@ def build_filename(replay_id, match_id, append_string, race = None, base_path = 
 
     return fname
 
-def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
+def add_text(plot, text, match_id):
+    draw = ImageDraw.Draw(plot) 
+    font1 = ImageFont.truetype('LiberationMono-Regular.ttf', 22)
+    font2 = ImageFont.truetype('LiberationMono-Regular.ttf', 16)
 
+    text_line0 = "receiving team:" + text[6]
+    text_line1 = text[0] + "(" + text[2] + ") vs."
+    text_line2 = text[1] + "(" + text[3] + ")"
+    text_line3 = "match nr. " + str(match_id) + " score:" + str(text[4]) + " - " + str(text[5])
+
+    draw.text((5, 252), text[7], font=font1, fill='black')
+    draw.text((5, 280), text_line0, font=font1, fill='black')
+    draw.text((5, 307), text_line1, font=font1, fill='black')
+    draw.text((5, 335), text_line2, font=font1, fill='black')
+    draw.text((5, 366), text_line3, font=font2, fill='black')
+
+    return plot
+
+
+def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
     race = positions.iloc[0]['race']
     append_string = "_kickoff_lower_defense.png"
     fname = build_filename(replay_id, match_id, append_string, race)
@@ -177,21 +190,7 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
         plot = add_tacklezones(plot, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)   
         plot = add_players(plot, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)
         plot = pitch_select_lower_half(plot)
-
-        draw = ImageDraw.Draw(plot) 
-        font1 = ImageFont.truetype('LiberationMono-Regular.ttf', 22)
-        font2 = ImageFont.truetype('LiberationMono-Regular.ttf', 16)
-
-        text_line0 = "receiving team:" + text[6]
-        text_line1 = text[0] + "(" + text[2] + ") vs."
-        text_line2 = text[1] + "(" + text[3] + ")"
-        text_line3 = "match nr. " + str(match_id) + " score:" + str(text[4]) + " - " + str(text[5])
-
-        draw.text((5, 252), text[7], font=font1, fill='black')
-        draw.text((5, 280), text_line0, font=font1, fill='black')
-        draw.text((5, 307), text_line1, font=font1, fill='black')
-        draw.text((5, 335), text_line2, font=font1, fill='black')
-        draw.text((5, 366), text_line3, font=font2, fill='black')
+        plot = add_text(plot, text, match_id)
 
         plot.save(fname, "PNG")
         if verbose:
@@ -205,8 +204,7 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
     return plot
 
 
-def create_offense_plot(replay_id, match_id, positions, receiving_team, refresh = False):
-
+def create_offense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
     race = positions.iloc[0]['race']
     append_string = "_kickoff_lower_offense.png"
     fname = build_filename(replay_id, match_id, append_string, race)
@@ -216,6 +214,7 @@ def create_offense_plot(replay_id, match_id, positions, receiving_team, refresh 
         plot = plot.rotate(angle = 90, expand = True)
         plot = plot.resize((15 * 28, 26 * 28))
         
+        # only part where offense plot differs from defense plot?
         if receiving_team == 'teamAway':
             doFlip = False
         else:
@@ -223,11 +222,13 @@ def create_offense_plot(replay_id, match_id, positions, receiving_team, refresh 
 
         plot = add_tacklezones(plot, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)   
         plot = add_players(plot, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)
-
         plot = pitch_select_lower_half(plot)
+        plot = add_text(plot, text, match_id)
+
         plot.save(fname,"PNG")
     else:
-        print(".", end = '')
+        if verbose:
+            print(".", end = '')
         plot = Image.open(fname)
     return plot
 
@@ -301,12 +302,12 @@ def create_plot(match_id, refresh = False, verbose = False, plot_type = 'D'):
     # create the plots
     if plot_type == 'D':
         plot = create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
+    elif plot_type == 'O':
+        plot = create_offense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)        
     elif plot_type == 'V':
         plot = create_vertical_plot(replay_id, match_id, positions, receiving_team)
     elif plot_type == 'H':
         plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team)
-    elif plot_type == 'O':
-        plot = create_offense_plot(replay_id, match_id, positions, receiving_team, refresh)
     else:
         plot = print("unknown plot type")
     # replay_id, match_id, team_id_defensive, race_defensive, team_id_offensive, race_offensive
