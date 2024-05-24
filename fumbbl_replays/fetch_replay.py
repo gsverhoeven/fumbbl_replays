@@ -11,10 +11,13 @@ import json
 
 def fetch_replay(replay_id, dirname = "raw/replay_files/", verbose = False):
 
-    #print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON') 
+    if verbose:
+        print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON') 
     fname_string_gz = dirname + str(replay_id) + ".gz"        
     # check if file already exists, else scrape it
     try:
+        if verbose:
+            print('trying to open ', fname_string_gz)
         f = open(fname_string_gz, mode = "rb")
     except OSError as e:
         # scrape it 
