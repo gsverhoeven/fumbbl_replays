@@ -10,9 +10,9 @@ from .condense_setup_formations import condense_setup_formations
 from .replace_player_ids_with_shorthand import replace_player_ids_with_shorthand
 from .write_to_excel import write_to_excel
 
-def fumbbl2bbgn(replay_id):
+def fumbbl2bbgn(replay_id, verbose = False):
     # load replay
-    my_replay = fetch_replay(replay_id, dirname = "example_input/")
+    my_replay = fetch_replay(replay_id, dirname = "example_input/", verbose = verbose)
     
     ignoreList = pd.read_csv("resources/IgnoreModelChange.csv")
     # initial parse
