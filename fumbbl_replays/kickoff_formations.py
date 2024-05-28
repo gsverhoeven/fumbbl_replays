@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import string
 
 from PIL import Image, ImageDraw, ImageFont
 from urllib.request import urlopen
@@ -8,6 +9,21 @@ from .fetch_replay import fetch_replay
 from .fetch_match import fetch_match
 from .parse_replay import parse_replay
 from .extract_rosters_from_replay import extract_rosters_from_replay
+
+def move_piece(positions, home_away, short_name, new_pos):
+    coord_y = new_pos[0]
+    coord_x = int(new_pos[1:])
+    mask = (positions.short_name == short_name) & (positions.home_away == home_away)
+    if sum(mask) == 0:
+        print("piece not on board")
+        return positions
+    positions.loc[mask, 'PlayerCoordinateX'] = coord_x
+    positions.loc[mask, 'PlayerCoordinateY'] = string.ascii_lowercase.index(coord_y)
+    positions.loc[mask, 'CoordinateY'] = coord_y
+    positions.loc[mask, 'modelChangeValue'] = '[' + str(coord_x) + ',' + str(string.ascii_lowercase.index(coord_y) - 1) + ']'
+
+    return positions
+    
 
 def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
     for i in range(len(positions)):
@@ -254,7 +270,7 @@ def extract_coin_toss(df):
             pass
     return None
 
-def prep_data(match_id):
+def fetch_data(match_id):
     my_match = fetch_match(match_id)
     team1_score = my_match['team1']['score']
     team2_score = my_match['team2']['score']
@@ -305,9 +321,9 @@ def create_plot(match_id, replay_id, positions, receiving_team, text, refresh = 
     elif plot_type == 'O':
         plot = create_offense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)        
     elif plot_type == 'V':
-        plot = create_vertical_plot(replay_id, match_id, positions, receiving_team)
+        plot = create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh)
     elif plot_type == 'H':
-        plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team)
+        plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team, refresh)
     else:
         plot = print("unknown plot type")
     return plot
