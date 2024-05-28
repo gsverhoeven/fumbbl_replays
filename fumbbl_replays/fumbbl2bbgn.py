@@ -12,7 +12,7 @@ from .write_to_excel import write_to_excel
 
 def fumbbl2bbgn(replay_id, verbose = False):
     # load replay
-    my_replay = fetch_replay(replay_id, dirname = "example_input/", verbose = verbose)
+    my_replay = fetch_replay(replay_id, dirname = "raw/replay_files/", verbose = verbose)
     
     ignoreList = pd.read_csv("resources/IgnoreModelChange.csv")
     # initial parse
