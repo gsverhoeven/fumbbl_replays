@@ -261,6 +261,13 @@ def prep_data(match_id):
 
     replay_id = my_match['replayId']
     my_replay = fetch_replay(replay_id)
+
+    coach1 = my_replay['game']['teamHome']['coach']
+    coach2 = my_replay['game']['teamAway']['coach']
+    
+    race1 = my_replay['game']['teamHome']['race']
+    race2 = my_replay['game']['teamAway']['race']
+
     df_players = extract_rosters_from_replay(my_replay)
     
     # board state at kick-off
@@ -280,23 +287,13 @@ def prep_data(match_id):
     # determine who is receiving: the home or the away team
     receiving_team = determine_receiving_team_at_start(df)
     
-    team_id_defensive = df_players.query('home_away != @receiving_team')['teamId'].unique()[0]
     team_id_offensive = df_players.query('home_away == @receiving_team')['teamId'].unique()[0]
-    
-    race_defensive = df_players.query('teamId == @team_id_defensive')['race'].unique()[0]
-    race_offensive = df_players.query('teamId == @team_id_offensive')['race'].unique()[0]
 
     choosing_team = extract_coin_toss(df)
     if str(choosing_team) == str(team_id_offensive):
         toss_choice = "toss choice is play offense"
     else:
         toss_choice = "toss choice is play defense"
-
-    coach1 = my_replay['game']['teamHome']['coach']
-    coach2 = my_replay['game']['teamAway']['coach']
-    
-    race1 = my_replay['game']['teamHome']['race']
-    race2 = my_replay['game']['teamAway']['race']
 
     text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
