@@ -17,13 +17,26 @@ def move_piece(positions, home_away, short_name, new_pos):
     if sum(mask) == 0:
         print("piece not on board")
         return positions
-    positions.loc[mask, 'PlayerCoordinateX'] = coord_x
+    positions.loc[mask, 'PlayerCoordinateX'] = coord_x - 1
     positions.loc[mask, 'PlayerCoordinateY'] = string.ascii_lowercase.index(coord_y)
     positions.loc[mask, 'CoordinateY'] = coord_y
-    positions.loc[mask, 'modelChangeValue'] = '[' + str(coord_x) + ',' + str(string.ascii_lowercase.index(coord_y) - 1) + ']'
+    positions.loc[mask, 'modelChangeValue'] = '[' + str(coord_x - 1) + ',' + str(string.ascii_lowercase.index(coord_y) - 1) + ']'
 
     return positions
     
+def move_piecelist(positions, setup, home_away):
+    if setup[0] != 'setup':
+        print("not a setup list")
+        return(positions)
+    if len(setup[1]) > 11:
+        print("too many pieces")
+        return(positions)
+    for p in range(len(setup[1])):
+        move_code = setup[1][p].split()
+        piece = move_code[0][:-1]
+        new_pos = move_code[1]
+        move_piece(positions, home_away, piece, new_pos)
+    return positions
 
 def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
     for i in range(len(positions)):
@@ -174,16 +187,19 @@ def add_text(plot, text, match_id):
     font1 = ImageFont.truetype('LiberationMono-Regular.ttf', 22)
     font2 = ImageFont.truetype('LiberationMono-Regular.ttf', 16)
 
-    text_line0 = "receiving team:" + text[6]
-    text_line1 = text[0] + "(" + text[2] + ") vs."
-    text_line2 = text[1] + "(" + text[3] + ")"
-    text_line3 = "match nr. " + str(match_id) + " score:" + str(text[4]) + " - " + str(text[5])
+    if(len(text)) == 8:
+        text_line0 = "receiving team:" + text[6]
+        text_line1 = text[0] + "(" + text[2] + ") vs."
+        text_line2 = text[1] + "(" + text[3] + ")"
+        text_line3 = "match nr. " + str(match_id) + " score:" + str(text[4]) + " - " + str(text[5])
 
-    draw.text((5, 252), text[7], font=font1, fill='black')
-    draw.text((5, 280), text_line0, font=font1, fill='black')
-    draw.text((5, 307), text_line1, font=font1, fill='black')
-    draw.text((5, 335), text_line2, font=font1, fill='black')
-    draw.text((5, 366), text_line3, font=font2, fill='black')
+        draw.text((5, 252), text[7], font=font1, fill='black')
+        draw.text((5, 280), text_line0, font=font1, fill='black')
+        draw.text((5, 307), text_line1, font=font1, fill='black')
+        draw.text((5, 335), text_line2, font=font1, fill='black')
+        draw.text((5, 366), text_line3, font=font2, fill='black')
+    else:
+        return plot
 
     return plot
 
