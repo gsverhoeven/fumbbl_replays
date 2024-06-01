@@ -1,5 +1,6 @@
 import pandas as pd
 
+from .fetch_match import fetch_match
 from .fetch_replay import fetch_replay
 from .parse_replay import parse_replay
 from .add_header import add_header
@@ -10,7 +11,9 @@ from .condense_setup_formations import condense_setup_formations
 from .replace_player_ids_with_shorthand import replace_player_ids_with_shorthand
 from .write_to_excel import write_to_excel
 
-def fumbbl2bbgn(replay_id, verbose = False):
+def fumbbl2bbgn(match_id, verbose = False):
+    my_match = fetch_match(match_id)
+    replay_id = my_match['replayId']
     # load replay
     my_replay = fetch_replay(replay_id, dirname = "raw/replay_files/", verbose = verbose)
     
