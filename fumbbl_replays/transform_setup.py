@@ -3,31 +3,15 @@ from .parse_boardpos import parse_boardpos
 def transform_setup(gamelog, df_roster, setup_id = 1):
     res = gamelog.query("set_up_id == @setup_id")
 
-    res = res.sort_values('gameTime', ascending=False).drop_duplicates(['modelChangeKey']).sort_values('gameTime')
-
+    res = res.sort_values('gameTime', ascending=False).drop_duplicates(['modelChangeKey']).sort_values('PlayerCoordinateX')
+    res = res.query("PlayerCoordinateX >= 0 & PlayerCoordinateX < 26")
     #loop over X-axis
     # build up JSON
-    setup = ['setup']
-    for boardrow in range(12, -1, -1):
-        positions = []
-        tmp = res.query("PlayerCoordinateX == @boardrow")
-        for r in range(len(tmp)):
-            playerId = str(tmp.iloc[r]['modelChangeKey'])
-            boardpos = parse_boardpos(tmp.iloc[r])
-            positions.append(df_roster.query('playerId == @playerId')['short_name'].values[0] + ': ' + boardpos)
-        #print(positions)
-        if len(tmp) > 0:
-            setup.append(positions)
-    
-    for boardrow in range(13, 26, 1):
-        positions = []
-        tmp = res.query("PlayerCoordinateX == @boardrow")
-        for r in range(len(tmp)):
-            playerId = str(tmp.iloc[r]['modelChangeKey'])
-            boardpos = parse_boardpos(tmp.iloc[r])
-            positions.append(df_roster.query('playerId == @playerId')['short_name'].values[0] + ': ' + boardpos)
-        #print(positions)
-        if len(tmp) > 0:
-            setup.append(positions)
+    positions = []
+    for r in range(len(res)):
+        playerId = str(res.iloc[r]['modelChangeKey'])
+        boardpos = parse_boardpos(res.iloc[r])
+        positions.append(df_roster.query('playerId == @playerId')['short_name'].values[0] + ': ' + boardpos)
 
+    setup = ['setup', positions]
     return setup
