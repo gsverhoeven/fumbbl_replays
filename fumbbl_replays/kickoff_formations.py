@@ -19,6 +19,7 @@ def move_piece(positions, home_away, short_name, new_pos):
         return positions
     positions.loc[mask, 'PlayerCoordinateX'] = coord_x - 1
     positions.loc[mask, 'PlayerCoordinateY'] = string.ascii_lowercase.index(coord_y)
+    positions.loc[mask, 'CoordinateX'] = coord_x
     positions.loc[mask, 'CoordinateY'] = coord_y
     positions.loc[mask, 'modelChangeValue'] = '[' + str(coord_x - 1) + ',' + str(string.ascii_lowercase.index(coord_y) - 1) + ']'
 
@@ -311,7 +312,7 @@ def fetch_data(match_id):
     
     # select only players on the board at kick-off, i.e. not in reserve
     positions = positions.query('PlayerCoordinateX != [-1, 30]').copy()
-
+    positions['CoordinateX'] = positions['PlayerCoordinateX'] + 1
     # expect a setup with 22 players
     if len(positions) != 22:
         print("warning: expected 22 players")
