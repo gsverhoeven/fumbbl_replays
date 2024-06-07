@@ -6,4 +6,4 @@ from .fetch_match import fetch_match
 
 from .extract_rosters_from_replay import extract_rosters_from_replay
 
-from .kickoff_formations import create_plot, determine_receiving_team_at_start, sort_defensive_plots, fetch_data, move_piece, move_piecelist
+from .kickoff_formations import create_plot, determine_receiving_team_at_start, sort_defensive_plots, fetch_data, move_piece, move_piecelist, print_positions

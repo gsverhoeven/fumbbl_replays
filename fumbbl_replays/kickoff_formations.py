@@ -287,6 +287,20 @@ def extract_coin_toss(df):
             pass
     return None
 
+def print_positions(positions, home_away = 'both'):
+    res = (positions
+    #.query("home_away == 'teamAway'")
+    .assign(boardpos = lambda x: x.CoordinateY + x.CoordinateX.astype(str))
+    .sort_values(['CoordinateX', 'CoordinateY'])
+    .filter(['home_away', 'race', 'short_name', 'positionName', 'boardpos']) 
+    )
+    if home_away != 'both':
+        if home_away in ['teamHome', 'teamAway']:
+           res = res.query("home_away == @home_away")
+        else:
+            print("error, cannot select team")
+    return res
+
 def fetch_data(match_id):
     my_match = fetch_match(match_id)
     team1_score = my_match['team1']['score']
