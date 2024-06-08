@@ -345,7 +345,9 @@ def fetch_data(match_id):
     text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
 
-def create_plot(match_id, replay_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
+def create_plot(match_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
+    my_match = fetch_match(match_id)
+    replay_id = my_match['replayId']
     # create the plots
     if plot_type == 'D':
         plot = create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
@@ -371,3 +373,21 @@ def sort_defensive_plots(df_replays):
             os.makedirs(current_dirname + dirname)
         fname = str(df_replays.iloc[row]['replayId']) + "_" + str(df_replays.iloc[row]['matchId']) + "_kickoff_lower_defense.png"
         os.rename(current_dirname + fname, current_dirname + dirname + fname)
+
+def show_boardpos(rotation = 'H', icon_size = (28, 28)):
+    if rotation == 'H':
+        pitch = Image.open("resources/nice.jpg")
+        pitch = pitch.rotate(angle = 90, expand = True)
+        pitch = pitch.resize((15 * 28, 26 * 28))
+        pitch_w, pitch_h = pitch.size
+        icon_w, icon_h = icon_size
+
+        draw = ImageDraw.Draw(pitch)
+        font1 = ImageFont.truetype('LiberationSans-Regular.ttf', 12)
+        for i in range(15):
+            for j in range(26):
+                text1 = string.ascii_lowercase[i] + str(j+1)
+                draw.text((icon_w * i+7,icon_h * j+7), text = text1, font = font1, fill = 'black')
+    else:
+        pitch = 'not implemented yet'
+    return pitch
