@@ -375,19 +375,24 @@ def sort_defensive_plots(df_replays):
         os.rename(current_dirname + fname, current_dirname + dirname + fname)
 
 def show_boardpos(rotation = 'H', icon_size = (28, 28)):
-    if rotation == 'H':
-        pitch = Image.open("resources/nice.jpg")
+    pitch = Image.open("resources/nice.jpg")
+    icon_w, icon_h = icon_size
+    font1 = ImageFont.truetype('LiberationSans-Regular.ttf', 12)
+    if rotation == 'V':
         pitch = pitch.rotate(angle = 90, expand = True)
         pitch = pitch.resize((15 * 28, 26 * 28))
-        pitch_w, pitch_h = pitch.size
-        icon_w, icon_h = icon_size
-
         draw = ImageDraw.Draw(pitch)
-        font1 = ImageFont.truetype('LiberationSans-Regular.ttf', 12)
         for i in range(15):
             for j in range(26):
                 text1 = string.ascii_lowercase[i] + str(j+1)
                 draw.text((icon_w * i+7,icon_h * j+7), text = text1, font = font1, fill = 'black')
+    elif rotation == 'H':
+        pitch = pitch.resize((26 * 28, 15 * 28))
+        draw = ImageDraw.Draw(pitch)
+        for i in range(15):
+            for j in range(26):
+                text1 = string.ascii_lowercase[i] + str(j+1)
+                draw.text((icon_w * j+7,icon_h * i+7), text = text1, font = font1, fill = 'black')
     else:
-        pitch = 'not implemented yet'
+        pitch = "unknown rotation type"
     return pitch
