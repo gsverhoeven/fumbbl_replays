@@ -8,6 +8,7 @@ from urllib.request import urlopen
 from .fetch_replay import fetch_replay
 from .fetch_match import fetch_match
 from .parse_replay import parse_replay
+from .parse_boardpos import parse_boardpos
 from .extract_rosters_from_replay import extract_rosters_from_replay
 
 def move_piece(positions, home_away, short_name, new_pos):
@@ -25,7 +26,7 @@ def move_piece(positions, home_away, short_name, new_pos):
 
     return positions
     
-def move_piecelist(positions, setup, home_away):
+def put_position(positions, setup, home_away):
     if setup[0] != 'setup':
         print("not a setup list")
         return(positions)
@@ -38,6 +39,18 @@ def move_piecelist(positions, setup, home_away):
         new_pos = move_code[1]
         move_piece(positions, home_away, piece, new_pos)
     return positions
+
+def get_position(positions, home_away):
+    positions = positions.query("home_away == @home_away")
+    position = []
+    for r in range(len(positions)):
+        playerId = str(positions.iloc[r]['modelChangeKey'])
+        boardpos = parse_boardpos(positions.iloc[r])
+        position.append(positions.query('playerId == @playerId')['short_name'].values[0] + ': ' + boardpos)
+
+    setup = ['setup', position]
+    return print(setup)
+
 
 def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
     for i in range(len(positions)):
@@ -287,7 +300,7 @@ def extract_coin_toss(df):
             pass
     return None
 
-def print_positions(positions, home_away = 'both'):
+def print_position(positions, home_away = 'both'):
     res = (positions
     #.query("home_away == 'teamAway'")
     .assign(boardpos = lambda x: x.CoordinateY + x.CoordinateX.astype(str))
@@ -345,7 +358,7 @@ def fetch_data(match_id):
     text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
 
-def create_plot(match_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
+def write_plot(match_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
     my_match = fetch_match(match_id)
     replay_id = my_match['replayId']
     # create the plots
@@ -359,6 +372,23 @@ def create_plot(match_id, positions, receiving_team, text, refresh = False, verb
         plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team, refresh)
     else:
         plot = print("unknown plot type")
+    return plot
+
+def create_plot(positions, receiving_team, orientation ='H', tackle_zones = False):
+    plot = Image.open("resources/nice.jpg")
+    if orientation == 'H':
+        plot = plot.resize((26 * 28, 15 * 28))
+        if tackle_zones:
+            plot = add_tacklezones(plot, positions, receiving_team, flip = False, horizontal = True)   
+        plot = add_players(plot, positions, receiving_team, flip = False, horizontal = True)
+    elif orientation == 'V':
+        plot = plot.rotate(angle = 90, expand = True)
+        plot = plot.resize((15 * 28, 26 * 28))
+        if tackle_zones:
+            plot = add_tacklezones(plot, positions, receiving_team, flip = False)   
+        plot = add_players(plot, positions, receiving_team, flip = False)
+    else: 
+        plot = "unknown plot type"
     return plot
 
 def sort_defensive_plots(df_replays):
@@ -385,14 +415,14 @@ def show_boardpos(rotation = 'H', icon_size = (28, 28)):
         for i in range(15):
             for j in range(26):
                 text1 = string.ascii_lowercase[i] + str(j+1)
-                draw.text((icon_w * i+7,icon_h * j+7), text = text1, font = font1, fill = 'black')
+                draw.text((icon_w * (14 - i) + 6, icon_h * j + 7), text = text1, font = font1, fill = 'black')
     elif rotation == 'H':
         pitch = pitch.resize((26 * 28, 15 * 28))
         draw = ImageDraw.Draw(pitch)
         for i in range(15):
             for j in range(26):
                 text1 = string.ascii_lowercase[i] + str(j+1)
-                draw.text((icon_w * j+7,icon_h * i+7), text = text1, font = font1, fill = 'black')
+                draw.text((icon_w * j+6,icon_h * i+7), text = text1, font = font1, fill = 'black')
     else:
         pitch = "unknown rotation type"
     return pitch
