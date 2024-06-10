@@ -25,7 +25,8 @@ First we construct a dataFrame with the players of both teams, then we look up t
 
 # Working with FUMBBL icons
 
-Plot icon on the pitch. First grab icon. Then grab pitch. Plot icon on pitch.
+Plot icon on the pitch. 
+First grab icon. Then grab pitch. Plot icon on pitch.
 
 ```
 from urllib.request import urlopen
