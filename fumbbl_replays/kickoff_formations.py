@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import string
+import re
 
 from PIL import Image, ImageDraw, ImageFont
 from urllib.request import urlopen
@@ -67,14 +68,7 @@ def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal =
             y = y
             
         team = positions.iloc[i]['home_away']
-        icon_path = positions.iloc[i]['icon_path']
-
-        icon = Image.open(urlopen(icon_path)).convert("RGBA")
-        icon_w, icon_h = icon.size
-        # select first icon
-        icon = icon.crop((0,0,icon_w/4,icon_w/4))
-        icon = icon.resize((28, 28))
-        icon_w, icon_h = icon.size
+        icon_w, icon_h = (28, 28)
         if team == receiving_team:
             tacklezone_color = (255, 0, 0) # RGB
         else:
@@ -313,6 +307,37 @@ def print_position(positions, home_away = 'both'):
         else:
             print("error, cannot select team")
     return res
+
+def create_position(roster, setup):
+    boardpos = []
+    piece = []
+    position = []
+
+    if setup[0] != 'setup':
+        print("not a setup list")
+        return -1
+    if len(setup[1]) > 11:
+        print("too many pieces")
+        return -1
+    for p in range(len(setup[1])):
+        move_code = setup[1][p].split()
+        piece.append(move_code[0][:-1])
+        boardpos.append(move_code[1])
+        position.append(re.split(r'([\d]+)', move_code[0][:-1], 1)[0])
+
+    df_positions = pd.DataFrame( {"boardpos": boardpos,
+                    "piece": piece,
+                    "position": position
+                    })
+    
+    df_positions = pd.merge(df_positions, roster, left_on='position', right_on='shorthand', how="left")
+
+    df_positions['home_away'] = 'teamHome'
+    # PM add PlayerCoordinateY, PlayerCoordinateX, CoordinateX, CoordinateY ,  modelChangeValue
+    # use move piece to fill cols? no reuse code
+
+    return df_positions
+        
 
 def fetch_data(match_id):
     my_match = fetch_match(match_id)
