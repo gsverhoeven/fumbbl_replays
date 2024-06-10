@@ -68,13 +68,13 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
         shorthand.append(tmpPosition['iconLetter'])
         icon_path.append('https://fumbbl.com/i/' + tmpPosition['icon'])
 
-        df_positions = pd.DataFrame( {"positionId": positionId,
+        df_roster = pd.DataFrame( {"positionId": positionId,
                                 "positionName": positionName,
                                 "shorthand": shorthand,
                                 "icon_path": icon_path
                                 })
 
-    return df_positions
+    return df_roster
 
 
 def get_ruleset(ruleset_id, fname_string, verbose):
