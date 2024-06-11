@@ -92,6 +92,13 @@ def add_players(pitch, positions, receiving_team, flip = False, horizontal = Fal
         else:
             positions = positions.sort_values(by = 'PlayerCoordinateX', \
                                       ascending = False)
+    else:
+        if flip == False:
+            positions = positions.sort_values(by = 'PlayerCoordinateY', \
+                                      ascending = True)
+        else:
+            positions = positions.sort_values(by = 'PlayerCoordinateY', \
+                                      ascending = False)        
 
     for i in range(len(positions)):
         #print(positions.iloc[i]['playerName'])
@@ -335,7 +342,7 @@ def create_position(roster, setup, home_away = 'teamHome'):
 
 
     positions = pd.DataFrame( {"boardpos": boardpos,
-                    "piece": piece,
+                    "short_name": piece,
                     "position_code": position_code,
                     "CoordinateX": CoordinateX,
                     "CoordinateY": CoordinateY,
