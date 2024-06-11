@@ -1,4 +1,4 @@
-from .fumbbl2bbgn import fumbbl2bbgn
+from .fumbbl2ffgn import fumbbl2ffgn
 
 from .fetch_replay import fetch_replay
 from .parse_replay import parse_replay
