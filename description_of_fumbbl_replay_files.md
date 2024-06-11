@@ -83,6 +83,7 @@ FFB uses `fieldModelSetPlayerCoordinate` to position players on the field or on 
 ## The list of Player states
 
 At any time, each Player is in a particular PlayerState.
+PlayerState contains Player State encoded as x-bit integer, with State modifiers (i.e. a PRONE that is also ROOTED) as higher bits that can be set.
 
 ```
 export default class PlayerState {
