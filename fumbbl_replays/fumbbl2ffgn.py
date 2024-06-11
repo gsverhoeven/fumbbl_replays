@@ -11,7 +11,7 @@ from .condense_setup_formations import condense_setup_formations
 from .replace_player_ids_with_shorthand import replace_player_ids_with_shorthand
 from .write_to_excel import write_to_excel
 
-def fumbbl2bbgn(match_id, verbose = False):
+def fumbbl2ffgn(match_id, verbose = False):
     my_match = fetch_match(match_id)
     replay_id = my_match['replayId']
     # load replay
