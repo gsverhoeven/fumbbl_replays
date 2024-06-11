@@ -66,13 +66,14 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
         positionId.append(tmpPosition['id'])
         positionName.append(tmpPosition['title'])
         shorthand.append(tmpPosition['iconLetter'])
-        icon_path.append('https://fumbbl.com/i/' + tmpPosition['icon'])
+        icon_path.append('https://fumbbl.com/i/' + tmpPosition['icon'] + '.png')
 
         df_roster = pd.DataFrame( {"positionId": positionId,
                                 "positionName": positionName,
                                 "shorthand": shorthand,
                                 "icon_path": icon_path
                                 })
+    # PlayerCoordinateY, PlayerCoordinateX, home_away
 
     return df_roster
 
