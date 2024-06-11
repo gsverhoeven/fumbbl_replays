@@ -308,7 +308,7 @@ def print_position(positions, home_away = 'both'):
             print("error, cannot select team")
     return res
 
-def create_position(roster, setup):
+def create_position(roster, setup, home_away = 'teamHome'):
     boardpos = []
     piece = []
     position_code = []
@@ -344,7 +344,7 @@ def create_position(roster, setup):
     
     positions = pd.merge(positions, roster, left_on='position_code', right_on='shorthand', how="left")
 
-    positions['home_away'] = 'teamHome'
+    positions['home_away'] = home_away
     positions['PlayerCoordinateX'] = positions['CoordinateX'] - 1
     
     return positions
