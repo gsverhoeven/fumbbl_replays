@@ -73,7 +73,7 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
                                 "shorthand": shorthand,
                                 "icon_path": icon_path
                                 })
-    # PlayerCoordinateY, PlayerCoordinateX, home_away
+    df_roster['race'] = roster_name
 
     return df_roster
 
