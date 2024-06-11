@@ -1,0 +1,48 @@
+A:link {color: #993300}
+A:active {color: #FF0000}
+A:visited {color: #663300}
+
+BODY {background-color: #FFFFFF; color: #000000}
+
+CODE {font-family: Courier New,Arial,sans-serif; font-size: 10pt; background-color: #DDEEFF}
+CODE I {font-family: Courier New,Arial,sans-serif; font-size: 10pt; background-color: #DDEEFF}
+
+DIV.center {text-align: center}
+DIV.left {text-align: left}
+DIV.notice {background-color: #DDEEFF; text-align: center}
+DIV.sidebar {background-color: #99CCFF; border-width: 2px; border-color: #FFFFFF; float: right; width: 30%; margin-left: 10px}
+
+EM.new {font-size: 18pt; color: #009900}
+EM.red {color: #CC0000}
+
+H1 {font-family: Arial,Helvetica,sans-serif; text-align: center}
+H2, H3, H4, H5, H6 {font-family: Arial,Helvetica,sans-serif;}
+H2.center {font-family: Arial,Helvetica,sans-serif; text-align: center}
+
+P.center {text-align: center}
+P.code {font-family: Courier New,Arial,sans-serif; font-size: 10pt; margin-left: 1cm; background-color: #DDEEFF}
+P.highlight {background-color: #DDEEFF}
+P.sans {font-family: Arial,Helvetica,sans-serif; font-size: 10pt;}
+P.sm {font-family: Arial,Helvetica,sans-serif; font-size: 9pt;}
+
+PRE.code {font-family: Courier New,Arial,sans-serif; font-size: 10pt; margin-left: 1cm; background-color: #DDEEFF}
+
+SPAN.darkblue {color: #000099}
+SPAN.darkgreen {color: #003300}
+SPAN.darkorange {color: #996600}
+SPAN.darkred {color: #660000}
+SPAN.red {color: #CC0000}
+SPAN.sm {font-family: Arial,Helvetica,sans-serif; font-size: 9pt;}
+
+TABLE.cloud {border-color: #B0E0E6}
+
+TD.center {text-align: center}
+TD.highlight {background-color: #DDEEFF}
+TD.image {background-color: #DDDDDD; text-align: center; font-family: Arial,sans-serif; font-size: 9pt;}
+TD.review {font-family: Arial,sans-serif; font-size: 9pt;}
+TD.sans H2 {font-family: Arial,Helvetica,sans-serif;}
+TD.sans {font-family: Arial,Helvetica,sans-serif; font-size: 10pt;}
+TD.sm {font-family: Arial,sans-serif; font-size: 9pt;}
+TD.smr {font-family: Arial,sans-serif; font-size: 9pt; text-align: right;}
+
+TH.sm {font-family: Arial,sans-serif; font-size: 9pt;}

@@ -1,0 +1,241 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>DM's Blood Bowl: Rules</title>
+<link rel="stylesheet" type="text/css" href="DM's%20Blood%20Bowl%20Rules_files/style.css">
+<script language="JavaScript">
+<!--
+function coord(x,y)
+{
+	if ((x < 1) || (x > 26) || (y < 1) || (y > 15))
+		return "";
+	return String.fromCharCode(x+64) + y + " ";
+}
+
+function distance(x,y,a,b,c)
+{
+	return Math.abs(a*x + b*y + c) / Math.sqrt(a*a + b*b);
+}
+
+function doPass()
+{
+	var f = document.pass;
+	var thrower = f.thrower.value;
+	var catcher = f.catcher.value;
+	var x1 = thrower.charAt(0).toUpperCase().charCodeAt(0)-64;
+	var y1 = parseInt(thrower.substring(1));
+	var x2 = catcher.charAt(0).toUpperCase().charCodeAt(0)-64;
+	var y2 = parseInt(catcher.substring(1));
+	var x12 = x1-x2;
+	var y12 = y1-y2;
+	var xy = x2*y1 - x1*y2;
+
+	if ((x1 < 1) || (x1 > 26) || (y1 < 1) || (y1 > 15) || (x2 < 1) || (x2 > 26) || (y2 < 1) || (y2 > 15))
+	{
+		f.result.value = "INPUT ERROR";
+		return;
+	}
+	var out = "From " + coord(x1,y1) + "to " + coord(x2,y2) + ": Range is ";
+	var d = Math.sqrt(x12*x12 + y12*y12);
+	if (d < 3.99) out += "Quick Pass";
+	else if (d < 7.4) out += "Short Pass";
+	else if (d < 10.8) out += "Long Pass";
+	else if (d < 13.6) out += "Long Bomb";
+	else out += "Hail Mary";
+	
+	out += "\nInterception is possible from:\n";
+	if ((x12 == 0) && (Math.abs(y12) > 1))
+	{
+		for (var j = Math.min(y1,y2)+1; j < Math.max(y1,y2); j++)
+			for (var i = x1-1; i <= x1+1; i++)
+				out += coord(i,j);
+	}
+	else if ((y12 == 0) && (Math.abs(x12) > 1))
+	{
+		for (var i = Math.min(x1,x2)+1; i < Math.max(x1,x2); i++)
+			for (var j = y1-1; j <= y1+1; j++)
+				out += coord(i,j);
+	}
+	else if ((x12 == 0) || (y12 == 0))
+		out += "Nowhere!";
+	else
+	{
+		for (var i = Math.min(x1,x2); i <= Math.max(x1,x2); i++)
+			for (var j = Math.min(y1,y2); j <= Math.max(y1,y2); j++)
+			{
+				d = distance(i,j,-y12,x12,xy);
+				if ((d <= 1) && ((d > 0) || ((i != x1) && (i != x2) && (j != y1) && (j != y2))))
+					out += coord(i,j);
+			}
+	}
+	f.result.value = out;
+}
+// -->
+</script>
+</head>
+<body>
+<h1><img src="DM's%20Blood%20Bowl%20Rules_files/skull25.gif" alt="" width="25" height="25"><img src="DM's%20Blood%20Bowl%20Rules_files/pow25.gif" alt="" width="25" height="25"><img src="DM's%20Blood%20Bowl%20Rules_files/arrow25.gif" alt="" width="25" height="25">DM's Blood Bowl Rules<img src="DM's%20Blood%20Bowl%20Rules_files/arrow25.gif" alt="" width="25" height="25"><img src="DM's%20Blood%20Bowl%20Rules_files/kapow25.gif" alt="" width="25" height="25"><img src="DM's%20Blood%20Bowl%20Rules_files/skullpow25.gif" alt="" width="25" height="25"></h1>
+<hr>
+
+<table hspace="5" cellspacing="0" cellpadding="2" border="1" align="right">
+<tbody><tr><td align="center">
+<img src="DM's%20Blood%20Bowl%20Rules_files/field_sm.gif" alt="[Field]" width="408" height="240"><br>
+The Blood Bowl field, showing grid reference system.
+</td></tr>
+<tr><td align="center">
+<img src="DM's%20Blood%20Bowl%20Rules_files/passes.gif" alt="[Pass Ranges]" width="408" height="240"><br>
+Passing ranges. From square A1.
+</td></tr>
+<tr><td bgcolor="#99CCFF" align="center">
+<form name="pass">
+	<table cellspacing="0" cellpadding="5" border="0" bgcolor="#99CCFF">
+	<tbody><tr><td>Thrower: <input type="text" name="thrower" size="5"></td>
+		<td>Catcher: <input type="text" name="catcher" size="5"></td></tr>
+	<tr><td colspan="2" align="center"><input type="button" value="Calculate Pass Range and Interceptions" onclick="doPass()"></td></tr>
+	<tr><td colspan="2"><textarea name="result" rows="5" cols="40" wrap="virtual"></textarea></td></tr>
+	</tbody></table>
+</form>
+</td></tr>
+</tbody></table>
+
+Normally Blood Bowl is a face-to-face board game. This is an Internet competition, so there are a few necessary rule
+modifications.
+<p>
+</p><dl>
+<dt><b>Basic Rules</b>
+</dt><dd>The basic rules are as published in Games Workshop's
+<a href="http://www.games-workshop.com/Warhammerworld/bloodbowl/l_rule_bbok_a.htm">Blood Bowl Living Rulebook</a>,
+Version 1.2, available as a PDF file.
+</dd><dt><b>Squares</b>
+</dt><dd>The field squares are referenced using an alphanumeric grid system as illustrated.
+</dd><dt><b>Passing</b>
+</dt><dd>The passing range ruler can be slightly subjective, and is not used. Passing ranges are determined by how many squares
+away the thrower and catcher are, as shown in the figure. (These are accurately measured ranges with the range ruler.)
+</dd><dt><b>Interceptions</b>
+</dt><dd>Interceptions are determined by drawing a (mathematically open) line interval from the centre of the thrower's square
+to the centre of the catcher's square. A player on any square whose centre is less than or equal to one square-width away
+from a point on that line may attempt an interception. Use the JavaScript calculator to confirm.
+</dd><dt><b>Wizards</b>
+</dt><dd><b>No wizards!</b> Wizards are too wussy - use your fists! (Alchemists, Master Chefs, Necromancers, and Apothecaries
+are allowed.)
+</dd><dt><b>Penalty Shoot-outs</b>
+</dt><dd>If a game is tied after extra time, a penalty shoot-out occurs. Rolling best of 1 die is wimpy, so use the following
+rules:
+<p>
+The coach who wins a coin toss chooses who takes the first penalty. The coach not taking the penalty selects a
+player and places him prone on one of the two centre squares of the pitch. The coach taking the penalty selects a player
+and places him (standing up) on the other centre square. The standing player must then commit a foul on the prone player.
+Roll to see if the referee notices as normal. If the foul is noticed, the fouling team loses the match on penalties. If
+the referee misses the foul, the fouling coach selects another player and places him prone on the pitch in any square
+<i>adjacent to another player</i>. The other coach selects another player and places him standing next to the new prone
+player, and commits a foul on him.
+</p><p>
+Continue this process, adding new players and committing fouls, until the referee notices a foul and awards the game to
+the other team. On its turn, each team <i>must</i> take a foul action, which may include movement, and may not take any
+other action - prone players may not stand up. Fouls may be assisted if any players are in a position to do so. Injured
+players are removed from the field as normal. If a team cannot take a foul action at any point, it loses the match.
+</p><p>
+Note that it is not necessary for the teams to have taken equal numbers of fouls. The first one to be noticed loses, so
+choose carefully if you win the toss!
+</p></dd></dl>
+
+<h2>Game Logs</h2>
+Games are recorded in a <b>game log</b> text file. Everything that happens needs to be recorded. Each player's move
+is recorded on a separate line, using the notation as follows:
+<dl>
+<dt><b>Dice Rolls</b>
+</dt><dd>Where needed, show any dice rolls with the result in parentheses. Blocking dice results are coded:
+	<ul>
+	<li><img src="DM's%20Blood%20Bowl%20Rules_files/skull25.gif" alt="[skull]" width="25" height="25"> A (Attacker down)
+	</li><li><img src="DM's%20Blood%20Bowl%20Rules_files/skullpow25.gif" alt="[skullpow]" width="25" height="25"> B (Both down)
+	</li><li><img src="DM's%20Blood%20Bowl%20Rules_files/arrow25.gif" alt="[arrow]" width="25" height="25"> P (Push back)
+	</li><li><img src="DM's%20Blood%20Bowl%20Rules_files/kapow25.gif" alt="[kapow!]" width="25" height="25"> !
+	</li><li><img src="DM's%20Blood%20Bowl%20Rules_files/pow25.gif" alt="[pow]" width="25" height="25"> D (Defender down)
+	</li></ul>
+</dd><dt><b>Moves</b>
+</dt><dd>Indicate the starting square of the player, then each square moved into, separated by spaces. If a Dodge roll is
+needed to move to a given square, indicate with a <code>z</code> followed by the number of tackle zones being Dodged
+<i>into</i> (i.e. the penalty to the Dodge roll) and the die roll. Going For It is indicated with <code>+</code> and
+the die roll.<br>
+e.g. <code>F8 E9 D10z1(5) C11z0(3) C12 C13+(2)</code><br>
+Player at F8 moves to E9, then to D10 dodging into one zone and rolling a 5, then to C11 dodging into clear space and
+rolling 3, then to C12, then pushes it one square to C13 rolling a 2.
+</dd><dt><b>Blocks</b>
+</dt><dd>Record the square of the blocking player, followed by <code>#</code> then the square of the player being blocked.
+Attacking assists are each noted with an <code>a</code> followed by the square of the assisting player, then defensive
+assists are similarly shown with a <code>d</code>. Then show the results of the blocking dice; if multiple dice are rolled,
+show the chosen result first. If a push back occurs, indicate the square pushed to after the blocking dice results. If
+the push back is followed up by the blocker, add the code <code>f</code>.<br>
+If an armour value roll is needed, leave a space and then <code>v</code> and the roll. If the player is injured, record
+<code>i</code> and the injury roll. If the player suffers a casualty, record <code>c</code> and the casualty roll.<br>
+e.g. <code>F8#G8 aF7aF9 (DP)H9f v(9)i(10)c(6)</code><br>
+Player at F8 blocks the player at G8, with assists from F7 and F9, blocking dice come up "Defender down" and "Push back",
+with the first result chosen; the defender is pushed back to H9 and knocked down, with the attacker following up (to G8).
+The attacker rolls a 9, which beats the defender's armour; the injury roll is 10, and the casualty roll is 6! The
+defender is dead!
+</dd><dt><b>Blitzes</b>
+</dt><dd>Blitzes use a combination of the notations for moving and blocking. Since the square the blitzer is in is known
+at each point, the initial square in the block notation is omitted.<br>
+e.g. <code>F8 E9 D10z1(5) #C11 dC10 (!)C12f v(5) B11+(3)z0(4)</code><br>
+Player at F8 moves to E9, then to D10 dodging into one zone and rolling a 5, then blitzes the defender at C11, who has
+a defensive assist from C10. The blocking die result is "!" and the defender is pushed back to C12, with the blitzer following
+up (to C11). The armour roll is a 5, not beating the defender's armour. The blitzer Goes For It, rolling a 3, moving to B11,
+dodging (out of the zone of C10) into clear space, rolling a 4 for the dodge.
+</dd><dt><b>Passes</b>
+</dt><dd>At the end of a player's move, indicate a pass with a space followed by a pass code depending on range: <code>qp</code>
+for quick pass, <code>sp</code> for short pass, <code>lp</code> for long pass, <code>lb</code> for long bomb - and the
+target square. Indicate any tackle zone penalty with a <code>z</code> and the number. If there is an interception attempt,
+show <code>%</code> following by the square of the intercepting player, any tackle zone penalty on the intercept, and the
+interception die roll. Assuming no successful interception show the passing die result. Leave a space. If the pass scatters,
+show the three scatter dice rolls in sequence, followed by the square the ball actually lands in. If someone is in the landing
+aquare, show any tackle zone penalty with a <code>z</code> and the number, then the catching die roll. If the catch fails,
+show further scatter and catching attempts as necessary.<br>
+e.g. <code>C5 D5 E5 spK8%H7(1)(5) z1(2) (4)L9</code><br>
+Player at C5 moves to D5, then E5, then throws a short pass to K8. A player at H7 attempts an intercept, but rolls a 1,
+failing. The passing player rolls a 5, an accurate pass. Player at K8 is in one tackle zone, and rolls a 2, dropping the
+pass. It scatters once (roll of 4) landing in L9.
+</dd><dt><b>Hand-offs</b>
+</dt><dd>Use an <code>h</code> and the square of the player handed the ball. Record the "catching" of the ball as for passes.
+</dd><dt><b>Rerolls</b>
+</dt><dd>Indicate any player rerolls with an <code>r</code> and the new die rolls in the same set of parentheses. Team rerolls
+use a <code>t</code>.
+</dd><dt><b>Turnovers</b>
+</dt><dd>Indicate a turnover with a <code>*</code>.
+</dd><dt><b>Other</b>
+</dt><dd>Other unusual circumstances should be noted with a brief freeform text comment enclosed in <code>{braces}</code>.
+</dd></dl>
+
+<h3>Code Reference</h3>
+<ul>
+<li><b>{</b> - Begin comment.
+</li><li><b>}</b> - End comment.
+</li><li><b>#</b> - Block.
+</li><li><b>%</b> - Intercept attempt.
+</li><li><b>*</b> - Turnover.
+</li><li><b>+</b> - Going For It.
+</li><li><b>!</b> - ! blocking die result.
+</li><li><b>A</b> - Attacker down blocking die result.
+</li><li><b>B</b> - Both down blocking die result.
+</li><li><b>D</b> - Defender down blocking die result.
+</li><li><b>P</b> - Push back blocking die result.
+</li><li><b>a</b> - Attacking assists.
+</li><li><b>c</b> - Casualty roll.
+</li><li><b>d</b> - Defensive assists.
+</li><li><b>f</b> - Follow-up move after a push back.
+</li><li><b>h</b> - Hand-off.
+</li><li><b>i</b> - Injury roll.
+</li><li><b>lb</b> - Long bomb.
+</li><li><b>lp</b> - Long pass.
+</li><li><b>qp</b> - Quick pass.
+</li><li><b>r</b> - Player reroll.
+</li><li><b>sp</b> - Short pass.
+</li><li><b>t</b> - Team reroll.
+</li><li><b>v</b> - Roll against armour value.
+</li><li><b>z</b> - Tackle zone penalty, for dodging, throwing, catching, intercepting, picking up the ball.
+</li></ul>
+
+<hr>
+<a href="https://www.dangermouse.net/">Home</a> | <a href="https://www.dangermouse.net/games/">DM's Games Page</a> | <a href="https://www.dangermouse.net/games/bloodbowl/">DM's Blood Bowl</a><br>
+<!--#include virtual="/footer.html" -->
+
+
+</body></html>
