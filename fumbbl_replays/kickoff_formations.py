@@ -311,7 +311,10 @@ def print_position(positions, home_away = 'both'):
 def create_position(roster, setup):
     boardpos = []
     piece = []
-    position = []
+    position_code = []
+    CoordinateX = []
+    CoordinateY = []
+    PlayerCoordinateY = []
 
     if setup[0] != 'setup':
         print("not a setup list")
@@ -320,23 +323,31 @@ def create_position(roster, setup):
         print("too many pieces")
         return -1
     for p in range(len(setup[1])):
-        move_code = setup[1][p].split()
+        move_code = setup[1][p].split() # split on :
         piece.append(move_code[0][:-1])
-        boardpos.append(move_code[1])
-        position.append(re.split(r'([\d]+)', move_code[0][:-1], 1)[0])
+        new_pos = move_code[1]
+        boardpos.append(new_pos)
+        CoordinateX.append(int(new_pos[1:]))
+        CoordinateY.append(new_pos[0])
+        PlayerCoordinateY.append(string.ascii_lowercase.index(new_pos[0]))
+        # player position code
+        position_code.append(re.split(r'([\d]+)', move_code[0][:-1], 1)[0])
 
-    df_positions = pd.DataFrame( {"boardpos": boardpos,
+
+    positions = pd.DataFrame( {"boardpos": boardpos,
                     "piece": piece,
-                    "position": position
+                    "position_code": position_code,
+                    "CoordinateX": CoordinateX,
+                    "CoordinateY": CoordinateY,
+                    "PlayerCoordinateY": PlayerCoordinateY
                     })
     
-    df_positions = pd.merge(df_positions, roster, left_on='position', right_on='shorthand', how="left")
+    positions = pd.merge(positions, roster, left_on='position_code', right_on='shorthand', how="left")
 
-    df_positions['home_away'] = 'teamHome'
-    # PM add PlayerCoordinateY, PlayerCoordinateX, CoordinateX, CoordinateY ,  modelChangeValue
-    # use move piece to fill cols? no reuse code
-
-    return df_positions
+    positions['home_away'] = 'teamHome'
+    positions['PlayerCoordinateX'] = positions['CoordinateX'] - 1
+    
+    return positions
         
 
 def fetch_data(match_id):
