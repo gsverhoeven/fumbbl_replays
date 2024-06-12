@@ -417,7 +417,7 @@ def write_plot(match_id, positions, receiving_team, text, refresh = False, verbo
         plot = print("unknown plot type")
     return plot
 
-def create_plot(positions, receiving_team, orientation ='H', tackle_zones = False):
+def create_plot(positions, receiving_team, orientation ='H', crop = "none", tackle_zones = False):
     plot = Image.open("resources/nice.jpg")
     if orientation == 'H':
         plot = plot.resize((26 * 28, 15 * 28))
@@ -430,6 +430,10 @@ def create_plot(positions, receiving_team, orientation ='H', tackle_zones = Fals
         if tackle_zones:
             plot = add_tacklezones(plot, positions, receiving_team, flip = False)   
         plot = add_players(plot, positions, receiving_team, flip = False)
+        if crop == 'upper':
+            plot = pitch_select_upper_half(plot)
+        if crop == 'lower':
+            plot = pitch_select_lower_half(plot)            
     else: 
         plot = "unknown plot type"
     return plot
