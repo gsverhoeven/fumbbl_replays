@@ -53,7 +53,7 @@ def get_position(positions, home_away):
     return print(setup)
 
 
-def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal = False):
+def add_tacklezones(pitch, positions, red_team, flip = False, horizontal = False):
     for i in range(len(positions)):
         if horizontal == False:
             x = 14 - positions.iloc[i]['PlayerCoordinateY']
@@ -69,10 +69,10 @@ def add_tacklezones(pitch, positions, receiving_team, flip = False, horizontal =
             
         team = positions.iloc[i]['home_away']
         icon_w, icon_h = (28, 28)
-        if team == receiving_team:
+        if team == red_team: # red
             tacklezone_color = (255, 0, 0) # RGB
         else:
-            tacklezone_color = (0, 0, 255)
+            tacklezone_color = (0, 0, 255) # blue
         box = (icon_w * x - 28, icon_h * y - 28, icon_w * x + 2*28, icon_h * y + 2*28)
         mask = Image.new("L", (3*28, 3*28), 0).convert("RGBA")
         mask.putalpha(50)
@@ -358,6 +358,7 @@ def create_position(roster, setup, home_away = 'teamHome'):
         
 
 def fetch_data(match_id):
+    pd.options.mode.chained_assignment = None
     my_match = fetch_match(match_id)
     team1_score = my_match['team1']['score']
     team2_score = my_match['team2']['score']
@@ -417,19 +418,18 @@ def write_plot(match_id, positions, receiving_team, text, refresh = False, verbo
         plot = print("unknown plot type")
     return plot
 
-def create_plot(positions, receiving_team, orientation ='H', crop = "none", tackle_zones = False):
+def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", tackle_zones = False):
     plot = Image.open("resources/nice.jpg")
+    plot = plot.resize((26 * 28, 15 * 28))
     if orientation == 'H':
-        plot = plot.resize((26 * 28, 15 * 28))
         if tackle_zones:
-            plot = add_tacklezones(plot, positions, receiving_team, flip = False, horizontal = True)   
-        plot = add_players(plot, positions, receiving_team, flip = False, horizontal = True)
+            plot = add_tacklezones(plot, positions, red_team, flip = False, horizontal = True)   
+        plot = add_players(plot, positions, red_team, flip = False, horizontal = True)
     elif orientation == 'V':
         plot = plot.rotate(angle = 90, expand = True)
-        plot = plot.resize((15 * 28, 26 * 28))
         if tackle_zones:
-            plot = add_tacklezones(plot, positions, receiving_team, flip = False)   
-        plot = add_players(plot, positions, receiving_team, flip = False)
+            plot = add_tacklezones(plot, positions, red_team, flip = False)   
+        plot = add_players(plot, positions, red_team, flip = False)
         if crop == 'upper':
             plot = pitch_select_upper_half(plot)
         if crop == 'lower':
