@@ -363,8 +363,7 @@ def fetch_data(match_id):
     team1_score = my_match['team1']['score']
     team2_score = my_match['team2']['score']
 
-    replay_id = my_match['replayId']
-    my_replay = fetch_replay(replay_id)
+    my_replay = fetch_replay(match_id)
 
     coach1 = my_replay['game']['teamHome']['coach']
     coach2 = my_replay['game']['teamAway']['coach']
