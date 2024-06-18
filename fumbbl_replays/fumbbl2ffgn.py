@@ -12,10 +12,9 @@ from .replace_player_ids_with_shorthand import replace_player_ids_with_shorthand
 from .write_to_excel import write_to_excel
 
 def fumbbl2ffgn(match_id, verbose = False):
-    my_match = fetch_match(match_id)
-    replay_id = my_match['replayId']
+    pd.options.mode.chained_assignment = None 
     # load replay
-    my_replay = fetch_replay(replay_id, dirname = "raw/replay_files/", verbose = verbose)
+    my_replay = fetch_replay(match_id, dirname = "raw/replay_files/", verbose = verbose)
     
     ignoreList = pd.read_csv("resources/IgnoreModelChange.csv")
     # initial parse
