@@ -5,6 +5,7 @@ from .parse_replay import parse_replay
 from .fetch_match import fetch_match
 
 from .extract_rosters_from_replay import extract_rosters_from_replay
+from .extract_players_from_replay import extract_players_from_replay
 from .fetch_roster import fetch_roster
 
 from .functions import create_plot, write_plot, determine_receiving_team_at_start, \

@@ -54,29 +54,36 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
                 print("o",  end = '')
         roster = read_json_file(fname_string)
 
+    tmpRosters = roster['positions']
+    # convert to pandas df
+    df_roster = json2pd_roster(tmpRosters, roster_name)
+
+    return df_roster
+
+
+def json2pd_roster(json_roster, roster_name):
     positionId = []
     positionName = []
+    skillArray = []
     shorthand = []
     icon_path = []
-
-    tmpRosters = roster['positions']
-
-    for positionIndex in range(len(tmpRosters)):
-        tmpPosition = tmpRosters[positionIndex]
+    
+    for positionIndex in range(len(json_roster)):
+        tmpPosition = json_roster[positionIndex]
         positionId.append(tmpPosition['id'])
         positionName.append(tmpPosition['title'])
+        skillArray.append(tmpPosition['skills'])
         shorthand.append(tmpPosition['iconLetter'])
         icon_path.append('https://fumbbl.com/i/' + tmpPosition['icon'] + '.png')
 
         df_roster = pd.DataFrame( {"positionId": positionId,
                                 "positionName": positionName,
+                                "skillArray": skillArray,
                                 "shorthand": shorthand,
                                 "icon_path": icon_path
                                 })
     df_roster['race'] = roster_name
-
     return df_roster
-
 
 def get_ruleset(ruleset_id, fname_string, verbose):
     api_string = "https://fumbbl.com/api/ruleset/get/" + str(ruleset_id)
