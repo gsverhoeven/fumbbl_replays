@@ -35,7 +35,7 @@ def json2pd_replay_players(json_players, home_away_str):
         home_away.append(home_away_str)
         teamId.append(tmp_team_id)
         race.append(tmp_race)
-        recoveringInjury.append(tmpPlayers[playerIndex]['recoveringInjury'])
+        recoveringInjury.append(str(tmpPlayers[playerIndex]['recoveringInjury']))
 
     df_players = pd.DataFrame( {"teamId": teamId,
                 "playerId": playerId, 
