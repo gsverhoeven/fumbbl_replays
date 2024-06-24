@@ -28,6 +28,7 @@ def json2pd_replay_roster(json_roster):
     shorthand = []
     icon_path = []
     cost = []
+    skillArrayRoster = []
 
     for positionIndex in range(len(json_roster['positionArray'])):
         tmpPosition = json_roster['positionArray'][positionIndex]
@@ -36,11 +37,16 @@ def json2pd_replay_roster(json_roster):
         shorthand.append(tmpPosition['shorthand'])
         icon_path.append(json_roster['baseIconPath'] + tmpPosition['urlIconSet'])
         cost.append(tmpPosition['cost'])
+        if "skillArray" in tmpPosition.keys():
+            skillArrayRoster.append(str(tmpPosition['skillArray']))
+        else:
+            skillArrayRoster.append(str(['None']))
+            
 
     df_positions = pd.DataFrame( {"positionId": positionId,
                         "positionName": positionName,
                         "shorthand": shorthand,
                         "icon_path": icon_path,
-                        "cost": cost
-                        })
+                        "cost": cost,
+                        "skillArrayRoster": skillArrayRoster})
     return df_positions
