@@ -20,6 +20,9 @@ def extract_rosters_from_replay(my_replay):
     df_roster['positionNr'] = df_roster.groupby(['home_away','positionName']).cumcount() + 1
     # create shorthand id
     df_roster['short_name'] = df_roster['shorthand'] + df_roster['positionNr'].astype(str)
+
+    df_roster = add_learned_skill_col(df_roster)
+
     return df_roster
 
 def json2pd_replay_roster(json_roster):
@@ -50,3 +53,23 @@ def json2pd_replay_roster(json_roster):
                         "cost": cost,
                         "skillArrayRoster": skillArrayRoster})
     return df_positions
+
+def add_learned_skill_col(df_roster):
+    df_roster = df_roster.copy()
+    learned_skill_col = []
+    base_skill_col = []
+    for r in range(len(df_roster)):
+        learned_skills = []
+        base_skills = []
+        skill_list = df_roster.iloc[r]['skillArray']
+        base_skill_List = df_roster.iloc[r]['skillArrayRoster']
+        for s in skill_list:
+            if s not in base_skill_List:
+                learned_skills.append(s)
+            else:
+                base_skills.append(s)
+        learned_skill_col.append(learned_skills)
+        base_skill_col.append(base_skills)
+    df_roster['learned_skills'] = learned_skill_col
+    df_roster['skillArrayRoster'] = base_skill_col
+    return df_roster
