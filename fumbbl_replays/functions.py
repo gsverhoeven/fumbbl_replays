@@ -451,7 +451,7 @@ def sort_defensive_plots(df_replays):
         fname = str(df_replays.iloc[row]['replayId']) + "_" + str(df_replays.iloc[row]['matchId']) + "_kickoff_lower_defense.png"
         os.rename(current_dirname + fname, current_dirname + dirname + fname)
 
-def show_boardpos(rotation = 'H', icon_size = (28, 28)):
+def show_boardpos(rotation = 'H', icon_size = (28, 28), crop = 'none'):
     pitch = Image.open("resources/nice.jpg")
     icon_w, icon_h = icon_size
     font1 = ImageFont.truetype('LiberationSans-Regular.ttf', 12)
@@ -463,6 +463,10 @@ def show_boardpos(rotation = 'H', icon_size = (28, 28)):
             for j in range(26):
                 text1 = string.ascii_lowercase[i] + str(j+1)
                 draw.text((icon_w * (14 - i) + 6, icon_h * j + 7), text = text1, font = font1, fill = 'black')
+        if crop == 'upper':
+            pitch = pitch_select_upper_half(pitch)
+        if crop == 'lower':
+            pitch = pitch_select_lower_half(pitch)  
     elif rotation == 'H':
         pitch = pitch.resize((26 * 28, 15 * 28))
         draw = ImageDraw.Draw(pitch)
