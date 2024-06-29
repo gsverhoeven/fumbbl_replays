@@ -1,7 +1,7 @@
 import pandas as pd
 from .extract_players_from_replay import extract_players_from_replay
 
-def extract_rosters_from_replay(my_replay):
+def extract_rosters_from_replay(my_replay, cl_file_location = 'resources/230218 bb_skill_colors.csv'):
 
     json_roster_home = my_replay['game']['teamHome']['roster']
     df_positions_home = json2pd_replay_roster(json_roster_home)
@@ -22,6 +22,7 @@ def extract_rosters_from_replay(my_replay):
     df_roster['short_name'] = df_roster['shorthand'] + df_roster['positionNr'].astype(str)
 
     df_roster = add_learned_skill_col(df_roster)
+    df_roster = add_skill_colors_col(df_roster, cl_file_location)
 
     return df_roster
 
@@ -73,3 +74,26 @@ def add_learned_skill_col(df_roster):
     df_roster['learned_skills'] = learned_skill_col
     df_roster['skillArrayRoster'] = base_skill_col
     return df_roster
+
+def add_skill_colors_col(obj, cl_file_location):
+    cl_skill = get_skill_list(cl_file_location)
+    skill_colors = []
+    for r in range(len(obj)):
+        color_list = []
+        skill_array = obj.iloc[r]['learned_skills']
+        for skill in skill_array:
+            if skill in cl_skill['skill_name'].values:
+                i = cl_skill.query('skill_name == @skill').index[0]
+                color_list.append(cl_skill.loc[i, 'Pcolor'])
+            else:
+                color_list.append('none')
+        skill_colors.append(color_list)
+    obj['skill_colors'] = skill_colors
+    return obj
+
+def get_skill_list(file_location):
+    skill_list = pd.read_csv(file_location, sep = ';', dtype='str', keep_default_na=False)
+    skill_list['n'] = skill_list['n'].astype(int)
+    #skill_list = skill_list[1:]
+    skill_list = skill_list.sort_values("n", ascending = False)
+    return skill_list
