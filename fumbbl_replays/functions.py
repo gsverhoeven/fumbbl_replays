@@ -79,12 +79,12 @@ def add_tacklezones(pitch, positions, red_team, flip = False, horizontal = False
         pitch.paste(tacklezone_color, box, mask)
     return pitch
 
-def add_players(pitch, positions, receiving_team, flip = False, horizontal = False):
+def add_players(pitch, positions, red_team, flip = False, horizontal = False):
     square_h = 28
     square_w = 28
 
     if horizontal == False:
-        # sort the positions for drawing the lowest row on the board first
+        # sort the players for drawing the lowest row on the board first (icons slightly overlap)
         # horizontal board, X from left to right is correct plotting order if we rotate CCW afterwards
         if flip == False:
             positions = positions.sort_values(by = 'PlayerCoordinateX', \
@@ -120,7 +120,7 @@ def add_players(pitch, positions, receiving_team, flip = False, horizontal = Fal
         icon = Image.open(urlopen(icon_path)).convert("RGBA")
         icon_w, icon_h = icon.size
 
-        if team == receiving_team:
+        if team == red_team:
             # select first icon
             icon = icon.crop((0,0,icon_w/4,icon_w/4))
         else:
@@ -133,6 +133,30 @@ def add_players(pitch, positions, receiving_team, flip = False, horizontal = Fal
         pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
                                       square_h * y - shift_h), \
                                         mask = icon)
+    return pitch
+
+def add_skill_bands(pitch, positions, flip = False, horizontal = True):
+    for i in range(len(positions)):
+        if horizontal == False:
+            x = 14 - positions.iloc[i]['PlayerCoordinateY']
+            y = positions.iloc[i]['PlayerCoordinateX']
+        else:
+            x = positions.iloc[i]['PlayerCoordinateX']
+            y = positions.iloc[i]['PlayerCoordinateY']
+        
+        if flip == True:
+            y = 25 - y
+        else:
+            y = y
+            
+        icon_w, icon_h = (28, 28)
+        skill_colors = positions.iloc[i]['skill_colors']
+        if len(skill_colors) > 0:
+            #print(skill_colors)
+            box = (icon_w * x, icon_h * y + 25, icon_w * x + 28, icon_h * y + 28)
+            mask = Image.new("L", (28, 3), 0).convert("RGBA")
+            #mask.putalpha(50)
+            pitch.paste(skill_colors[0], box, mask)    
     return pitch
 
 def pitch_select_lower_half(pitch):
@@ -425,6 +449,7 @@ def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none
         if tackle_zones:
             plot = add_tacklezones(plot, positions, red_team, flip = False, horizontal = True)   
         plot = add_players(plot, positions, red_team, flip = False, horizontal = True)
+        plot = add_skill_bands(plot, positions, flip = False, horizontal = True)
     elif orientation == 'V':
         plot = plot.rotate(angle = 90, expand = True)
         if tackle_zones:
