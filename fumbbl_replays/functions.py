@@ -152,11 +152,11 @@ def add_skill_bands(pitch, positions, flip = False, horizontal = True):
         icon_w, icon_h = (28, 28)
         skill_colors = positions.iloc[i]['skill_colors']
         if len(skill_colors) > 0:
-            #print(skill_colors)
             box = (icon_w * x, icon_h * y + 25, icon_w * x + 28, icon_h * y + 28)
             mask = Image.new("L", (28, 3), 0).convert("RGBA")
-            #mask.putalpha(50)
-            pitch.paste(skill_colors[0], box, mask)    
+            pitch.paste(skill_colors[0], box, mask)
+        if len(skill_colors) > 1:
+            print("skill stacking not supported yet")    
     return pitch
 
 def pitch_select_lower_half(pitch):
@@ -244,6 +244,7 @@ def add_text(plot, text, match_id):
 
 
 def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
+    positions = positions.query('home_away != @receiving_team')
     race = positions.iloc[0]['race']
     append_string = "_kickoff_lower_defense.png"
     fname = build_filename(replay_id, match_id, append_string, race)
@@ -258,8 +259,9 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
         else:
             doFlip = False
 
-        plot = add_tacklezones(plot, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)   
-        plot = add_players(plot, positions.query('home_away != @receiving_team'), receiving_team, flip = doFlip)
+        plot = add_tacklezones(plot, positions, receiving_team, flip = doFlip)   
+        plot = add_players(plot, positions, receiving_team, flip = doFlip)
+        plot = add_skill_bands(plot, positions, flip = doFlip, horizontal = False)
         plot = pitch_select_lower_half(plot)
         plot = add_text(plot, text, match_id)
 
@@ -442,14 +444,15 @@ def write_plot(match_id, positions, receiving_team, text, refresh = False, verbo
         plot = print("unknown plot type")
     return plot
 
-def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", tackle_zones = False):
+def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False):
     plot = Image.open("resources/nice.jpg")
     plot = plot.resize((26 * 28, 15 * 28))
     if orientation == 'H':
         if tackle_zones:
             plot = add_tacklezones(plot, positions, red_team, flip = False, horizontal = True)   
         plot = add_players(plot, positions, red_team, flip = False, horizontal = True)
-        plot = add_skill_bands(plot, positions, flip = False, horizontal = True)
+        if skill_bands == True:
+            plot = add_skill_bands(plot, positions, flip = False, horizontal = True)
     elif orientation == 'V':
         plot = plot.rotate(angle = 90, expand = True)
         if tackle_zones:
