@@ -94,6 +94,25 @@ def add_skill_colors_col(obj, cl_file_location):
 def get_skill_list(file_location):
     skill_list = pd.read_csv(file_location, sep = ';', dtype='str', keep_default_na=False)
     skill_list['n'] = skill_list['n'].astype(int)
-    #skill_list = skill_list[1:]
     skill_list = skill_list.sort_values("n", ascending = False)
     return skill_list
+
+def add_skill_to_player(positions, short_name, skill_name, cl_file_location = 'resources/230218 bb_skill_colors.csv'):
+    if short_name in positions['short_name'].values:
+        cl_skill = get_skill_list(cl_file_location)
+        i = positions.query('short_name == @short_name').index[0]
+        print(i)
+        skill_list = positions.loc[i, 'learned_skills']
+        print(skill_list)
+        skillArrayRoster = positions.loc[i, 'skillArrayRoster']
+        color_list = positions.loc[i, 'skill_colors']
+        if skill_name not in skill_list + skillArrayRoster:
+            skill_list.append(skill_name)
+            if skill_name in cl_skill['skill_name'].values:
+                    i = cl_skill.query('skill_name == @skill_name').index[0]
+                    color_list.append(cl_skill.loc[i, 'Pcolor'])
+        else:
+            print("Skill already present")
+    else:
+        print("Player not found")
+    return positions
