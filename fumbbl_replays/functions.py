@@ -151,10 +151,11 @@ def add_skill_bands(pitch, positions, flip = False, horizontal = True):
             
         icon_w, icon_h = (28, 28)
         skill_colors = positions.iloc[i]['skill_colors']
-        if len(skill_colors) > 0:
-            box = (icon_w * x, icon_h * y + 25, icon_w * x + 28, icon_h * y + 28)
-            mask = Image.new("L", (28, 3), 0).convert("RGBA")
-            pitch.paste(skill_colors[0], box, mask)
+        if len(skill_colors) == 1:
+            if skill_colors[0] != 'none':
+                box = (icon_w * x, icon_h * y + 25, icon_w * x + 28, icon_h * y + 28)
+                mask = Image.new("L", (28, 3), 0).convert("RGBA")
+                pitch.paste(skill_colors[0], box, mask)
         if len(skill_colors) > 1:
             print("skill stacking not supported yet")    
     return pitch
@@ -379,6 +380,9 @@ def create_position(roster, setup, home_away = 'teamHome'):
 
     positions['home_away'] = home_away
     positions['PlayerCoordinateX'] = positions['CoordinateX'] - 1
+    positions['learned_skills'] = [[] for _ in range(len(positions))]
+    positions['skill_colors'] = [[] for _ in range(len(positions))]
+    positions.rename({'skillArray':'skillArrayRoster'}, axis=1, inplace = True)
     
     return positions
         
@@ -392,11 +396,11 @@ def fetch_data(match_id):
     replay_id = my_match['replayId']
     my_replay = fetch_replay(match_id)
 
-    coach1 = my_replay['game']['teamHome']['coach']
-    coach2 = my_replay['game']['teamAway']['coach']
+    coachHome = my_replay['game']['teamHome']['coach']
+    coachAway = my_replay['game']['teamAway']['coach']
     
-    race1 = my_replay['game']['teamHome']['race']
-    race2 = my_replay['game']['teamAway']['race']
+    raceHome = my_replay['game']['teamHome']['race']
+    raceAway = my_replay['game']['teamAway']['race']
 
     df_players = extract_rosters_from_replay(my_replay)
     
@@ -416,6 +420,13 @@ def fetch_data(match_id):
 
     # determine who is receiving: the home or the away team
     receiving_team = determine_receiving_team_at_start(df)
+
+    if receiving_team == "teamHome":
+        raceOffense = raceHome
+        raceDefense = raceAway
+    else:
+        raceOffense = raceAway
+        raceDefense = raceHome
     
     team_id_offensive = df_players.query('home_away == @receiving_team')['teamId'].unique()[0]
 
@@ -425,7 +436,7 @@ def fetch_data(match_id):
     else:
         toss_choice = "toss choice is play defense"
 
-    text = [coach1, coach2, race1, race2, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
+    text = [coachHome, coachAway, raceDefense, raceOffense, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
 
 def write_plot(match_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
@@ -458,6 +469,8 @@ def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none
         if tackle_zones:
             plot = add_tacklezones(plot, positions, red_team, flip = False)   
         plot = add_players(plot, positions, red_team, flip = False)
+        if skill_bands == True:
+            plot = add_skill_bands(plot, positions, flip = False, horizontal = False)
         if crop == 'upper':
             plot = pitch_select_upper_half(plot)
         if crop == 'lower':
