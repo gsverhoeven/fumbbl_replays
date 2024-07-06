@@ -101,9 +101,7 @@ def add_skill_to_player(positions, short_name, skill_name, cl_file_location = 'r
     if short_name in positions['short_name'].values:
         cl_skill = get_skill_list(cl_file_location)
         i = positions.query('short_name == @short_name').index[0]
-        print(i)
         skill_list = positions.loc[i, 'learned_skills']
-        print(skill_list)
         skillArrayRoster = positions.loc[i, 'skillArrayRoster']
         color_list = positions.loc[i, 'skill_colors']
         if skill_name not in skill_list + skillArrayRoster:
@@ -113,6 +111,23 @@ def add_skill_to_player(positions, short_name, skill_name, cl_file_location = 'r
                     color_list.append(cl_skill.loc[i, 'Pcolor'])
         else:
             print("Skill already present")
+    else:
+        print("Player not found")
+    return positions
+
+def remove_skill_from_player(positions, short_name, skill_name):
+    if short_name in positions['short_name'].values:
+        i = positions.query('short_name == @short_name').index[0]
+        skill_list = positions.loc[i, 'learned_skills']
+        skillArrayRoster = positions.loc[i, 'skillArrayRoster']
+        color_list = positions.loc[i, 'skill_colors']
+
+        if skill_name in skill_list:
+            i = skill_list.index(skill_name)
+            skill_list.pop(i)
+            color_list.pop(i)
+        else:
+            print("Skill not present")
     else:
         print("Player not found")
     return positions
