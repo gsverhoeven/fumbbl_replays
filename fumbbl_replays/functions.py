@@ -101,7 +101,6 @@ def add_players(pitch, positions, red_team, flip = False, horizontal = False):
                                       ascending = False)        
 
     for i in range(len(positions)):
-        #print(positions.iloc[i]['playerName'])
         if horizontal == False:
             x = 14 - positions.iloc[i]['PlayerCoordinateY']
             y = positions.iloc[i]['PlayerCoordinateX']
@@ -133,6 +132,11 @@ def add_players(pitch, positions, red_team, flip = False, horizontal = False):
         pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
                                       square_h * y - shift_h), \
                                         mask = icon)
+        if positions.iloc[i]['PlayerState'] in ['Prone', 'Stunned']:
+            draw = ImageDraw.Draw(pitch)
+            draw.line((square_w * x + 2, (square_w * y) + 2, (square_h * x) + 25, (square_h * y) + 25), fill="red", width = 2)
+        if positions.iloc[i]['PlayerState'] in ['Stunned']:
+            draw.line((square_w * x + 25, (square_w * y) + 2, (square_h * x) + 2, (square_h * y) + 25), fill="red", width = 2)
     return pitch
 
 def add_skill_bands(pitch, positions, flip = False, horizontal = True):
@@ -349,6 +353,7 @@ def create_position(roster, setup, home_away = 'teamHome'):
     CoordinateX = []
     CoordinateY = []
     PlayerCoordinateY = []
+    PlayerState = []
 
     if setup[0] != 'setup':
         print("not a setup list")
@@ -357,6 +362,14 @@ def create_position(roster, setup, home_away = 'teamHome'):
         print("too many pieces")
         return -1
     for p in range(len(setup[1])):
+        if setup[1][p][-1] == 'X':
+            PlayerState.append("Stunned")
+            setup[1][p] = setup[1][p][:-1]
+        elif setup[1][p][-1] == '/':
+            PlayerState.append("Prone")
+            setup[1][p] = setup[1][p][:-1]
+        else:
+            PlayerState.append("Standing")
         move_code = setup[1][p].split() # split on :
         piece.append(move_code[0][:-1])
         new_pos = move_code[1]
@@ -366,6 +379,7 @@ def create_position(roster, setup, home_away = 'teamHome'):
         PlayerCoordinateY.append(string.ascii_lowercase.index(new_pos[0]))
         # player position code
         position_code.append(re.split(r'([\d]+)', move_code[0][:-1], 1)[0])
+        
 
 
     positions = pd.DataFrame( {"boardpos": boardpos,
@@ -373,7 +387,8 @@ def create_position(roster, setup, home_away = 'teamHome'):
                     "position_code": position_code,
                     "CoordinateX": CoordinateX,
                     "CoordinateY": CoordinateY,
-                    "PlayerCoordinateY": PlayerCoordinateY
+                    "PlayerCoordinateY": PlayerCoordinateY,
+                    "PlayerState": PlayerState
                     })
     
     positions = pd.merge(positions, roster, left_on='position_code', right_on='shorthand', how="left")
