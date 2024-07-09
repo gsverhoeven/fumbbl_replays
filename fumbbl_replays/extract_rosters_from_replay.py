@@ -113,7 +113,7 @@ def add_skill_to_player(positions, short_name, skill_name, cl_file_location = 'r
             print("Skill already present")
     else:
         print("Player not found")
-    return positions
+    return
 
 def remove_skill_from_player(positions, short_name, skill_name):
     if short_name in positions['short_name'].values:
@@ -130,4 +130,4 @@ def remove_skill_from_player(positions, short_name, skill_name):
             print("Skill not present")
     else:
         print("Player not found")
-    return positions
+    return
