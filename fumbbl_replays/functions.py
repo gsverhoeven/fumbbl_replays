@@ -117,7 +117,7 @@ def add_players(pitch, positions, red_team, flip = False, horizontal = False):
         icon_path = positions.iloc[i]['icon_path']
 
         icon = Image.open(urlopen(icon_path)).convert("RGBA")
-        icon_w, icon_h = icon.size
+        icon_w, icon_h = icon.size # still full size i.e. grid with 4 icons
 
         if team == red_team:
             # select first icon
@@ -126,7 +126,7 @@ def add_players(pitch, positions, red_team, flip = False, horizontal = False):
             # select third icon
             icon = icon.crop((icon_w/2, 0, icon_w*3/4, icon_w/4))
 
-        icon_w, icon_h = icon.size # bigger for big guys
+        icon_w, icon_h = icon.size # here cropped size. bigger for big guys
         shift_w = icon_w - square_w
         shift_h = icon_h - square_h
         pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
@@ -134,9 +134,9 @@ def add_players(pitch, positions, red_team, flip = False, horizontal = False):
                                         mask = icon)
         if positions.iloc[i]['PlayerState'] in ['Prone', 'Stunned']:
             draw = ImageDraw.Draw(pitch)
-            draw.line((square_w * x + 2, (square_w * y) + 2, (square_h * x) + 25, (square_h * y) + 25), fill="red", width = 2)
+            draw.line((square_w * x + 2, (square_w * y) + 2, (square_h * x) + 25, (square_h * y) + 25), fill="white", width = 2)
         if positions.iloc[i]['PlayerState'] in ['Stunned']:
-            draw.line((square_w * x + 25, (square_w * y) + 2, (square_h * x) + 2, (square_h * y) + 25), fill="red", width = 2)
+            draw.line((square_w * x + 25, (square_w * y) + 2, (square_h * x) + 2, (square_h * y) + 25), fill="white", width = 2)
     return pitch
 
 def add_skill_bands(pitch, positions, flip = False, horizontal = True):
@@ -155,13 +155,40 @@ def add_skill_bands(pitch, positions, flip = False, horizontal = True):
             
         icon_w, icon_h = (28, 28)
         skill_colors = positions.iloc[i]['skill_colors']
-        if len(skill_colors) == 1:
-            if skill_colors[0] != 'none':
-                box = (icon_w * x, icon_h * y + 25, icon_w * x + 28, icon_h * y + 28)
+        # support skill stacking, loop over list, change y pos 28 - s_nr * 3
+        for s in range(len(skill_colors)):
+            if skill_colors[s] != 'none':
+                box = (icon_w * x, icon_h * y + (28 - (s+1) * 3), icon_w * x + 28, icon_h * y + (28 - (s * 3)))
                 mask = Image.new("L", (28, 3), 0).convert("RGBA")
-                pitch.paste(skill_colors[0], box, mask)
-        if len(skill_colors) > 1:
-            print("skill stacking not supported yet")    
+                pitch.paste(skill_colors[s], box, mask)  
+    return pitch
+
+def add_ball(pitch, positions, flip = False, horizontal = True):
+    square_h = square_w = 28
+
+    for i in range(len(positions)):
+        if positions.iloc[i]['PlayerState'] == 'HasBall':
+            if horizontal == False:
+                x = 14 - positions.iloc[i]['PlayerCoordinateY']
+                y = positions.iloc[i]['PlayerCoordinateX']
+            else:
+                x = positions.iloc[i]['PlayerCoordinateX']
+                y = positions.iloc[i]['PlayerCoordinateY']
+            
+            if flip == True:
+                y = 25 - y
+            else:
+                y = y
+                
+            icon = Image.open('resources/sball_30x30.png').convert("RGBA")
+            icon = icon.resize((15, 15))
+            icon_w, icon_h = icon.size
+            shift_w = icon_w - square_w
+            shift_h = icon_h - square_h
+            pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
+                                        square_h * y - shift_h), \
+                                            mask = icon)
+ 
     return pitch
 
 def pitch_select_lower_half(pitch):
@@ -368,6 +395,9 @@ def create_position(roster, setup, home_away = 'teamHome'):
         elif setup[1][p][-1] == '/':
             PlayerState.append("Prone")
             setup[1][p] = setup[1][p][:-1]
+        elif setup[1][p][-1] == 'o':
+            PlayerState.append("HasBall")
+            setup[1][p] = setup[1][p][:-1]            
         else:
             PlayerState.append("Standing")
         move_code = setup[1][p].split() # split on :
@@ -470,7 +500,7 @@ def write_plot(match_id, positions, receiving_team, text, refresh = False, verbo
         plot = print("unknown plot type")
     return plot
 
-def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False):
+def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False, flip = False):
     plot = Image.open("resources/nice.jpg")
     plot = plot.resize((26 * 28, 15 * 28))
     if orientation == 'H':
@@ -479,13 +509,14 @@ def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none
         plot = add_players(plot, positions, red_team, flip = False, horizontal = True)
         if skill_bands == True:
             plot = add_skill_bands(plot, positions, flip = False, horizontal = True)
+        plot = add_ball(plot, positions, flip = False, horizontal = True)
     elif orientation == 'V':
         plot = plot.rotate(angle = 90, expand = True)
         if tackle_zones:
-            plot = add_tacklezones(plot, positions, red_team, flip = False)   
-        plot = add_players(plot, positions, red_team, flip = False)
+            plot = add_tacklezones(plot, positions, red_team, flip = flip)   
+        plot = add_players(plot, positions, red_team, flip = flip)
         if skill_bands == True:
-            plot = add_skill_bands(plot, positions, flip = False, horizontal = False)
+            plot = add_skill_bands(plot, positions, flip = flip, horizontal = False)
         if crop == 'upper':
             plot = pitch_select_upper_half(plot)
         if crop == 'lower':
