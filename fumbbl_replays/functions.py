@@ -26,6 +26,18 @@ def move_piece(positions, home_away, short_name, new_pos):
     positions.loc[mask, 'modelChangeValue'] = '[' + str(coord_x - 1) + ',' + str(string.ascii_lowercase.index(coord_y) - 1) + ']'
 
     return positions
+
+def set_piece_state(positions, home_away, short_name, new_state):
+    mask = (positions.short_name == short_name) & (positions.home_away == home_away)
+    if sum(mask) == 0:
+        print("piece not on board")
+        return positions
+    if new_state in ['Standing', 'HasBall', 'Prone', 'Stunned']:
+        positions.loc[mask, 'PlayerState'] = new_state
+    else:
+        print("unknown state")
+    return positions
+        
     
 def put_position(positions, setup, home_away):
     if setup[0] != 'setup':
@@ -42,6 +54,7 @@ def put_position(positions, setup, home_away):
     return positions
 
 def get_position(positions, home_away):
+    # PM add PlayerState to the position description!!!
     positions = positions.query("home_away == @home_away")
     position = []
     for r in range(len(positions)):
@@ -364,7 +377,7 @@ def print_position(positions, home_away = 'both'):
     #.query("home_away == 'teamAway'")
     .assign(boardpos = lambda x: x.CoordinateY + x.CoordinateX.astype(str))
     .sort_values(['CoordinateX', 'CoordinateY'])
-    .filter(['home_away', 'race', 'short_name', 'positionName', 'boardpos']) 
+    .filter(['home_away', 'race', 'short_name', 'positionName', 'boardpos', 'PlayerState']) 
     )
     if home_away != 'both':
         if home_away in ['teamHome', 'teamAway']:
