@@ -458,11 +458,14 @@ def fetch_data(match_id):
     
     # select only players on the board at kick-off, i.e. not in reserve
     positions = positions.query('PlayerCoordinateX != [-1, 30]').copy()
+    # add required columns
     positions['CoordinateX'] = positions['PlayerCoordinateX'] + 1
+    positions['PlayerState'] = 'Standing'
+
     # expect a setup with 22 players
     if len(positions) != 22:
         print("warning: expected 22 players")
-
+    
     # determine who is receiving: the home or the away team
     receiving_team = determine_receiving_team_at_start(df)
 
