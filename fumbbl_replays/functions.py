@@ -53,14 +53,21 @@ def put_position(positions, setup, home_away):
         move_piece(positions, home_away, piece, new_pos)
     return positions
 
-def get_position(positions, home_away):
-    # PM add PlayerState to the position description!!!
+def get_position(positions, home_away = 'teamHome'):
     positions = positions.query("home_away == @home_away")
     position = []
     for r in range(len(positions)):
-        playerId = str(positions.iloc[r]['modelChangeKey'])
+        PlayerNr = str(positions.iloc[r]['PlayerNr'])
         boardpos = parse_boardpos(positions.iloc[r])
-        position.append(positions.query('playerId == @playerId')['short_name'].values[0] + ': ' + boardpos)
+        if positions.iloc[r]['PlayerState'] == 'Prone':
+            boardpos = boardpos + '/'
+        elif positions.iloc[r]['PlayerState'] == 'Stunned':
+            boardpos = boardpos + 'X'
+        elif positions.iloc[r]['PlayerState'] == 'HasBall':
+            boardpos = boardpos + 'o'
+        else:
+            pass
+        position.append(positions.query('PlayerNr == @PlayerNr')['short_name'].values[0] + ': ' + boardpos)
 
     setup = ['setup', position]
     return print(setup)
@@ -394,6 +401,7 @@ def create_position(roster, setup, home_away = 'teamHome'):
     CoordinateY = []
     PlayerCoordinateY = []
     PlayerState = []
+    PlayerNr = []
 
     if setup[0] != 'setup':
         print("not a setup list")
@@ -402,6 +410,7 @@ def create_position(roster, setup, home_away = 'teamHome'):
         print("too many pieces")
         return -1
     for p in range(len(setup[1])):
+        PlayerNr.append(p + 1)
         if setup[1][p][-1] == 'X':
             PlayerState.append("Stunned")
             setup[1][p] = setup[1][p][:-1]
@@ -425,7 +434,8 @@ def create_position(roster, setup, home_away = 'teamHome'):
         
 
 
-    positions = pd.DataFrame( {"boardpos": boardpos,
+    positions = pd.DataFrame( {"PlayerNr": PlayerNr,
+                    "boardpos": boardpos,
                     "short_name": piece,
                     "position_code": position_code,
                     "CoordinateX": CoordinateX,
@@ -474,7 +484,7 @@ def fetch_data(match_id):
     # add required columns
     positions['CoordinateX'] = positions['PlayerCoordinateX'] + 1
     positions['PlayerState'] = 'Standing'
-
+    positions['PlayerNr'] = positions['modelChangeKey']
     # expect a setup with 22 players
     if len(positions) != 22:
         print("warning: expected 22 players")
