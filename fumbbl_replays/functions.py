@@ -183,32 +183,56 @@ def add_skill_bands(pitch, positions, flip = False, horizontal = True):
                 pitch.paste(skill_colors[s], box, mask)  
     return pitch
 
-def add_ball(pitch, positions, flip = False, horizontal = True):
+def add_ball(pitch, positions, flip = False, horizontal = True, ballpos = None):
     square_h = square_w = 28
-
-    for i in range(len(positions)):
-        if positions.iloc[i]['PlayerState'] == 'HasBall':
-            if horizontal == False:
-                x = 14 - positions.iloc[i]['PlayerCoordinateY']
-                y = positions.iloc[i]['PlayerCoordinateX']
-            else:
-                x = positions.iloc[i]['PlayerCoordinateX']
-                y = positions.iloc[i]['PlayerCoordinateY']
-            
-            if flip == True:
-                y = 25 - y
-            else:
-                y = y
+    if ballpos is None:
+        # check if a player has it
+        for i in range(len(positions)):
+            if positions.iloc[i]['PlayerState'] == 'HasBall':
+                if horizontal == False:
+                    x = 14 - positions.iloc[i]['PlayerCoordinateY']
+                    y = positions.iloc[i]['PlayerCoordinateX']
+                else:
+                    x = positions.iloc[i]['PlayerCoordinateX']
+                    y = positions.iloc[i]['PlayerCoordinateY']
                 
-            icon = Image.open('resources/sball_30x30.png').convert("RGBA")
-            icon = icon.resize((15, 15))
-            icon_w, icon_h = icon.size
-            shift_w = icon_w - square_w
-            shift_h = icon_h - square_h
-            pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
-                                        square_h * y - shift_h), \
-                                            mask = icon)
- 
+                if flip == True:
+                    y = 25 - y
+                else:
+                    y = y
+                    
+                icon = Image.open('resources/sball_30x30.png').convert("RGBA")
+                icon = icon.resize((15, 15))
+                icon_w, icon_h = icon.size
+                shift_w = icon_w - square_w
+                shift_h = icon_h - square_h
+                pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
+                                            square_h * y - shift_h), \
+                                                mask = icon)
+    else:
+        # ball is in a free square
+        coord_y = ballpos[0] # letter
+        coord_x = int(ballpos[1:]) # nr
+        if horizontal == False:
+            x = 14 - string.ascii_lowercase.index(coord_y)
+            y = coord_x  - 1
+        else:
+            x = coord_x - 1
+            y = string.ascii_lowercase.index(coord_y)
+        
+        if flip == True:
+            y = 25 - y
+        else:
+            y = y
+            
+        icon = Image.open('resources/sball_30x30.png').convert("RGBA")
+        #icon = icon.resize((15, 15))
+        icon_w, icon_h = icon.size
+        shift_w = icon_w - square_w
+        shift_h = icon_h - square_h
+        pitch.paste(im = icon, box = (square_w * x - int(shift_w/2), \
+                                    square_h * y - shift_h), \
+                                        mask = icon)
     return pitch
 
 def pitch_select_lower_half(pitch):
@@ -526,7 +550,7 @@ def write_plot(match_id, positions, receiving_team, text, refresh = False, verbo
         plot = print("unknown plot type")
     return plot
 
-def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False, flip = False):
+def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False, flip = False, ballpos = None):
     plot = Image.open("resources/nice.jpg")
     plot = plot.resize((26 * 28, 15 * 28))
     if orientation == 'H':
@@ -535,8 +559,9 @@ def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none
         plot = add_players(plot, positions, red_team, flip = False, horizontal = True)
         if skill_bands == True:
             plot = add_skill_bands(plot, positions, flip = False, horizontal = True)
-        plot = add_ball(plot, positions, flip = False, horizontal = True)
-    elif orientation == 'V':
+        plot = add_ball(plot, positions, flip = False, horizontal = True, ballpos = ballpos)
+  
+    elif orientation == 'V': # no ball plotting yet
         plot = plot.rotate(angle = 90, expand = True)
         if tackle_zones:
             plot = add_tacklezones(plot, positions, red_team, flip = flip)   
