@@ -302,18 +302,19 @@ def add_text(plot, text, match_id):
     font1 = ImageFont.truetype('LiberationMono-Regular.ttf', 22)
     font2 = ImageFont.truetype('LiberationMono-Regular.ttf', 16)
 
-    if(len(text)) == 8:
-        text_line0 = "receiving team:" + text[6]
+    if(len(text)) == 10:
+        text_line0 = "receiving team:" + text[8]
         text_line1 = text[0] + "(" + text[2] + ") vs."
         text_line2 = text[1] + "(" + text[3] + ")"
-        text_line3 = "match nr. " + str(match_id) + " score:" + str(text[4]) + " - " + str(text[5])
+        text_line3 = "match nr. " + str(match_id) + " score:" + str(text[6]) + " - " + str(text[7])
 
-        draw.text((5, 252), text[7], font=font1, fill='black')
+        draw.text((5, 252), text[9], font=font1, fill='black')
         draw.text((5, 280), text_line0, font=font1, fill='black')
         draw.text((5, 307), text_line1, font=font1, fill='black')
         draw.text((5, 335), text_line2, font=font1, fill='black')
         draw.text((5, 366), text_line3, font=font2, fill='black')
     else:
+        print("metadata unexpected length")
         return plot
 
     return plot
@@ -531,7 +532,7 @@ def fetch_data(match_id):
     else:
         toss_choice = "toss choice is play defense"
 
-    text = [coachHome, coachAway, raceDefense, raceOffense, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
+    text = [coachHome, coachAway, raceHome, raceAway, raceDefense, raceOffense, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
 
 def write_plot(match_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
