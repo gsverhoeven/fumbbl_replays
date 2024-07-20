@@ -7,6 +7,8 @@ import requests
 import json
 import pandas as pd
 
+## ADD STARPLAYER ROSTER
+
 def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update = False):
     # check if file already exists, else scrape it
     fname_string = "raw/rosters/rosters_ruleset_" + str(ruleset_id) + ".json"  
