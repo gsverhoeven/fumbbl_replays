@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='fumbbl_replays',
       version='0.0.1',
-      description='Functions for working with FUMBBL replays. Including transform to FFGN format',
+      description='Utility package to plot Fantasy Football board positions and analyze FUMBBL game logs.',
       url='https://github.com/gsverhoeven/fumbbl_replays',
       author='Gertjan Verhoeven',
       packages=['fumbbl_replays'],
