@@ -6,7 +6,7 @@ from .fetch_match import fetch_match
 
 from .extract_rosters_from_replay import extract_rosters_from_replay, add_skill_to_player, remove_skill_from_player
 from .extract_players_from_replay import extract_players_from_replay
-from .fetch_roster import fetch_roster
+from .fetch_roster import fetch_roster, fetch_stars
 
 from .functions import create_plot, write_plot, determine_receiving_team_at_start, \
     sort_defensive_plots, fetch_data, move_piece, set_piece_state, \

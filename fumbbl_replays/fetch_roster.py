@@ -7,8 +7,6 @@ import requests
 import json
 import pandas as pd
 
-## ADD STARPLAYER ROSTER
-
 def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update = False):
     # check if file already exists, else scrape it
     fname_string = "raw/rosters/rosters_ruleset_" + str(ruleset_id) + ".json"  
@@ -39,6 +37,16 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
                 roster_id = ruleset['rosters'][i]['id']
                 break
 
+    df_roster = get_roster(roster_id, update, verbose, roster_name)
+ 
+
+    return df_roster
+
+def fetch_stars(star_roster_id = 5160, verbose = False, update = False):
+    df_stars = get_roster(star_roster_id, update, verbose, roster_name = "Star Players")
+    return df_stars
+
+def get_roster(roster_id, update, verbose, roster_name):
     fname_string = "raw/rosters/roster_" + str(roster_id) + ".json"  
     try:
         f = open(fname_string, mode = "rb")
@@ -46,12 +54,12 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
 
     except OSError as e:
         # scrape it
-        roster = get_roster(roster_id, fname_string, verbose = False)
+        roster = get_roster_raw(roster_id, fname_string, verbose = False)
             
     else:
         # file already present
         if update:
-            roster = get_roster(roster_id, fname_string, verbose = False)
+            roster = get_roster_raw(roster_id, fname_string, verbose = False)
             if verbose:
                 print("o",  end = '')
         roster = read_json_file(fname_string)
@@ -61,7 +69,6 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
     df_roster = json2pd_roster(tmpRosters, roster_name)
 
     return df_roster
-
 
 def json2pd_roster(json_roster, roster_name):
     positionId = []
@@ -100,7 +107,7 @@ def get_ruleset(ruleset_id, fname_string, verbose):
 
     return ruleset
 
-def get_roster(roster_id, fname_string, verbose):
+def get_roster_raw(roster_id, fname_string, verbose):
     api_string = "https://fumbbl.com/api/roster/get/" + str(roster_id)
 
     roster = requests.get(api_string)
