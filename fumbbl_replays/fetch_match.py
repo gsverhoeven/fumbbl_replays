@@ -32,6 +32,32 @@ def fetch_match(match_id, dirname = "raw/replay_files/", verbose = False):
 
     return match
 
+def fetch_team_matches(team_id, dirname = "raw/replay_files/", verbose = False):
+    # check if file already exists, else scrape it
+    fname_string = dirname + str(team_id) + "_team_matches.json"  
+    try:
+        f = open(fname_string, mode = "rb")
+
+    except OSError as e:
+        # scrape it
+        api_string = "https://fumbbl.com/api/team/matches/" + str(team_id)
+
+        team_matches = requests.get(api_string)
+        team_matches = team_matches.json()
+
+        write_json_file(team_matches, fname_string)
+        if verbose:
+            print("x", end = '')
+        time.sleep(0.3)
+            
+    else:
+        # file already present
+        if verbose:
+            print("o",  end = '')
+        team_matches = read_json_file(fname_string)
+
+    return team_matches
+
 def write_json_file(json_object, fname = None):
     if fname is None:
         return "fname missing"

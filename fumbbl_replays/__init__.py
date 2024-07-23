@@ -2,7 +2,7 @@ from .fumbbl2ffgn import fumbbl2ffgn
 
 from .fetch_replay import fetch_replay
 from .parse_replay import parse_replay
-from .fetch_match import fetch_match
+from .fetch_match import fetch_match, fetch_team_matches
 
 from .extract_rosters_from_replay import extract_rosters_from_replay, add_skill_to_player, remove_skill_from_player
 from .extract_players_from_replay import extract_players_from_replay
