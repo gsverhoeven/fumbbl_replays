@@ -7,7 +7,7 @@ https://gsverhoeven.github.io/post/fumbbl-replays/
 # Installation
 
 * Clone this repository
-* Create a new Python 3.6 virtual environment
+* Create a new Python virtual environment (tested with Python 3.6 and 3.12 on Ubuntu Linux)
 * Install `pandas` package
 * Install the `fumbbl_replays` package using `pip install -e .`
 
