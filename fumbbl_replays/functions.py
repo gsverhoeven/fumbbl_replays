@@ -67,7 +67,7 @@ def get_position(positions, home_away = 'teamHome'):
             boardpos = boardpos + 'o'
         else:
             pass
-        position.append(positions.query('PlayerNr == @PlayerNr')['short_name'].values[0] + ': ' + boardpos)
+        position.append(positions.query('PlayerNr.astype("str") == @PlayerNr')['short_name'].values[0] + ': ' + boardpos)
 
     setup = ['setup', position]
     return print(setup)
