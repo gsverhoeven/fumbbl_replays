@@ -8,7 +8,7 @@ https://gsverhoeven.github.io/post/fumbbl-replays/
 
 * Clone this repository
 * Create a new Python virtual environment (tested with Python 3.6 and 3.12 on Ubuntu Linux)
-* Install `pandas` package
-* Install the `fumbbl_replays` package using `pip install -e .`
+* Install all the packages listed in this script on GitHub: `(gsverhoeven/fumbbl_scraping/create_fumbbl_env.sh)` 
+* Install the `fumbbl_replays` package in this environment using `pip install -e .`
 
 Let me know if this does not work.
