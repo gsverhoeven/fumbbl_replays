@@ -1,0 +1,81 @@
+{
+    "id": 4538795,
+    "replayId": 1712868,
+    "tournamentId": 61335,
+    "divisionId": 5,
+    "division": "League",
+    "scheduler": "None",
+    "date": "2024-04-15",
+    "time": "22:40:44",
+    "gate": 0,
+    "conceded": "None",
+    "hasComments": "false",
+    "team1": {
+        "id": 1162011,
+        "name": "[SL] Green Bay Smackers",
+        "roster": {
+            "id": 4974,
+            "name": "Orc"
+        },
+        "score": 1,
+        "casualties": {
+            "bh": 2,
+            "si": 0,
+            "rip": 0
+        },
+        "fanfactor": 0,
+        "teamValue": 1160000,
+        "currentTeamValue": 1160000,
+        "coach": {
+            "id": 225446,
+            "name": "Stimme",
+            "rating": {
+                "pre": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                },
+                "post": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                }
+            }
+        },
+        "winnings": 20000,
+        "gate": 0,
+        "tournamentWeight": "1160k"
+    },
+    "team2": {
+        "id": 1159896,
+        "name": "[SL] Supercharged Chimeras",
+        "roster": {
+            "id": 4979,
+            "name": "Wood Elf"
+        },
+        "score": 1,
+        "casualties": {
+            "bh": 1,
+            "si": 2,
+            "rip": 0
+        },
+        "fanfactor": 0,
+        "teamValue": 1160000,
+        "currentTeamValue": 1160000,
+        "coach": {
+            "id": 5542,
+            "name": "Tripleskull",
+            "rating": {
+                "pre": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                },
+                "post": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                }
+            }
+        },
+        "winnings": 20000,
+        "gate": 0,
+        "tournamentWeight": "1160k"
+    }
+}

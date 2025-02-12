@@ -1,0 +1,81 @@
+{
+    "id": 4407782,
+    "replayId": 1559380,
+    "tournamentId": 58323,
+    "divisionId": 5,
+    "division": "League",
+    "scheduler": "None",
+    "date": "2022-09-25",
+    "time": "22:57:05",
+    "gate": 0,
+    "conceded": "None",
+    "hasComments": "false",
+    "team1": {
+        "id": 1094059,
+        "name": "[Gonzi] Scuola caoz",
+        "roster": {
+            "id": 5142,
+            "name": "Chaos Dwarf"
+        },
+        "score": 1,
+        "casualties": {
+            "bh": 0,
+            "si": 0,
+            "rip": 0
+        },
+        "fanfactor": 0,
+        "teamValue": 1150000,
+        "currentTeamValue": 1150000,
+        "coach": {
+            "id": 226619,
+            "name": "Ferra76",
+            "rating": {
+                "pre": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                },
+                "post": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                }
+            }
+        },
+        "winnings": 40000,
+        "gate": 0,
+        "tournamentWeight": "1150k"
+    },
+    "team2": {
+        "id": 1092298,
+        "name": "[AZES] Malta Dodgers",
+        "roster": {
+            "id": 4964,
+            "name": "Human"
+        },
+        "score": 2,
+        "casualties": {
+            "bh": 0,
+            "si": 0,
+            "rip": 0
+        },
+        "fanfactor": 1,
+        "teamValue": 1150000,
+        "currentTeamValue": 1150000,
+        "coach": {
+            "id": 220689,
+            "name": "fxiii",
+            "rating": {
+                "pre": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                },
+                "post": {
+                    "cr": 0,
+                    "bracket": "Rookie"
+                }
+            }
+        },
+        "winnings": 50000,
+        "gate": 0,
+        "tournamentWeight": "1150k"
+    }
+}
