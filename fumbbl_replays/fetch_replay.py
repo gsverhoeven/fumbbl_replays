@@ -11,7 +11,7 @@ import json
 from .fetch_match import fetch_match
 
 def fetch_replay(match_id, dirname = "raw/replay_files/", verbose = False):
-    my_match = fetch_match(match_id)
+    my_match = fetch_match(match_id, dirname, verbose)
     replay_id = my_match['replayId']
     if verbose:
         print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON') 
