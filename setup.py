@@ -9,6 +9,7 @@ setup(name='fumbbl_replays',
       author_email='gertjan.verhoeven@gmail.com',
       license='MIT License',
       install_requires=['pandas', 'requests', 'pillow'],
+      include_package_data=True
 )
 
 
