@@ -1,0 +1,18 @@
+Metadata-Version: 2.2
+Name: fumbbl_replays
+Version: 0.0.1
+Summary: Utility package to plot Fantasy Football board positions and analyze FUMBBL game logs.
+Home-page: https://github.com/gsverhoeven/fumbbl_replays
+Author: Gertjan Verhoeven
+Author-email: gertjan.verhoeven@gmail.com
+License: MIT License
+License-File: LICENSE
+Requires-Dist: pandas
+Requires-Dist: requests
+Requires-Dist: pillow
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page
+Dynamic: license
+Dynamic: requires-dist
+Dynamic: summary
