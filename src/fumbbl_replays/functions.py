@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import string
 import re
+import importlib.resources as resources
+from fumbbl_replays import __name__ as pkg_name
 
 from PIL import Image, ImageDraw, ImageFont
 from urllib.request import urlopen
@@ -591,7 +593,10 @@ def sort_defensive_plots(df_replays):
         os.rename(current_dirname + fname, current_dirname + dirname + fname)
 
 def show_boardpos(rotation = 'H', icon_size = (28, 28), crop = 'none'):
-    pitch = Image.open("resources/nice.jpg")
+
+    file_path = resources.files(pkg_name) / "resources" / "nice.jpg"
+    pitch = Image.open(file_path)
+
     icon_w, icon_h = icon_size
     font1 = ImageFont.truetype('LiberationSans-Regular.ttf', 12)
     if rotation == 'V':
