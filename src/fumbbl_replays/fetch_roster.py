@@ -6,10 +6,17 @@ import time
 import requests
 import json
 import pandas as pd
+import os
 
 def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update = False):
+    home_dir = os.path.expanduser("~")
+    cache_dir = home_dir + "/.cache/fumbbl_replays/rosters"
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
+
+    fname_string = cache_dir + "/rosters_ruleset_" + str(ruleset_id) + ".json"  
+    
     # check if file already exists, else scrape it
-    fname_string = "raw/rosters/rosters_ruleset_" + str(ruleset_id) + ".json"  
     try:
         f = open(fname_string, mode = "rb")
 
