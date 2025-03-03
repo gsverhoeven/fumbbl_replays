@@ -5,10 +5,16 @@ https://fumbbl.com/apidoc/
 import time
 import requests
 import json
+import os
 
 def fetch_match(match_id, dirname = "raw/replay_files/", verbose = False):
+    home_dir = os.path.expanduser("~")
+    cache_dir = home_dir + "/.cache/fumbbl_replays/" + dirname
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
+
     # check if file already exists, else scrape it
-    fname_string = dirname + str(match_id) + "_match.json"  
+    fname_string = cache_dir + str(match_id) + "_match.json"  
     try:
         f = open(fname_string, mode = "rb")
 
@@ -33,8 +39,13 @@ def fetch_match(match_id, dirname = "raw/replay_files/", verbose = False):
     return match
 
 def fetch_team_matches(team_id, dirname = "raw/replay_files/", verbose = False):
+    home_dir = os.path.expanduser("~")
+    cache_dir = home_dir + "/.cache/fumbbl_replays/" + dirname
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
+
     # check if file already exists, else scrape it
-    fname_string = dirname + str(team_id) + "_team_matches.json"  
+    fname_string = cache_dir + str(team_id) + "_team_matches.json"  
     try:
         f = open(fname_string, mode = "rb")
 

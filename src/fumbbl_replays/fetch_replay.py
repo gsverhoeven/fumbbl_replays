@@ -8,14 +8,22 @@ import gzip
 import time
 import requests
 import json
+import os
 from .fetch_match import fetch_match
 
 def fetch_replay(match_id, dirname = "raw/replay_files/", verbose = False):
+
+    home_dir = os.path.expanduser("~")
+    cache_dir = home_dir + "/.cache/fumbbl_replays/" + dirname
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
+
     my_match = fetch_match(match_id, dirname, verbose)
     replay_id = my_match['replayId']
     if verbose:
         print('fetching replay data for replay_id ' + str(replay_id) + ' as JSON') 
-    fname_string_gz = dirname + str(replay_id) + ".gz"        
+    
+    fname_string_gz = cache_dir + str(replay_id) + ".gz"        
     # check if file already exists, else scrape it
     try:
         if verbose:
