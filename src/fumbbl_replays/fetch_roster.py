@@ -44,7 +44,13 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
                 roster_id = ruleset['rosters'][i]['id']
                 break
 
-    df_roster = get_roster(roster_id, update, verbose, roster_name)
+    df_roster = get_roster(roster_id, update, verbose, roster_name) 
+    
+    # remove rotter linemen added for Rotter Challenge
+    if not roster_name == "Nurgle":
+        df_roster = df_roster.query("positionName != 'Rotter Lineman' ")
+    else:
+        df_roster = df_roster.drop_duplicates(subset=['positionId']) # removes 2nd rotter lineman position
 
     return df_roster
 
