@@ -37,7 +37,7 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
         print("available rosters:")
         for i in range(len(ruleset['rosters'])):
             print(ruleset['rosters'][i]['value'])
-        return -1
+        return None
     else:
         for i in range(len(ruleset['rosters'])):
             if roster_name == ruleset['rosters'][i]['value']:
@@ -45,7 +45,6 @@ def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update 
                 break
 
     df_roster = get_roster(roster_id, update, verbose, roster_name)
- 
 
     return df_roster
 
@@ -54,7 +53,15 @@ def fetch_stars(star_roster_id = 5160, verbose = False, update = False):
     return df_stars
 
 def get_roster(roster_id, update, verbose, roster_name):
-    fname_string = "raw/rosters/roster_" + str(roster_id) + ".json"  
+
+    home_dir = os.path.expanduser("~")
+    cache_dir = home_dir + "/.cache/fumbbl_replays/rosters"
+
+    if not os.path.exists(cache_dir):
+        os.makedirs(cache_dir)
+
+    fname_string = cache_dir + "/roster_" + str(roster_id) + ".json"  
+
     try:
         f = open(fname_string, mode = "rb")
         # check if file already exists, else scrape it
