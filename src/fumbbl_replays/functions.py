@@ -202,8 +202,8 @@ def add_ball(pitch, positions, flip = False, horizontal = True, ballpos = None):
                     y = 25 - y
                 else:
                     y = y
-                    
-                icon = Image.open('resources/sball_30x30.png').convert("RGBA")
+                file_path = resources.files(pkg_name) / "resources" / "sball_30x30.png"    
+                icon = Image.open(file_path).convert("RGBA")
                 icon = icon.resize((15, 15))
                 icon_w, icon_h = icon.size
                 shift_w = icon_w - square_w
@@ -226,8 +226,8 @@ def add_ball(pitch, positions, flip = False, horizontal = True, ballpos = None):
             y = 25 - y
         else:
             y = y
-            
-        icon = Image.open('resources/sball_30x30.png').convert("RGBA")
+        file_path = resources.files(pkg_name) / "resources" / "sball_30x30.png"
+        icon = Image.open(file_path).convert("RGBA")
         #icon = icon.resize((15, 15))
         icon_w, icon_h = icon.size
         shift_w = icon_w - square_w
@@ -250,7 +250,8 @@ def create_horizontal_plot(replay_id, match_id, positions, receiving_team, refre
     fname = build_filename(replay_id, match_id, append_string)
 
     if not os.path.exists(fname) or refresh:
-        plot = Image.open("resources/nice.jpg")
+        file_path = resources.files(pkg_name) / "resources" / "nice.jpg"  
+        plot = Image.open(file_path)
         plot = plot.resize((26 * 28, 15 * 28))
         plot = add_tacklezones(plot, positions, receiving_team, flip = False, horizontal = True)   
         plot = add_players(plot, positions, receiving_team, flip = False, horizontal = True)
@@ -265,7 +266,8 @@ def create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh
     fname = build_filename(replay_id, match_id, append_string)
 
     if not os.path.exists(fname) or refresh:
-        plot = Image.open("resources/nice.jpg")
+        file_path = resources.files(pkg_name) / "resources" / "nice.jpg"
+        plot = Image.open(file_path)
         plot = plot.rotate(angle = 90, expand = True)
         plot = plot.resize((15 * 28, 26 * 28))
         
@@ -328,8 +330,9 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
     append_string = "_kickoff_lower_defense.png"
     fname = build_filename(replay_id, match_id, append_string, race)
 
-    if not os.path.exists(fname) or refresh:  
-        plot = Image.open("resources/nice.jpg")
+    if not os.path.exists(fname) or refresh:
+        file_path = resources.files(pkg_name) / "resources" / "nice.jpg"
+        plot = Image.open(file_path)
         plot = plot.rotate(angle = 90, expand = True)
         plot = plot.resize((15 * 28, 26 * 28))
         
@@ -361,8 +364,9 @@ def create_offense_plot(replay_id, match_id, positions, receiving_team, text, re
     append_string = "_kickoff_lower_offense.png"
     fname = build_filename(replay_id, match_id, append_string, race)
 
-    if not os.path.exists(fname) or refresh:  
-        plot = Image.open("resources/nice.jpg")
+    if not os.path.exists(fname) or refresh:
+        file_path = resources.files(pkg_name) / "resources" / "nice.jpg"
+        plot = Image.open(file_path)
         plot = plot.rotate(angle = 90, expand = True)
         plot = plot.resize((15 * 28, 26 * 28))
         
@@ -554,7 +558,8 @@ def write_plot(match_id, positions, receiving_team, text, refresh = False, verbo
     return plot
 
 def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False, flip = False, ballpos = None):
-    plot = Image.open("resources/nice.jpg")
+    file_path = resources.files(pkg_name) / "resources" / "nice.jpg"
+    plot = Image.open(file_path)
     plot = plot.resize((26 * 28, 15 * 28))
     if orientation == 'H':
         if tackle_zones:
@@ -593,7 +598,6 @@ def sort_defensive_plots(df_replays):
         os.rename(current_dirname + fname, current_dirname + dirname + fname)
 
 def show_boardpos(rotation = 'H', icon_size = (28, 28), crop = 'none'):
-
     file_path = resources.files(pkg_name) / "resources" / "nice.jpg"
     pitch = Image.open(file_path)
 

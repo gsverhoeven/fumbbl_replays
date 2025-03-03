@@ -1,7 +1,14 @@
 import pandas as pd
+import importlib.resources as resources
+from fumbbl_replays import __name__ as pkg_name
+
 from .extract_players_from_replay import extract_players_from_replay
 
-def extract_rosters_from_replay(my_replay, cl_file_location = 'resources/230218 bb_skill_colors.csv'):
+def extract_rosters_from_replay(my_replay, cl_file_location = None):
+    if cl_file_location == None:
+        file_path = resources.files(pkg_name) / "resources" / "230218 bb_skill_colors.csv"
+    else:
+        file_path = cl_file_location
 
     json_roster_home = my_replay['game']['teamHome']['roster']
     df_positions_home = json2pd_replay_roster(json_roster_home)
@@ -22,7 +29,7 @@ def extract_rosters_from_replay(my_replay, cl_file_location = 'resources/230218 
     df_roster['short_name'] = df_roster['shorthand'] + df_roster['positionNr'].astype(str)
 
     df_roster = add_learned_skill_col(df_roster)
-    df_roster = add_skill_colors_col(df_roster, cl_file_location)
+    df_roster = add_skill_colors_col(df_roster, file_path)
 
     return df_roster
 
@@ -97,9 +104,14 @@ def get_skill_list(file_location):
     skill_list = skill_list.sort_values("n", ascending = False)
     return skill_list
 
-def add_skill_to_player(positions, short_name, skill_name, cl_file_location = 'resources/230218 bb_skill_colors.csv'):
+def add_skill_to_player(positions, short_name, skill_name, cl_file_location = None):
+    if cl_file_location == None:
+        file_path = resources.files(pkg_name) / "resources" / "230218 bb_skill_colors.csv"
+    else:
+        file_path = cl_file_location
+
     if short_name in positions['short_name'].values:
-        cl_skill = get_skill_list(cl_file_location)
+        cl_skill = get_skill_list(file_path)
         i = positions.query('short_name == @short_name').index[0]
         skill_list = positions.loc[i, 'learned_skills']
         skillArrayRoster = positions.loc[i, 'skillArrayRoster']
