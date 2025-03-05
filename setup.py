@@ -7,7 +7,7 @@ setup(name='fumbbl_replays',
       author='Gertjan Verhoeven',
       author_email='gertjan.verhoeven@gmail.com',
       license='MIT License',
-      install_requires=['pandas', 'requests', 'pillow', 'ipykernel'],
+      install_requires=['pandas', 'requests', 'pillow', 'ipykernel', 'openpyxl'],
       include_package_data=True
 )
 
