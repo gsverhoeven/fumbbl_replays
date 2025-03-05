@@ -1,4 +1,7 @@
 import pandas as pd
+import os
+import importlib.resources as resources
+from fumbbl_replays import __name__ as pkg_name
 
 from .fetch_match import fetch_match
 from .fetch_replay import fetch_replay
@@ -16,19 +19,22 @@ def fumbbl2ffgn(match_id, verbose = False):
     # load replay
     my_replay = fetch_replay(match_id, dirname = "raw/replay_files/", verbose = verbose)
     
-    ignoreList = pd.read_csv("resources/IgnoreModelChange.csv")
+    file_path = resources.files(pkg_name) / "resources" / "IgnoreModelChange.csv"
+    ignoreList = pd.read_csv(file_path)
     # initial parse
     df = parse_replay(my_replay, ignoreList) 
     
     df = add_header(df, my_replay)
 
     # add state descriptions
-    cl_state = pd.read_csv("resources/PlayerState.csv")
+    file_path = resources.files(pkg_name) / "resources" / "PlayerState.csv"
+    cl_state = pd.read_csv(file_path)
     df = pd.merge(left = df, right = cl_state, left_on = "SetPlayerState", right_on = "INT", how = "left", sort = False)
     df = df.drop(['DESCRIPTION'], axis = 1)
 
     # add location descriptions
-    cl_location = pd.read_csv("resources/Coordinate.csv")
+    file_path = resources.files(pkg_name) / "resources" / "Coordinate.csv"
+    cl_location = pd.read_csv(file_path)
     df = pd.merge(left = df, right = cl_location, left_on = "PlayerCoordinateX", right_on = "VALUE", how = "left", sort = False)
 
     df = df.drop_duplicates(subset=df.columns.difference(['modelChangeValue']))
