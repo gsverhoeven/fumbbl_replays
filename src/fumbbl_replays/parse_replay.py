@@ -137,7 +137,8 @@ def parse_replay(my_replay, ignoreList = None):
 
     changesel = ["fieldModelSetPlayerCoordinate", "fieldModelSetBallCoordinate"]
     row_sel = '(modelChangeId in @changesel & ((PlayerCoordinateY >= 0) & (PlayerCoordinateY <= 14)))'
-    df['CoordinateY'] = 0
+    # add CoordinateY variable
+    df['CoordinateY'] = '0'
     df.loc[df.eval(row_sel), 'CoordinateY'] = [string.ascii_lowercase[element] for element in df.loc[df.eval(row_sel), 'PlayerCoordinateY'].astype(int).values]  
     
     # flag placing players in dugout during setup
