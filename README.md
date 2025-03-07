@@ -27,10 +27,12 @@ Expected output:
 # Using fumbbl_replays in a Jupyter notebook
 
 The package is most useful in a Jupyter notebook that can display board positions as bitmap images.
-* Install the `ipykernel` package in this environment.
+
 * Test the package: start python, then `import fumbbl_replays as fb; fb.show_boardpos(rotation = 'H')`
 
 This should display a grid on a horizontal pitch with all positions named using chess-like notation.
+
+![](boardpos_output.png)
 
 # Development info 
 
@@ -41,3 +43,13 @@ Python version support follows https://devguide.python.org/versions/
 (Except that 3.9 is not supported)
 
 Let me know if anything does not work.
+
+# Feature requests
+
+Not implemented features: 
+*   highlighting squares, 
+*   drawing arrows, 
+*   some form of pathfinding (e.g. find shortest path without dice rolling).
+*   adding rerolls, apo and inducements to roster extracted from replay
+*   defensive setup plot before turn 1 (application 2)
+*   team development plot (application 3)
