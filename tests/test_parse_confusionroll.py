@@ -8,4 +8,5 @@ out = parse_confusionroll(obj)
 
 desired_out = 'Confusion roll: 2 | 15064977 acts normally'
 
-assert out == desired_out
+def test_parse_confusionroll():
+    assert out == desired_out
