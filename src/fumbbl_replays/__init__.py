@@ -11,3 +11,6 @@ from .fetch_roster import fetch_roster, fetch_stars
 from .functions import create_plot, write_plot, determine_receiving_team_at_start, \
     sort_defensive_plots, fetch_data, move_piece, set_piece_state, \
         put_position, get_position, print_position, create_position, show_boardpos
+
+
+from .plot_team_league_development import make_team_development_plot, fetch_team_development_data
