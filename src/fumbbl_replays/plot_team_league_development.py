@@ -6,6 +6,7 @@ from .fetch_roster import fetch_roster
 from plotnine import *
 
 def fetch_team_development_data(team_id, n_matches = 15):
+    team_id = str(team_id)
     team_matches = fetch_team_matches(int(team_id))
 
     matches = []
@@ -71,8 +72,9 @@ def fetch_team_development_data(team_id, n_matches = 15):
     res = res.merge(player_list.filter(['playerName', 'shorthand', 'short_name', 'positionNr']), on = 'playerName')
     return res
 
-def make_team_development_plot(res):      
-    (
+def make_team_development_plot(res):
+    rosterName = res['rosterName'].unique()[0]
+    p = (
         ggplot(res, aes(x="factor(match_count)", y="reorder(short_name, cost)"))
         + geom_tile(aes(fill = "cell_color", width=0.95, height=0.95))
         + geom_text(aes(label="learned_skill"), size=6)
@@ -82,3 +84,4 @@ def make_team_development_plot(res):
         + theme(legend_position='none')
         + labs(x="League game number", y="Players", title= rosterName + " team development BBT")
     )
+    p.draw(show = True)
