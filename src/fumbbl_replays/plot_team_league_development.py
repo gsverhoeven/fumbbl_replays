@@ -35,25 +35,34 @@ def fetch_team_development_data(team_id, n_matches = 15):
         i = i + 1
 
     cell_color = []
-    learned_skill = []
+    first_skill = []
+    second_skill = []
 
     for i in range(len(res)):
         n_skills = len(res.iloc[i]['learned_skills'])
         if n_skills == 0:
             cell_color.append("grey")
-            learned_skill.append("-")
+            first_skill.append("-")
+            second_skill.append("-")
         elif n_skills == 1:
             cell_color.append(res.iloc[i]['skill_colors'][n_skills - 1])
-            learned_skill.append(res.iloc[i]['learned_skills'][n_skills - 1])
+            first_skill.append(res.iloc[i]['learned_skills'][n_skills - 1])
+            second_skill.append("-")
+        elif n_skills == 2:
+            cell_color.append(res.iloc[i]['skill_colors'][n_skills])
+            first_skill.append(res.iloc[i]['learned_skills'][n_skills])
+            second_skill.append("-")            
         else:
             cell_color.append("black")
-            learned_skill.append(">1")        
+            first_skill.append(">2")
+            second_skill.append(">2") 
 
     res['cell_color'] = cell_color
-    res['learned_skill'] = learned_skill
+    res['first_skill'] = first_skill
+    res['second_skill'] = second_skill
     res = res.drop(columns = ['short_name'])
 
-    res = res.query('learned_skill != "Loner" & recoveringInjury == "None" ')
+    res = res.query('first_skill != "Loner" & recoveringInjury == "None" ')
 
     rosterName = res['rosterName'].unique()[0]
     roster = fetch_roster(rosterName).filter(['positionName', 'shorthand'])
@@ -77,7 +86,7 @@ def make_team_development_plot(res):
     p = (
         ggplot(res, aes(x="factor(match_count)", y="reorder(short_name, cost)"))
         + geom_tile(aes(fill = "cell_color", width=0.95, height=0.95))
-        + geom_text(aes(label="learned_skill"), size=6)
+        + geom_text(aes(label="first_skill"), size=6)
         + scale_fill_identity()
         #+ coord_equal(expand=False)  # new
         + theme(figure_size=(12, 6))  # new
