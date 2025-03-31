@@ -6,7 +6,7 @@ from .extract_players_from_replay import extract_players_from_replay
 
 def extract_rosters_from_replay(my_replay, cl_file_location = None):
     if cl_file_location == None:
-        file_path = resources.files(pkg_name) / "resources" / "230218 bb_skill_colors.csv"
+        file_path = resources.files(pkg_name) / "resources" / "bb_skill_colors.csv"
     else:
         file_path = cl_file_location
 
