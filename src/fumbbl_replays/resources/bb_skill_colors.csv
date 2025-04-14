@@ -1,61 +1,61 @@
-"skill_name";"n";"Rcolor";"skillgroup";"Pcolor"
-"Arm Bar";2;"yellowgreen";"strength";"darkgreen"
-"Brawler";8;"steelblue4";"strength";"mediumslateblue"
-"Break Tackle";1;"aliceblue";"strength";"darkgreen"
-"Grab";1;"lightsalmon4";"strength";"firebrick"
-"Guard";296;"green";"strength";"lime"
-"Juggernaut";8;"slateblue2";"strength";"darkblue"
-"Mighty Blow";54;"red";"strength";"red"
-"Multiple Block";1;"aliceblue";"strength";"darkgreen"
-"Pile Driver";0;"brown4";"strength";"darkgreen"
-"Stand Firm";1;"aliceblue";"strength";"darkgreen"
-"Strong Arm";0;"lightslategrey";"strength";"darkgreen"
-"Thick Skull";1;"aliceblue";"strength";"darkgreen"
-"Accurate";5;"lightcyan4";"passing";"indigo"
-"Cannoneer";1;"lightblue2";"passing";"indigo"
-"Cloud Burster";0;"aliceblue";"passing";"indigo"
-"Dump-off";2;"lightseagreen";"passing";"indigo"
-"Fumblerooskie";0;"aliceblue";"passing";"indigo"
-"Hail Mary Pass";1;"aliceblue";"passing";"indigo"
-"Leader";62;"purple";"passing";"purple"
-"Nerves of Steel";0;"aliceblue";"passing";"indigo"
-"On The Ball";0;"lightskyblue";"passing";"indigo"
-"Pass";1;"aliceblue";"passing";"indigo"
-"Running Pass";1;"aliceblue";"passing";"indigo"
-"Safe Pass";0;"lightsteelblue";"passing";"indigo"
-"Big Hand";0;"chartreuse4";"mutations";"darkred"
-"Claws";2;"darkred";"mutations";"darkred"
-"Disturbing Presence";0;"aliceblue";"mutations";"darkred"
-"Extra Arms";1;"aliceblue";"mutations";"darkred"
-"Foul Appearance";0;"slateblue";"mutations";"darkred"
-"Horns";1;"aliceblue";"mutations";"darkred"
-"Iron Hard Skin";0;"chartreuse1";"mutations";"darkred"
-"Monstrous Mouth";1;"aliceblue";"mutations";"darkred"
-"Prehensile Tail";0;"chartreuse";"mutations";"darkred"
-"Tentacles";1;"aliceblue";"mutations";"darkred"
-"Two Heads";1;"navajowhite4";"mutations";"darkred"
-"Very long legs";0;"aliceblue";"mutations";"darkred"
-"Block";290;"blue";"general";"blue"
-"Dauntless";1;"aliceblue";"general";"cyan"
-"Dirty Player";15;"chocolate3";"general";"brown"
-"Fend";0;"dodgerblue";"general";"slategray"
-"Frenzy";6;"firebrick3";"general";"crimson"
-"Kick";8;"slateblue4";"general";"slateblue"
-"Pro";12;"pink3";"general";"rosybrown"
-"Shadowing";0;"slateblue";"general";"slateblue"
-"Strip Ball";25;"deeppink1";"general";"deeppink"
-"Sure Hands";12;"pink4";"general";"pink"
-"Tackle";40;"orange";"general";"orange"
-"Wrestle";104;"grey80";"general";"floralwhite"
-"Catch";1;"aliceblue";"agility";"lightyellow"
-"Defensive";1;"aquamarine";"agility";"lightgoldenrodyellow"
-"Diving Catch";1;"aliceblue";"agility";"lightgoldenrodyellow"
-"Diving Tackle";1;"aliceblue";"agility";"lightgoldenrodyellow"
-"Dodge";135;"yellow";"agility";"yellow"
-"Jump Up";1;"aliceblue";"agility";"lightgoldenrodyellow"
-"Leap";1;"aliceblue";"agility";"lightgoldenrodyellow"
-"Safe Pair of Hands";1;"aliceblue";"agility";"lightgoldenrodyellow"
-"Side Step";4;"lightgoldenrod";"agility";"lightyellow"
-"Sneaky Git";24;"pink1";"agility";"pink"
-"Sprint";1;"aliceblue";"agility";"lightgoldenrodyellow"
-"Sure Feet";3;"yellow2";"agility";"khaki"
+"skill_name";"n";"Rcolor";"skillgroup";"Pcolor";"text_color";"sort_order"
+"Arm Bar";2;"yellowgreen";"strength";"darkgreen";"white";1
+"Brawler";8;"steelblue4";"strength";"mediumslateblue";"black";2
+"Break Tackle";1;"aliceblue";"strength";"darkgreen";"white";3
+"Grab";1;"lightsalmon4";"strength";"firebrick";"black";4
+"Guard";296;"green";"strength";"lime";"black";5
+"Juggernaut";8;"slateblue2";"strength";"darkblue";"white";6
+"Mighty Blow";54;"red";"strength";"red";"black";7
+"Multiple Block";1;"aliceblue";"strength";"darkgreen";"white";8
+"Pile Driver";0;"brown4";"strength";"darkgreen";"white";9
+"Stand Firm";1;"aliceblue";"strength";"darkgreen";"white";10
+"Strong Arm";0;"lightslategrey";"strength";"darkgreen";"white";11
+"Thick Skull";1;"aliceblue";"strength";"darkgreen";"white";12
+"Accurate";5;"lightcyan4";"passing";"indigo";"white";13
+"Cannoneer";1;"lightblue2";"passing";"indigo";"white";14
+"Cloud Burster";0;"aliceblue";"passing";"indigo";"white";15
+"Dump-off";2;"lightseagreen";"passing";"indigo";"white";16
+"Fumblerooskie";0;"aliceblue";"passing";"indigo";"white";17
+"Hail Mary Pass";1;"aliceblue";"passing";"indigo";"white";18
+"Leader";62;"purple";"passing";"purple";"black";19
+"Nerves of Steel";0;"aliceblue";"passing";"indigo";"white";20
+"On The Ball";0;"lightskyblue";"passing";"indigo";"white";21
+"Pass";1;"aliceblue";"passing";"indigo";"white";22
+"Running Pass";1;"aliceblue";"passing";"indigo";"white";23
+"Safe Pass";0;"lightsteelblue";"passing";"indigo";"white";24
+"Big Hand";0;"chartreuse4";"mutations";"darkred";"white";25
+"Claws";2;"darkred";"mutations";"darkred";"white";26
+"Disturbing Presence";0;"aliceblue";"mutations";"darkred";"white";27
+"Extra Arms";1;"aliceblue";"mutations";"darkred";"white";28
+"Foul Appearance";0;"slateblue";"mutations";"darkred";"white";29
+"Horns";1;"aliceblue";"mutations";"darkred";"white";30
+"Iron Hard Skin";0;"chartreuse1";"mutations";"darkred";"white";31
+"Monstrous Mouth";1;"aliceblue";"mutations";"darkred";"white";32
+"Prehensile Tail";0;"chartreuse";"mutations";"darkred";"white";33
+"Tentacles";1;"aliceblue";"mutations";"darkred";"white";34
+"Two Heads";1;"navajowhite4";"mutations";"darkred";"white";35
+"Very long legs";0;"aliceblue";"mutations";"darkred";"white";36
+"Block";290;"blue";"general";"blue";"black";37
+"Dauntless";1;"aliceblue";"general";"cyan";"black";38
+"Dirty Player";15;"chocolate3";"general";"brown";"black";39
+"Fend";0;"dodgerblue";"general";"slategray";"black";40
+"Frenzy";6;"firebrick3";"general";"crimson";"black";41
+"Kick";8;"slateblue4";"general";"slateblue";"black";42
+"Pro";12;"pink3";"general";"rosybrown";"black";43
+"Shadowing";0;"slateblue";"general";"slateblue";"black";44
+"Strip Ball";25;"deeppink1";"general";"deeppink";"black";45
+"Sure Hands";12;"pink4";"general";"pink";"black";46
+"Tackle";40;"orange";"general";"orange";"black";47
+"Wrestle";104;"grey80";"general";"floralwhite";"black";48
+"Catch";1;"aliceblue";"agility";"lightyellow";"black";49
+"Defensive";1;"aquamarine";"agility";"lightgoldenrodyellow";"black";50
+"Diving Catch";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";51
+"Diving Tackle";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";52
+"Dodge";135;"yellow";"agility";"yellow";"black";53
+"Jump Up";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";54
+"Leap";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";55
+"Safe Pair of Hands";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";56
+"Side Step";4;"lightgoldenrod";"agility";"lightyellow";"black";57
+"Sneaky Git";24;"pink1";"agility";"pink";"black";58
+"Sprint";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";59
+"Sure Feet";3;"yellow2";"agility";"khaki";"black";60
