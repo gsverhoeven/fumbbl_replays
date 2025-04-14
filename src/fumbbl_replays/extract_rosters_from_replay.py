@@ -87,17 +87,23 @@ def add_learned_skill_col(df_roster):
 def add_skill_colors_col(obj, cl_file_location):
     cl_skill = get_skill_list(cl_file_location)
     skill_colors = []
+    skill_text_colors = []
     for r in range(len(obj)):
         color_list = []
+        text_list = []
         skill_array = obj.iloc[r]['learned_skills']
         for skill in skill_array:
             if skill in cl_skill['skill_name'].values:
                 i = cl_skill.query('skill_name == @skill').index[0]
                 color_list.append(cl_skill.loc[i, 'Pcolor'])
+                text_list.append(cl_skill.loc[i, 'text_color'])
             else:
                 color_list.append('none')
+                text_list.append('none')
         skill_colors.append(color_list)
+        skill_text_colors.append(text_list)
     obj['skill_colors'] = skill_colors
+    obj['skill_text_colors'] = skill_text_colors
     return obj
 
 def get_skill_list(file_location):
