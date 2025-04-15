@@ -112,7 +112,7 @@ def make_team_development_plot(res):
         + geom_text(aes(x="match_count", y="plotPosition", label="first_skill", color = "first_skill_text_color"), size=6)
         + geom_tile(data = res.query('second_skill_color != "NA"'), mapping = aes(x="match_count+0.5", y="plotPosition-0.5", fill = "second_skill_color"), width=0.95, height=0.95)
         + geom_text(data = res.query('second_skill_color != "NA"'), mapping = aes(x="match_count+0.5", y="plotPosition-0.5", label="second_skill", color = "second_skill_text_color"), size = 6)
-        + geom_text(aes(x= -1.5, y = "plotPosition", label = "positionName"))
+        + geom_text(data = res.drop_duplicates(['plotPosition','positionName'])[['plotPosition','positionName']], mapping = aes(x= -1.5, y = "plotPosition", label = "positionName"))
         + expand_limits(x=-3)        
         + scale_fill_identity(na_value = "NA")
         + scale_color_identity(na_value = "NA")    
