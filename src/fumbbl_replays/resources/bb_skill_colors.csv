@@ -17,7 +17,7 @@
 "Dump-off";2;"lightseagreen";"passing";"indigo";"white";16
 "Fumblerooskie";0;"aliceblue";"passing";"indigo";"white";17
 "Hail Mary Pass";1;"aliceblue";"passing";"indigo";"white";18
-"Leader";62;"purple";"passing";"purple";"black";19
+"Leader";62;"purple";"passing";"purple";"white";19
 "Nerves of Steel";0;"aliceblue";"passing";"indigo";"white";20
 "On The Ball";0;"lightskyblue";"passing";"indigo";"white";21
 "Pass";1;"aliceblue";"passing";"indigo";"white";22
@@ -35,14 +35,14 @@
 "Tentacles";1;"aliceblue";"mutations";"darkred";"white";34
 "Two Heads";1;"navajowhite4";"mutations";"darkred";"white";35
 "Very long legs";0;"aliceblue";"mutations";"darkred";"white";36
-"Block";290;"blue";"general";"blue";"black";37
+"Block";290;"blue";"general";"blue";"white";37
 "Dauntless";1;"aliceblue";"general";"cyan";"black";38
 "Dirty Player";15;"chocolate3";"general";"brown";"black";39
 "Fend";0;"dodgerblue";"general";"slategray";"black";40
 "Frenzy";6;"firebrick3";"general";"crimson";"black";41
 "Kick";8;"slateblue4";"general";"slateblue";"black";42
 "Pro";12;"pink3";"general";"rosybrown";"black";43
-"Shadowing";0;"slateblue";"general";"slateblue";"black";44
+"Shadowing";0;"slateblue";"general";"slateblue";"white";44
 "Strip Ball";25;"deeppink1";"general";"deeppink";"black";45
 "Sure Hands";12;"pink4";"general";"pink";"black";46
 "Tackle";40;"orange";"general";"orange";"black";47
@@ -59,3 +59,8 @@
 "Sneaky Git";24;"pink1";"agility";"pink";"black";58
 "Sprint";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";59
 "Sure Feet";3;"yellow2";"agility";"khaki";"black";60
+"+MA";1;"red";"characteristic";"red";"white";61
+"+AV";1;"grey80";"characteristic";"grey";"white";62
+"+PA";1;"grey80";"characteristic";"grey";"black";63
+"+AG";1;"grey80";"characteristic";"grey";"black";64
+"+ST";1;"grey80";"characteristic";"grey";"black";65
