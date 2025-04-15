@@ -40,7 +40,7 @@
 "Dirty Player";15;"chocolate3";"general";"brown";"black";39
 "Fend";0;"dodgerblue";"general";"slategray";"black";40
 "Frenzy";6;"firebrick3";"general";"crimson";"black";41
-"Kick";8;"slateblue4";"general";"slateblue";"black";42
+"Kick";8;"slateblue4";"general";"slateblue";"white";42
 "Pro";12;"pink3";"general";"rosybrown";"black";43
 "Shadowing";0;"slateblue";"general";"slateblue";"white";44
 "Strip Ball";25;"deeppink1";"general";"deeppink";"black";45
@@ -59,7 +59,7 @@
 "Sneaky Git";24;"pink1";"agility";"pink";"black";58
 "Sprint";1;"aliceblue";"agility";"lightgoldenrodyellow";"black";59
 "Sure Feet";3;"yellow2";"agility";"khaki";"black";60
-"+MA";1;"red";"characteristic";"red";"white";61
+"+MA";1;"red";"characteristic";"red";"black";61
 "+AV";1;"grey80";"characteristic";"grey";"white";62
 "+PA";1;"grey80";"characteristic";"grey";"black";63
 "+AG";1;"grey80";"characteristic";"grey";"black";64
