@@ -24,7 +24,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
         df_positions = extract_rosters_from_replay(my_replay) 
         df_positions = (df_positions
                         .query("teamId == @team_id")
-                        .filter(['short_name', 'rosterName' , 'positionName', 'playerName', 'skillArrayRoster', \
+                        .filter(['short_name', 'rosterName' , 'home_away', 'positionName', 'playerName', 'skillArrayRoster', \
                             'learned_skills', 'skill_colors', 'skill_text_colors', 'cost', 'recoveringInjury'])
                         .reset_index()
                         )
@@ -101,11 +101,20 @@ def fetch_team_development_data(team_id, n_matches = 15):
     player_list = player_list.sort_values(['cost', 'first_match'])
     player_list['plotPosition'] = range(1, len(player_list) + 1)
 
+    
+
     res = res.merge(player_list.filter(['playerName', 'shorthand', 'short_name', 'positionNr', 'plotPosition']), on = 'playerName')
+    
+    # fetch team and coach name from last replay
+    home_away = df_positions['home_away'].unique()[0]
+    
+    res['plotTitle'] =  my_replay['game'][home_away]['teamName'] + ' (' + my_replay['game'][home_away]['teamId'] \
+    + ')' + ' by ' + my_replay['game'][home_away]['coach']
     return res
 
 def make_team_development_plot(res):
     rosterName = res['rosterName'].unique()[0]
+    plotTitle = res['plotTitle'].unique()[0]
     p = (
         ggplot(res)
         + geom_tile(aes(x="match_count", y="plotPosition", fill = "first_skill_color"), width=0.95, height=0.95)
@@ -118,6 +127,6 @@ def make_team_development_plot(res):
         + scale_color_identity(na_value = "NA")    
         + theme(figure_size=(12, 6))  # new
         + theme(legend_position='none')
-        + labs(x="League game number", y="Players", title= rosterName + " team development BBT")
+        + labs(x="League game number", y="Players", title= plotTitle + " / " + rosterName + " / BBT")
     )
     p.draw(show = True)
