@@ -114,7 +114,7 @@ def get_skill_list(file_location):
 
 def add_skill_to_player(positions, short_name, skill_name, cl_file_location = None):
     if cl_file_location == None:
-        file_path = resources.files(pkg_name) / "resources" / "230218 bb_skill_colors.csv"
+        file_path = resources.files(pkg_name) / "resources" / "bb_skill_colors.csv"
     else:
         file_path = cl_file_location
 
