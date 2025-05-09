@@ -6,6 +6,7 @@ from .fetch_roster import fetch_roster
 from plotnine import *
 
 def fetch_team_development_data(team_id, n_matches = 15):
+    # fetching is currently limited to the last 25 matches
     team_id = str(team_id)
     team_matches = fetch_team_matches(int(team_id))
 
@@ -14,7 +15,6 @@ def fetch_team_development_data(team_id, n_matches = 15):
         matches.append(team_matches[i]['id'])
 
     matches.sort()
-
     # fetch rosters from replays
     i = 0
 

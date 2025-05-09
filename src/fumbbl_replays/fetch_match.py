@@ -67,6 +67,8 @@ def fetch_team_matches(team_id, dirname = "raw/replay_files/", verbose = False):
             print("o",  end = '')
         team_matches = read_json_file(fname_string)
 
+    # PM check number of matches: if 25 then use paging add /last_team_id , to fetch next 25. Repeat until less than 25 matches are returned.
+    #1213876 petehodges, 137 games played, cannot fetch first 15 matches
     return team_matches
 
 def write_json_file(json_object, fname = None):
