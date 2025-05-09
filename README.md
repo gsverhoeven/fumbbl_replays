@@ -51,5 +51,4 @@ Not implemented features:
 *   drawing arrows, 
 *   some form of pathfinding (e.g. find shortest path without dice rolling).
 *   adding rerolls, apo and inducements to roster extracted from replay
-*   defensive setup plot before turn 1 (application 2)
-*   team development plot (application 3)
+*   defensive setup plot before turn 1
