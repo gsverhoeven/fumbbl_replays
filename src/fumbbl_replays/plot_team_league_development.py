@@ -112,7 +112,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
     + ')' + ' by ' + my_replay['game'][home_away]['coach']
     return res
 
-def make_team_development_plot(res):
+def make_team_development_plot(res, extra_title_text = ""): 
     rosterName = res['rosterName'].unique()[0]
     plotTitle = res['plotTitle'].unique()[0]
     p = (
@@ -127,6 +127,6 @@ def make_team_development_plot(res):
         + scale_color_identity(na_value = "NA")    
         + theme(figure_size=(12, 6))  # new
         + theme(legend_position='none')
-        + labs(x="League game number", y="Players", title= plotTitle + " / " + rosterName + " / BBT")
+        + labs(x="League game number", y="Players", title= plotTitle + " / " + rosterName + extra_title_text)
     )
     p.draw(show = True)
