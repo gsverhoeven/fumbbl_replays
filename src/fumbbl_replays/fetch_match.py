@@ -39,20 +39,46 @@ def fetch_match(match_id, dirname = "raw/replay_files/", verbose = False):
     return match
 
 def fetch_team_matches(team_id, dirname = "raw/replay_files/", verbose = False):
+    
+    api_string = "https://fumbbl.com/api/team/matches/" + str(team_id)
+    finished = 0
+    iteration = 0
+
+    while finished == 0:
+        team_batch = fetch_batch(team_id, api_string, dirname, iteration, verbose)
+
+        if len(team_batch) < 25:
+            finished = 1
+            if iteration == 0:
+                team_matches = team_batch
+            else:
+                team_matches = team_matches + team_batch
+        else:
+            if iteration == 0:
+                team_matches = team_batch
+            else:
+                team_matches = team_matches + team_batch
+            iteration += 1
+            api_string = "https://fumbbl.com/api/team/matches/" + str(team_id) + "/" + str(team_batch[24]['id']-1)
+
+    return team_matches
+
+def fetch_batch(team_id, api_string, dirname, iteration, verbose):
     home_dir = os.path.expanduser("~")
     cache_dir = home_dir + "/.cache/fumbbl_replays/" + dirname
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
 
     # check if file already exists, else scrape it
-    fname_string = cache_dir + str(team_id) + "_team_matches.json"  
+    if iteration == 0:
+        fname_string = cache_dir + str(team_id) + "_team_matches.json"  
+    else:
+        fname_string = cache_dir + str(team_id) + "_" + str(iteration) + "_team_matches.json"  
     try:
         f = open(fname_string, mode = "rb")
 
     except OSError as e:
         # scrape it
-        api_string = "https://fumbbl.com/api/team/matches/" + str(team_id)
-
         team_matches = requests.get(api_string)
         team_matches = team_matches.json()
 
@@ -67,8 +93,6 @@ def fetch_team_matches(team_id, dirname = "raw/replay_files/", verbose = False):
             print("o",  end = '')
         team_matches = read_json_file(fname_string)
 
-    # PM check number of matches: if 25 then use paging add /last_team_id , to fetch next 25. Repeat until less than 25 matches are returned.
-    #1213876 petehodges, 137 games played, cannot fetch first 15 matches
     return team_matches
 
 def write_json_file(json_object, fname = None):
