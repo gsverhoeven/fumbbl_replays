@@ -13,10 +13,14 @@ def extract_rosters_from_replay(my_replay, cl_file_location = None):
     json_roster_home = my_replay['game']['teamHome']['roster']
     df_positions_home = json2pd_replay_roster(json_roster_home)
     df_positions_home['rosterName'] = json_roster_home['rosterName']
+    df_positions_home['reRolls'] = my_replay['game']['teamHome']['reRolls']
+    df_positions_home['apothecaries'] = my_replay['game']['teamHome']['apothecaries']
 
     json_roster_away = my_replay['game']['teamAway']['roster']
     df_positions_away = json2pd_replay_roster(json_roster_away)
     df_positions_away['rosterName'] = json_roster_away['rosterName']
+    df_positions_away['reRolls'] = my_replay['game']['teamAway']['reRolls']
+    df_positions_away['apothecaries'] = my_replay['game']['teamAway']['apothecaries']    
 
     df_positions = pd.concat([df_positions_home, df_positions_away])
 
