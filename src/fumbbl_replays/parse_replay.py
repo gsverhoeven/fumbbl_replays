@@ -112,9 +112,7 @@ def parse_replay(my_replay, ignoreList = None):
             # unknown netCommand: print it
             print(tmpCommand['netCommandId'])
 
-
-
-    df = pd.DataFrame( {"commandNr": commandNr, 
+    pd_replay = pd.DataFrame( {"commandNr": commandNr, 
                         "gameTime": gameTime,
                         "turnTime": turnTime,
                         "Half": Half,
@@ -128,23 +126,44 @@ def parse_replay(my_replay, ignoreList = None):
                         "PlayerCoordinateY": PlayerCoordinateY,
                         "SetPlayerState": SetPlayerState})
 
-
     # here we can drop rows with gameSetTurnMode (needed for initial parsing above)
-    df = df.query("modelChangeId != 'gameSetTurnMode'")   
+    pd_replay = pd_replay.query("modelChangeId != 'gameSetTurnMode'")   
     # from ms to s
-    df['gameTime'] = df['gameTime']/1000
-    df['turnTime'] = df['turnTime']/1000     
+    pd_replay['gameTime'] = pd_replay['gameTime']/1000
+    pd_replay['turnTime'] = pd_replay['turnTime']/1000     
 
     changesel = ["fieldModelSetPlayerCoordinate", "fieldModelSetBallCoordinate"]
     row_sel = '(modelChangeId in @changesel & ((PlayerCoordinateY >= 0) & (PlayerCoordinateY <= 14)))'
     # add CoordinateY variable
-    df['CoordinateY'] = '0'
-    df.loc[df.eval(row_sel), 'CoordinateY'] = [string.ascii_lowercase[element] for element in df.loc[df.eval(row_sel), 'PlayerCoordinateY'].astype(int).values]  
+    pd_replay['CoordinateY'] = '0'
+    pd_replay.loc[pd_replay.eval(row_sel), 'CoordinateY'] = [string.ascii_lowercase[element] for element in pd_replay.loc[pd_replay.eval(row_sel), 'PlayerCoordinateY'].astype(int).values]  
     
     # flag placing players in dugout during setup
     # needed to ID players that are initially placed on board but are moved to dugout later during setup
     row_sel = '(turnMode == "setup" & modelChangeId == "fieldModelSetPlayerCoordinate" & ((PlayerCoordinateX < 0) | (PlayerCoordinateX > 25)))'
-    df['to_dugout'] = 0
-    df.loc[df.eval(row_sel), 'to_dugout'] = 1
+    pd_replay['to_dugout'] = 0
+    pd_replay.loc[pd_replay.eval(row_sel), 'to_dugout'] = 1
                     
-    return df
+    return pd_replay
+
+def determine_receiving_team_at_start(pd_replay):
+    gameSetHomeFirstOffense = len(pd_replay.query('turnNr == 0 & turnMode == "startGame" & modelChangeId == "gameSetHomeFirstOffense"').index)
+
+    if gameSetHomeFirstOffense == 1:
+        receiving_team = 'teamHome'
+    else: 
+        receiving_team = 'teamAway'
+    return receiving_team
+
+def extract_coin_toss(pd_replay):
+    for i in range(len(pd_replay)):
+        if isinstance(pd_replay.iloc[i].modelChangeValue, dict):
+            if 'choosingTeamId' in pd_replay.iloc[i].modelChangeValue:
+                choosingTeamId = pd_replay.iloc[i].modelChangeValue['choosingTeamId']
+                # PM compare this to receiving team: this is the choice
+                return choosingTeamId
+            else:
+                pass
+        else:
+            pass
+    return None

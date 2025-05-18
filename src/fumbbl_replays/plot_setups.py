@@ -3,9 +3,8 @@ import pandas as pd
 
 from .fetch_replay import fetch_replay
 from .fetch_match import fetch_match
-from .parse_replay import parse_replay
+from .parse_replay import parse_replay, determine_receiving_team_at_start, extract_coin_toss
 from .extract_rosters_from_replay import extract_rosters_from_replay
-from .parsed_replays import determine_receiving_team_at_start, extract_coin_toss
 from .plot import *
 
 import importlib.resources as resources

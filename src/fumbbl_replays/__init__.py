@@ -1,8 +1,7 @@
 from .fumbbl2ffgn import fumbbl2ffgn
 
 from .fetch_replay import fetch_replay
-from .parse_replay import parse_replay
-from .parsed_replays import determine_receiving_team_at_start
+from .parse_replay import parse_replay, determine_receiving_team_at_start
 
 from .fetch_match import fetch_match, fetch_team_matches
 
