@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 from .fetch_replay import fetch_replay
 from .fetch_match import fetch_match
