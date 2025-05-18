@@ -31,8 +31,8 @@ def fetch_data(match_id):
     df_players = extract_rosters_from_replay(my_replay)
     
     # board state at kick-off
-    df = parse_replay(my_replay)
-    positions = df.query('turnNr == 0 & turnMode == "setup" & Half == 1 & \
+    pd_replay = parse_replay(my_replay)
+    positions = pd_replay.query('turnNr == 0 & turnMode == "setup" & Half == 1 & \
                          modelChangeId == "fieldModelSetPlayerCoordinate"').groupby('modelChangeKey').tail(1)
 
     positions = pd.merge(positions, df_players, left_on='modelChangeKey', right_on='playerId', how="left")
@@ -48,7 +48,7 @@ def fetch_data(match_id):
         print("warning: expected 22 players")
     
     # determine who is receiving: the home or the away team
-    receiving_team = determine_receiving_team_at_start(df)
+    receiving_team = determine_receiving_team_at_start(pd_replay)
 
     if receiving_team == "teamHome":
         raceOffense = raceHome
@@ -59,7 +59,7 @@ def fetch_data(match_id):
     
     team_id_offensive = df_players.query('home_away == @receiving_team')['teamId'].unique()[0]
 
-    choosing_team = extract_coin_toss(df)
+    choosing_team = extract_coin_toss(pd_replay)
     if str(choosing_team) == str(team_id_offensive):
         toss_choice = "toss choice is play offense"
     else:
