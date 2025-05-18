@@ -15,3 +15,4 @@ from .plot_setups import fetch_data, write_plot, sort_defensive_plots
 from .positions import move_piece, set_piece_state, put_position, get_position, print_position, create_position
 
 from .plot_team_league_development import make_team_development_plot, fetch_team_development_data
+from .fetch_team import fetch_team
