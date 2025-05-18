@@ -103,7 +103,6 @@ def set_piece_state(positions, home_away, short_name, new_state):
         print("unknown state")
     return positions
         
-    
 def put_position(positions, setup, home_away):
     if setup[0] != 'setup':
         print("not a setup list")
