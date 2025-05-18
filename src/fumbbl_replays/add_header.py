@@ -1,6 +1,6 @@
 import pandas as pd
 
-def add_header(df, my_replay):
+def add_header(pd_replay, my_replay):
     
     df_header = pd.DataFrame( {"commandNr": [0, 0], 
                         "gameTime": [0, 0],
@@ -16,6 +16,6 @@ def add_header(df, my_replay):
                         "PlayerCoordinateY": [99, 99],
                         "SetPlayerState": [0, 0]}, index = [0, 1])
 
-    df = pd.concat([df_header, df], ignore_index=True)
+    pd_replay = pd.concat([df_header, pd_replay], ignore_index=True)
     
-    return df
+    return pd_replay
