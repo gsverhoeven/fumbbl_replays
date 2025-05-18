@@ -5,6 +5,7 @@ from .fetch_match import fetch_match
 from .parse_replay import parse_replay
 from .extract_rosters_from_replay import extract_rosters_from_replay
 from .parsed_replays import determine_receiving_team_at_start, extract_coin_toss
+from .plot import *
 
 import importlib.resources as resources
 from fumbbl_replays import __name__ as pkg_name
