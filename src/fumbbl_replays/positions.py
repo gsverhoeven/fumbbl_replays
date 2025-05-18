@@ -41,8 +41,6 @@ def create_position(roster, setup, home_away = 'teamHome'):
         # player position code
         position_code.append(re.split(r'([\d]+)', move_code[0][:-1], 1)[0])
         
-
-
     positions = pd.DataFrame( {"PlayerNr": PlayerNr,
                     "boardpos": boardpos,
                     "short_name": piece,

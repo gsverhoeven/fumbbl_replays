@@ -233,28 +233,6 @@ def build_filename(replay_id, match_id, append_string, race = None, base_path = 
 
     return fname
 
-def determine_receiving_team_at_start(df):
-    gameSetHomeFirstOffense = len(df.query('turnNr == 0 & turnMode == "startGame" & modelChangeId == "gameSetHomeFirstOffense"').index)
-
-    if gameSetHomeFirstOffense == 1:
-        receiving_team = 'teamHome'
-    else: 
-        receiving_team = 'teamAway'
-    return receiving_team
-
-def extract_coin_toss(df):
-    for i in range(len(df)):
-        if isinstance(df.iloc[i].modelChangeValue, dict):
-            if 'choosingTeamId' in df.iloc[i].modelChangeValue:
-                choosingTeamId = df.iloc[i].modelChangeValue['choosingTeamId']
-                # PM compare this to receiving team: this is the choice
-                return choosingTeamId
-            else:
-                pass
-        else:
-            pass
-    return None
-
 def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False, flip = False, ballpos = None):
     file_path = resources.files(pkg_name) / "resources" / "nice.jpg"
     plot = Image.open(file_path)
