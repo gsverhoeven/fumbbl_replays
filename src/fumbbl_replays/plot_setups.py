@@ -64,7 +64,9 @@ def fetch_data(match_id):
     else:
         toss_choice = "toss choice is play defense"
 
-    text = [coachHome, coachAway, raceHome, raceAway, raceDefense, raceOffense, team1_score, team2_score, receiving_team, toss_choice] # 1 home # 2 away
+    text = [coachHome, coachAway, raceHome, raceAway, \
+        raceDefense, raceOffense, team1_score, team2_score, \
+            receiving_team, toss_choice] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
 
 def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
@@ -151,34 +153,4 @@ def add_text(plot, text, match_id):
         print("metadata unexpected length")
         return plot
 
-    return plot
-
-# helper: df_replays is in a notebook?
-def sort_defensive_plots(df_replays):
-    """Sort defense setups in folders by race"""
-    current_dirname = "kickoff_pngs/"
-
-    for row in range(len(df_replays)):
-        dirname = df_replays.iloc[row]['raceDefense'] + "/"
-        dirname = dirname.lower()
-        dirname = dirname.replace(' ', '_')
-        if not os.path.exists(current_dirname + dirname):
-            os.makedirs(current_dirname + dirname)
-        fname = str(df_replays.iloc[row]['replayId']) + "_" + str(df_replays.iloc[row]['matchId']) + "_kickoff_lower_defense.png"
-        os.rename(current_dirname + fname, current_dirname + dirname + fname)
-
-def write_plot(match_id, positions, receiving_team, text, refresh = False, verbose = False, plot_type = 'D'):
-    my_match = fetch_match(match_id)
-    replay_id = my_match['replayId']
-    # create the plots
-    if plot_type == 'D':
-        plot = create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)
-    elif plot_type == 'O':
-        plot = create_offense_plot(replay_id, match_id, positions, receiving_team, text, refresh, verbose)        
-    elif plot_type == 'V':
-        plot = create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh)
-    elif plot_type == 'H':
-        plot = create_horizontal_plot(replay_id, match_id, positions, receiving_team, refresh)
-    else:
-        plot = print("unknown plot type")
     return plot
