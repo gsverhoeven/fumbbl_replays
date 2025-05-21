@@ -7,6 +7,7 @@ from fumbbl_replays import __name__ as pkg_name
 from PIL import Image, ImageDraw, ImageFont
 
 from urllib.request import urlopen
+from .plot_setups import build_filename
 
 def add_tacklezones(pitch, positions, red_team, flip = False, horizontal = False):
     for i in range(len(positions)):
@@ -214,24 +215,6 @@ def create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh
     else:
         plot = Image.open(fname)
     return plot
-
-def build_filename(replay_id, match_id, append_string, race = None, base_path = 'kickoff_pngs/'):
-    if race is not None:
-        dirname = race + "/"
-        dirname = dirname.lower()
-        dirname = dirname.replace(' ', '_')
-
-        if not os.path.exists(base_path + dirname):
-            os.makedirs(base_path + dirname)
-
-    image_name = str(replay_id) + "_" + str(match_id) + append_string
-
-    if race is not None:
-        fname = base_path + dirname + image_name
-    else:
-        fname = base_path + image_name
-
-    return fname
 
 def create_plot(positions, red_team = "teamHome", orientation ='H', crop = "none", skill_bands = False, tackle_zones = False, flip = False, ballpos = None):
     file_path = resources.files(pkg_name) / "resources" / "nice.jpg"

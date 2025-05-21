@@ -69,6 +69,24 @@ def fetch_data(match_id):
             receiving_team, toss_choice] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
 
+def build_filename(replay_id, match_id, append_string, race = None, base_path = 'kickoff_pngs/'):
+    if race is not None:
+        dirname = race + "/"
+        dirname = dirname.lower()
+        dirname = dirname.replace(' ', '_')
+
+        if not os.path.exists(base_path + dirname):
+            os.makedirs(base_path + dirname)
+
+    image_name = str(replay_id) + "_" + str(match_id) + append_string
+
+    if race is not None:
+        fname = base_path + dirname + image_name
+    else:
+        fname = base_path + image_name
+
+    return fname
+    
 def create_defense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
     positions = positions.query('home_away != @receiving_team')
     race = positions.iloc[0]['race']
