@@ -7,7 +7,7 @@ from fumbbl_replays import __name__ as pkg_name
 from PIL import Image, ImageDraw, ImageFont
 
 from urllib.request import urlopen
-from .plot_setups import build_filename
+from .get_cache_dir import get_cache_dir
 
 def add_tacklezones(pitch, positions, red_team, flip = False, horizontal = False):
     for i in range(len(positions)):
@@ -181,7 +181,7 @@ def pitch_select_upper_half(pitch):
 
 def create_horizontal_plot(replay_id, match_id, positions, receiving_team, refresh = False):
     append_string = "_kickoff_horizontal.png"
-    fname = build_filename(replay_id, match_id, append_string)
+    fname = get_cache_dir() + str(replay_id) + str(match_id) + append_string
 
     if not os.path.exists(fname) or refresh:
         file_path = resources.files(pkg_name) / "resources" / "nice.jpg"  
@@ -196,7 +196,7 @@ def create_horizontal_plot(replay_id, match_id, positions, receiving_team, refre
 
 def create_vertical_plot(replay_id, match_id, positions, receiving_team, refresh = False):
     append_string = "_kickoff_vertical.png"
-    fname = build_filename(replay_id, match_id, append_string)
+    fname = get_cache_dir() + str(replay_id) + str(match_id) + append_string
 
     if not os.path.exists(fname) or refresh:
         file_path = resources.files(pkg_name) / "resources" / "nice.jpg"

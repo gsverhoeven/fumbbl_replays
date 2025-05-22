@@ -6,12 +6,10 @@ import time
 import requests
 import json
 import os
+from .get_cache_dir import get_cache_dir
 
 def fetch_match(match_id, dirname = "raw/replay_files/", verbose = False):
-    home_dir = os.path.expanduser("~")
-    cache_dir = home_dir + "/.cache/fumbbl_replays/" + dirname
-    if not os.path.exists(cache_dir):
-        os.makedirs(cache_dir)
+    cache_dir = get_cache_dir(dirname)
 
     # check if file already exists, else scrape it
     fname_string = cache_dir + str(match_id) + "_match.json"  
