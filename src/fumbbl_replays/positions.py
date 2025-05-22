@@ -1,4 +1,5 @@
 import re
+import string
 import pandas as pd
 from .parse_boardpos import parse_boardpos
 
