@@ -5,7 +5,7 @@ from .fetch_replay import fetch_replay
 from .fetch_match import fetch_match
 from .parse_replay import parse_replay, determine_receiving_team_at_start, extract_coin_toss
 from .extract_rosters_from_replay import extract_rosters_from_replay
-from .plot import *
+from .plot import add_tacklezones, add_players, add_skill_bands, pitch_select_lower_half
 
 import importlib.resources as resources
 from fumbbl_replays import __name__ as pkg_name
@@ -70,6 +70,7 @@ def fetch_data(match_id):
     return match_id, replay_id, positions, receiving_team, text
 
 def build_filename(replay_id, match_id, append_string, race = None, base_path = 'kickoff_pngs/'):
+    # PM use get cache_dir
     if race is not None:
         dirname = race + "/"
         dirname = dirname.lower()
