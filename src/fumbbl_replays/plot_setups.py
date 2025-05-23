@@ -124,6 +124,7 @@ def create_defense_plot(replay_id, match_id, positions, receiving_team, text, re
 
 
 def create_offense_plot(replay_id, match_id, positions, receiving_team, text, refresh = False, verbose = False):
+    positions = positions.query('home_away == @receiving_team')
     race = positions.iloc[0]['race']
     append_string = "_kickoff_lower_offense.png"
     fname = build_filename(replay_id, match_id, append_string, race)
