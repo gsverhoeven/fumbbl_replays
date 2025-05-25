@@ -58,11 +58,7 @@ def fetch_data(match_id):
     
     team_id_offensive = df_players.query('home_away == @receiving_team')['teamId'].unique()[0]
 
-    choosing_team = extract_coin_toss(pd_replay)
-    if str(choosing_team) == str(team_id_offensive):
-        toss_choice = "toss choice is play offense"
-    else:
-        toss_choice = "toss choice is play defense"
+    toss_choice = extract_coin_toss(pd_replay)
 
     text = [coachHome, coachAway, raceHome, raceAway, \
         raceDefense, raceOffense, team1_score, team2_score, \
@@ -141,8 +137,9 @@ def create_offense_plot(replay_id, match_id, positions, receiving_team, text, re
         else:
             doFlip = True
 
-        plot = add_tacklezones(plot, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)   
-        plot = add_players(plot, positions.query('home_away == @receiving_team'), receiving_team, flip = doFlip)
+        plot = add_tacklezones(plot, positions, receiving_team, flip = doFlip)   
+        plot = add_players(plot, positions, receiving_team, flip = doFlip)
+        plot = add_skill_bands(plot, positions, flip = doFlip, horizontal = False)        
         plot = pitch_select_lower_half(plot)
         plot = add_text(plot, text, match_id)
 
@@ -159,7 +156,12 @@ def add_text(plot, text, match_id):
     font2 = ImageFont.truetype('LiberationMono-Regular.ttf', 16)
 
     if(len(text)) == 10:
-        text_line0 = "receiving team:" + text[8]
+        if text[8] == "teamHome":
+            text_line0 = "receiving coach:" + text[0]
+        elif text[8] == "teamAway":
+            text_line0 = "receiving coach:" + text[1]
+        else:
+            text_line0 = " error"
         text_line1 = text[0] + "(" + text[2] + ") vs."
         text_line2 = text[1] + "(" + text[3] + ")"
         text_line3 = "match nr. " + str(match_id) + " score:" + str(text[6]) + " - " + str(text[7])
