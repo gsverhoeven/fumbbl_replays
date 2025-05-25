@@ -157,13 +157,28 @@ def determine_receiving_team_at_start(pd_replay):
 
 def extract_coin_toss(pd_replay):
     for i in range(len(pd_replay)):
-        if isinstance(pd_replay.iloc[i].modelChangeValue, dict):
-            if 'choosingTeamId' in pd_replay.iloc[i].modelChangeValue:
-                choosingTeamId = pd_replay.iloc[i].modelChangeValue['choosingTeamId']
-                # PM compare this to receiving team: this is the choice
-                return choosingTeamId
+        if pd_replay.iloc[i]['modelChangeId'] == 'receiveChoice':
+            if  pd_replay.iloc[i].modelChangeValue['receiveChoice'] is False:
+                return "choose not receive"
+            elif pd_replay.iloc[i].modelChangeValue['receiveChoice'] is True:
+                return "choose receive"
             else:
-                pass
+                return "error"
         else:
             pass
     return None
+
+def write_to_excel(pd_replay, df_roster = None, fname = 'pd_replay.xlsx'):
+    writer = pd.ExcelWriter(fname, engine = 'openpyxl')
+
+    cols = ['commandNr', 'gameTime', 'turnTime', 'Half',  'turnNr', 'turnMode', 'set_up_id', \
+                'playerAction', 'modelChangeId', 'modelChangeKey', 'defenderId', 'modelChangeValue']
+
+    # intersection of two lists   
+    cols_sel = [value for value in cols if value in  pd_replay.columns]
+    
+    pd_replay.to_excel(writer, sheet_name = 'gamelog', columns = cols_sel) # define selection plus order
+    if df_roster is not None:
+        df_roster.to_excel(writer, sheet_name = 'roster')
+    writer.close()
+
