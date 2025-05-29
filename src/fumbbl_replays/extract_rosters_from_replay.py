@@ -10,7 +10,10 @@ def extract_rosters_from_replay(my_replay, cl_file_location = None):
     else:
         file_path = cl_file_location
 
+    df_players = extract_players_from_replay(my_replay)
+
     json_roster_home = my_replay['game']['teamHome']['roster']
+
     df_positions_home = json2pd_replay_roster(json_roster_home)
     df_positions_home['rosterName'] = json_roster_home['rosterName']
     df_positions_home['reRolls'] = my_replay['game']['teamHome']['reRolls']
@@ -26,9 +29,7 @@ def extract_rosters_from_replay(my_replay, cl_file_location = None):
 
     df_positions.drop_duplicates(inplace = True, ignore_index = True)
 
-    df_players = extract_players_from_replay(my_replay)
-
-    df_roster = pd.merge(df_players, df_positions, on="positionId", how="left")
+    df_roster = pd.merge(df_players, df_positions, left_on=["positionId", "race"], right_on = ["positionId", "rosterName"], how="left")
       
     df_roster['positionNr'] = df_roster.groupby(['home_away','positionName']).cumcount() + 1
     # create shorthand id
@@ -37,7 +38,7 @@ def extract_rosters_from_replay(my_replay, cl_file_location = None):
     df_roster = add_learned_skill_col(df_roster)
     df_roster = add_skill_colors_col(df_roster, file_path)
 
-    return df_roster
+    return df_roster#, df_positions
 
 def json2pd_replay_roster(json_roster):
     positionId = []
