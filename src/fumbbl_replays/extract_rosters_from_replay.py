@@ -19,18 +19,20 @@ def extract_rosters_from_replay(my_replay, cl_file_location = None):
     df_positions_home['reRolls'] = my_replay['game']['teamHome']['reRolls']
     df_positions_home['apothecaries'] = my_replay['game']['teamHome']['apothecaries']
 
+    df_roster_home = pd.merge(df_players.query('home_away == "teamHome"'), df_positions_home, \
+                              left_on=["positionId", "race"], right_on = ["positionId", "rosterName"], how="left")
+
     json_roster_away = my_replay['game']['teamAway']['roster']
     df_positions_away = json2pd_replay_roster(json_roster_away)
     df_positions_away['rosterName'] = json_roster_away['rosterName']
     df_positions_away['reRolls'] = my_replay['game']['teamAway']['reRolls']
     df_positions_away['apothecaries'] = my_replay['game']['teamAway']['apothecaries']    
 
-    df_positions = pd.concat([df_positions_home, df_positions_away])
+    df_roster_away = pd.merge(df_players.query('home_away == "teamAway"'), df_positions_away, \
+                              left_on=["positionId", "race"], right_on = ["positionId", "rosterName"], how="left")
 
-    df_positions.drop_duplicates(inplace = True, ignore_index = True)
+    df_roster = pd.concat([df_roster_home, df_roster_away])
 
-    df_roster = pd.merge(df_players, df_positions, left_on=["positionId", "race"], right_on = ["positionId", "rosterName"], how="left")
-      
     df_roster['positionNr'] = df_roster.groupby(['home_away','positionName']).cumcount() + 1
     # create shorthand id
     df_roster['short_name'] = df_roster['shorthand'] + df_roster['positionNr'].astype(str)
@@ -38,7 +40,7 @@ def extract_rosters_from_replay(my_replay, cl_file_location = None):
     df_roster = add_learned_skill_col(df_roster)
     df_roster = add_skill_colors_col(df_roster, file_path)
 
-    return df_roster#, df_positions
+    return df_roster
 
 def json2pd_replay_roster(json_roster):
     positionId = []
