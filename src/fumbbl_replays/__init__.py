@@ -1,7 +1,7 @@
 from .fumbbl2ffgn import fumbbl2ffgn
 
 from .fetch_replay import fetch_replay
-from .parse_replay import parse_replay, determine_receiving_team_at_start, extract_coin_toss, write_to_excel
+from .parse_replay import parse_replay, extract_receiving_team_at_start, extract_coin_toss, extract_receive_choice, write_to_excel
 
 from .fetch_match import fetch_match, fetch_team_matches
 

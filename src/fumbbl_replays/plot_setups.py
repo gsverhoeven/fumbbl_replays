@@ -3,7 +3,7 @@ import pandas as pd
 
 from .fetch_replay import fetch_replay
 from .fetch_match import fetch_match
-from .parse_replay import parse_replay, determine_receiving_team_at_start, extract_coin_toss
+from .parse_replay import parse_replay, extract_receiving_team_at_start, extract_coin_toss, extract_receive_choice
 from .extract_rosters_from_replay import extract_rosters_from_replay
 from .plot import add_tacklezones, add_players, add_skill_bands, pitch_select_lower_half
 
@@ -47,7 +47,7 @@ def fetch_data(match_id):
         print("warning: expected 22 players")
     
     # determine who is receiving: the home or the away team
-    receiving_team = determine_receiving_team_at_start(pd_replay)
+    receiving_team = extract_receiving_team_at_start(pd_replay)
 
     if receiving_team == "teamHome":
         raceOffense = raceHome
@@ -58,11 +58,12 @@ def fetch_data(match_id):
     
     team_id_offensive = df_players.query('home_away == @receiving_team')['teamId'].unique()[0]
 
-    toss_choice = extract_coin_toss(pd_replay)
+    choosing_team = extract_coin_toss(pd_replay)
+    receive_choice = extract_receive_choice(pd_replay)
 
     text = [coachHome, coachAway, raceHome, raceAway, \
         raceDefense, raceOffense, team1_score, team2_score, \
-            receiving_team, toss_choice] # 1 home # 2 away
+            receiving_team, receive_choice, choosing_team] # 1 home # 2 away
     return match_id, replay_id, positions, receiving_team, text
 
 def build_filename(replay_id, match_id, append_string, race = None, base_path = 'kickoff_pngs/'):
@@ -155,7 +156,7 @@ def add_text(plot, text, match_id):
     font1 = ImageFont.truetype('LiberationMono-Regular.ttf', 22)
     font2 = ImageFont.truetype('LiberationMono-Regular.ttf', 16)
 
-    if(len(text)) == 10:
+    if(len(text)) == 11: # move to pytest
         if text[8] == "teamHome":
             text_line0 = "receiving coach:" + text[0]
         elif text[8] == "teamAway":

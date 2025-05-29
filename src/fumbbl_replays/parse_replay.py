@@ -146,7 +146,7 @@ def parse_replay(my_replay, ignoreList = None):
                     
     return pd_replay
 
-def determine_receiving_team_at_start(pd_replay):
+def extract_receiving_team_at_start(pd_replay):
     gameSetHomeFirstOffense = len(pd_replay.query('turnNr == 0 & turnMode == "startGame" & modelChangeId == "gameSetHomeFirstOffense"').index)
 
     if gameSetHomeFirstOffense == 1:
@@ -158,6 +158,16 @@ def determine_receiving_team_at_start(pd_replay):
 def extract_coin_toss(pd_replay):
     for i in range(len(pd_replay)):
         if pd_replay.iloc[i]['modelChangeId'] == 'receiveChoice':
+            return pd_replay.iloc[i].modelChangeValue['teamId']
+        else:
+            pass
+    print("no receiveChoice found")
+    return None
+
+def extract_receive_choice(pd_replay):
+    # line scan pandas replay
+    for i in range(len(pd_replay)):
+        if pd_replay.iloc[i]['modelChangeId'] == 'receiveChoice':
             if  pd_replay.iloc[i].modelChangeValue['receiveChoice'] is False:
                 return "choose not receive"
             elif pd_replay.iloc[i].modelChangeValue['receiveChoice'] is True:
@@ -167,6 +177,7 @@ def extract_coin_toss(pd_replay):
         else:
             pass
     return None
+
 
 def write_to_excel(pd_replay, df_roster = None, fname = 'pd_replay.xlsx'):
     writer = pd.ExcelWriter(fname, engine = 'openpyxl')
