@@ -172,6 +172,8 @@ def add_text(plot, text, match_id):
         draw.text((5, 307), text_line1, font=font1, fill='black')
         draw.text((5, 335), text_line2, font=font1, fill='black')
         draw.text((5, 366), text_line3, font=font2, fill='black')
+    elif (len(text)) == 0: 
+        return plot
     else:
         print("metadata unexpected length")
         return plot
