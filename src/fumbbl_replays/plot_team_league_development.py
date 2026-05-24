@@ -25,7 +25,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
         df_positions = extract_rosters_from_replay(my_replay) 
         df_positions = (df_positions
                         .query("teamId == @team_id")
-                        .filter(['short_name', 'rosterName' , 'home_away', 'positionName', 'playerName', 'skillArrayRoster', \
+                        .filter(['short_name', 'rosterName' , 'home_away', 'positionName', 'playerId', 'playerName', 'skillArrayRoster', \
                             'learned_skills', 'skill_colors', 'skill_text_colors', 'cost', 'recoveringInjury'])
                         .reset_index()
                         )
@@ -98,7 +98,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
     roster = fetch_roster(rosterName, ruleset_id= rulesetid).filter(['positionName', 'shorthand'])
 
     player_list = (res
-        .groupby(['playerName', 'positionName', 'cost'], as_index = False)
+        .groupby(['playerId', 'playerName', 'positionName', 'cost'], as_index = False)
         .agg(count = ('index', 'count'), first_match = ('match_count', 'min'))
         .merge(roster, on = 'positionName')
         .sort_values(['positionName', 'first_match'])
@@ -113,7 +113,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
 
     
 
-    res = res.merge(player_list.filter(['playerName', 'shorthand', 'short_name', 'positionNr', 'plotPosition']), on = 'playerName')
+    res = res.merge(player_list.filter(['playerId', 'shorthand', 'short_name', 'positionNr', 'plotPosition']), on = 'playerId')
     
     # fetch team and coach name from last replay
     home_away = df_positions['home_away'].unique()[0]
@@ -121,6 +121,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
     res['plotTitle'] =  my_replay['game'][home_away]['teamName'] + ' (' + my_replay['game'][home_away]['teamId'] \
     + ')' + ' by ' + my_replay['game'][home_away]['coach']
     return res
+
 
 def make_team_development_plot(res, extra_title_text = ""): 
     rosterName = res['rosterName'].unique()[0]
