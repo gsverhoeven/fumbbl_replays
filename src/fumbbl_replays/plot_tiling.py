@@ -24,8 +24,8 @@ def make_tiling(im_list, h = 2,  scale = 1.0):
     v = ceil(len(im_list) / h)
     dst = Image.new(mode = 'RGB', size = (im1.width * h, im1.height * v),  color = (153, 153, 153))
     n_im = 0
-    for hc in range(h):
-        for vc in range(v):
+    for vc in range(v):
+        for hc in range(h):
             if n_im >= len(im_list):
                 pass
             else:
