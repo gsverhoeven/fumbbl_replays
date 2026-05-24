@@ -8,7 +8,7 @@ import json
 import pandas as pd
 import os
 
-def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update = False):
+def fetch_roster(roster_name = None, ruleset_id = 2228, verbose = False, update = False): # 2228 = NAF-BB2020
     home_dir = os.path.expanduser("~")
     cache_dir = home_dir + "/.cache/fumbbl_replays/rosters"
     if not os.path.exists(cache_dir):
