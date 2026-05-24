@@ -21,6 +21,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
     for match_id in matches[0:n_matches]:
         print(".", end = '')
         my_replay = fetch_replay(match_id)
+        rulesVersion = get_rulesVersion_from_replay(my_replay)
         df_positions = extract_rosters_from_replay(my_replay) 
         df_positions = (df_positions
                         .query("teamId == @team_id")
@@ -85,7 +86,16 @@ def fetch_team_development_data(team_id, n_matches = 15):
     res = res.query('first_skill != "Loner" & recoveringInjury == "None" ')
 
     rosterName = res['rosterName'].unique()[0]
-    roster = fetch_roster(rosterName).filter(['positionName', 'shorthand'])
+
+    if rulesVersion == "BB2025":
+        rulesetid = 3906
+    elif rulesVersion == "BB2020":  
+        rulesetid = 2228
+    else:
+        print(rulesVersion)
+        raise Exception("No ruleset Id known for this rulesVersion") 
+
+    roster = fetch_roster(rosterName, ruleset_id= rulesetid).filter(['positionName', 'shorthand'])
 
     player_list = (res
         .groupby(['playerName', 'positionName', 'cost'], as_index = False)
@@ -130,3 +140,10 @@ def make_team_development_plot(res, extra_title_text = ""):
         + labs(x="League game number", y="Players", title= plotTitle + " / " + rosterName + extra_title_text)
     )
     p.draw(show = True)
+
+def get_rulesVersion_from_replay(my_replay):
+    for i in range(len(my_replay['game']['gameOptions']['gameOptionArray'])):
+        key = my_replay['game']['gameOptions']['gameOptionArray'][i]['gameOptionId']
+        if key == 'rulesVersion':
+            value = my_replay['game']['gameOptions']['gameOptionArray'][i]['gameOptionValue']
+    return value
