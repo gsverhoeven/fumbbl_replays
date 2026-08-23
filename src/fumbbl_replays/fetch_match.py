@@ -42,7 +42,7 @@ def fetch_team_matches(team_id, dirname = "raw/replay_files/", verbose = False):
     finished = 0
     iteration = 0
 
-    while finished == 0:
+    while finished == 0: 
         team_batch = fetch_batch(team_id, api_string, dirname, iteration, verbose)
 
         if len(team_batch) < 25:
@@ -51,7 +51,7 @@ def fetch_team_matches(team_id, dirname = "raw/replay_files/", verbose = False):
                 team_matches = team_batch
             else:
                 team_matches = team_matches + team_batch
-        else:
+        else: # adjust API call to reach beyond first page
             if iteration == 0:
                 team_matches = team_batch
             else:
@@ -67,7 +67,7 @@ def fetch_batch(team_id, api_string, dirname, iteration, verbose):
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
 
-    # check if file already exists, else scrape it
+    # check if file already exists, else get from API
     if iteration == 0:
         fname_string = cache_dir + str(team_id) + "_team_matches.json"  
     else:
@@ -76,7 +76,7 @@ def fetch_batch(team_id, api_string, dirname, iteration, verbose):
         f = open(fname_string, mode = "rb")
 
     except OSError as e:
-        # scrape it
+        # else get from API
         team_matches = requests.get(api_string)
         team_matches = team_matches.json()
 
