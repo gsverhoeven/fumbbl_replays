@@ -21,12 +21,11 @@ def fetch_team_development_data(team_id, n_matches = 15):
     for match_id in matches[0:n_matches]:
         print(".", end = '')
         my_replay = fetch_replay(match_id)
-        rulesVersion = get_rulesVersion_from_replay(my_replay)
         df_positions = extract_rosters_from_replay(my_replay) 
         df_positions = (df_positions
                         .query("teamId == @team_id")
                         .filter(['short_name', 'rosterName' , 'home_away', 'positionName', 'playerId', 'playerName', 'skillArrayRoster', \
-                            'learned_skills', 'skill_colors', 'skill_text_colors', 'cost', 'recoveringInjury'])
+                            'learned_skills', 'skill_colors', 'skill_text_colors', 'cost', 'recoveringInjury', 'reRolls', 'apothecaries'])
                         .reset_index()
                         )
         df_positions['match_count'] = i+1
@@ -44,6 +43,7 @@ def fetch_team_development_data(team_id, n_matches = 15):
     second_skill_text_color = []
 
     for i in range(len(res)):
+        # remove Hatred from learned_skills list at this step
         n_skills = len(res.iloc[i]['learned_skills'])
         if n_skills == 0:
             first_skill.append("-")
@@ -83,9 +83,13 @@ def fetch_team_development_data(team_id, n_matches = 15):
 
     res = res.drop(columns = ['short_name'])
 
+    # this removes Journeymen
     res = res.query('first_skill != "Loner" & recoveringInjury == "None" ')
 
     rosterName = res['rosterName'].unique()[0]
+
+    # use replay to determine BB rules version
+    rulesVersion = get_rulesVersion_from_replay(my_replay)
 
     if rulesVersion == "BB2025":
         rulesetid = 3906
@@ -120,16 +124,26 @@ def fetch_team_development_data(team_id, n_matches = 15):
     
     res['plotTitle'] =  my_replay['game'][home_away]['teamName'] + ' (' + my_replay['game'][home_away]['teamId'] \
     + ')' + ' by ' + my_replay['game'][home_away]['coach']
+
+    # here a row bind with rerolls and apo instead of players. with a nr count as first skill and first_skill_text_color black
+    # add this manually to res first, then test with make_plot below
     return res
 
 
 def make_team_development_plot(res, extra_title_text = ""): 
     rosterName = res['rosterName'].unique()[0]
     plotTitle = res['plotTitle'].unique()[0]
+
+    reroll_res = res[['plotPosition', 'match_count' , 'reRolls', 'apothecaries']].copy()
+    reroll_res['plotPosition'] = max(res['plotPosition'])+1
+    reroll_res = reroll_res.drop_duplicates()
     p = (
         ggplot(res)
         + geom_tile(aes(x="match_count", y="plotPosition", fill = "first_skill_color"), width=0.95, height=0.95)
         + geom_text(aes(x="match_count", y="plotPosition", label="first_skill", color = "first_skill_text_color"), size=6)
+        + geom_tile(data = reroll_res, mapping = aes(x="match_count", y="plotPosition"), width=0.95, height=0.95, fill = "purple")
+        + geom_text(data = reroll_res, mapping = aes(x="match_count", y="plotPosition", label="reRolls"), size=6, color = "white")        
+        + geom_text(data = reroll_res, mapping = aes(x="match_count", y="plotPosition+1", label="apothecaries"), size=6, color = "black")   
         + geom_tile(data = res.query('second_skill_color != "NA"'), mapping = aes(x="match_count+0.5", y="plotPosition-0.5", fill = "second_skill_color"), width=0.95, height=0.95)
         + geom_text(data = res.query('second_skill_color != "NA"'), mapping = aes(x="match_count+0.5", y="plotPosition-0.5", label="second_skill", color = "second_skill_text_color"), size = 6)
         + geom_text(data = res.drop_duplicates(['plotPosition','positionName'])[['plotPosition','positionName']], mapping = aes(x= -1.5, y = "plotPosition", label = "positionName"))
